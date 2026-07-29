@@ -233,6 +233,15 @@ input,select,textarea{font-family:inherit;}
 .upi-app .ua-name{font-size:12.5px;font-weight:600;flex:1;}
 .upi-app .ua-radio{width:16px;height:16px;min-width:16px;border-radius:50%;border:1.7px solid var(--co-pay-border);transition:all .13s;}
 .upi-app.sel .ua-radio{border-width:5px;border-color:var(--co-accent);}
+.upi-any{margin-top:8px;}
+.upi-any .ua-logo{background:var(--co-accent);color:var(--co-accent-ink);}
+.upi-any .ua-logo svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.upi-vpa{margin-top:10px;}
+.upi-vpa .uv-hint{font-size:10.5px;margin-top:6px;}
+.uc-badge{width:66px;height:66px;border-radius:50%;background:var(--co-accent);color:var(--co-accent-ink);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 10px 26px color-mix(in srgb,var(--co-accent) 35%,transparent);animation:popin .4s cubic-bezier(.2,1.6,.4,1);}
+.uc-badge svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.uc-pow{margin-top:16px;font-size:8.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;}
+.uc-pow b{font-size:11px;letter-spacing:2px;}
 
 /* netbanking — NBBL Banking Connect */
 .nb-badge{text-align:right;line-height:1.25;margin-right:2px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
@@ -946,13 +955,24 @@ const REG = {
   },
   upi: {
     group:'fields', name:'UPI apps', sub:'GPay, PhonePe, Paytm…', region:'payment', icon:IC.upi, method:true,
-    defaults:()=>({title:'Pay via UPI', open:true, apps:{gpay:true,phonepe:true,paytm:true,cred:true,bhim:false,amazon:false}}),
-    fields:[{k:'title',label:'Title',t:'text'},{k:'apps',label:'UPI apps shown',t:'apps'}],
+    defaults:()=>({title:'Pay via UPI', open:true, showAny:true, apps:{gpay:true,phonepe:true,paytm:true,cred:true,bhim:false,amazon:false}}),
+    fields:[{k:'title',label:'Title',t:'text'},{k:'showAny',label:'"Pay by any UPI App" (collect)',t:'toggle'},{k:'apps',label:'UPI apps shown',t:'apps'}],
     render:(b)=>{
       const apps = Object.entries(b.props.apps).filter(([,v])=>v);
+      const anyRow = b.props.showAny ? `
+        <div class="upi-app upi-any ${rt.selUpi==='any'?'sel':''}" data-act="upiany">
+          <div class="ua-logo">${svg(IC.upi)}</div>
+          <div class="ua-name">Pay by any UPI App</div>
+          <div class="ua-radio"></div>
+        </div>
+        ${rt.selUpi==='any'?`<div class="upi-vpa">
+          <div class="b-field"><input placeholder="Enter your UPI ID — e.g. name@okhdfc" data-role="vpa" value="${esc(rt.vpa||'')}"></div>
+          <div class="uv-hint cv-sub">We'll send a payment request to this UPI ID — approve it in whichever app you use.</div>
+        </div>`:''}` : '';
       return methodShell(b, IC.upi, `<span class="bm-badge">INSTANT</span>`, `
         <div class="upi-note cv-sub">Choose your UPI app — you'll approve the payment there</div>
-        <div class="upi-grid">${apps.map(([k])=>{const a=UPI_APPS[k];return `<div class="upi-app ${rt.selUpi===k?'sel':''}" data-act="upi" data-k="${k}"><div class="ua-logo" style="background:${a.c}">${a.ab}</div><div class="ua-name">${a.name}</div><div class="ua-radio"></div></div>`;}).join('')}</div>`);
+        <div class="upi-grid">${apps.map(([k])=>{const a=UPI_APPS[k];return `<div class="upi-app ${rt.selUpi===k?'sel':''}" data-act="upi" data-k="${k}"><div class="ua-logo" style="background:${a.c}">${a.ab}</div><div class="ua-name">${a.name}</div><div class="ua-radio"></div></div>`;}).join('')}</div>
+        ${anyRow}`);
     }
   },
   upiqr: {
@@ -1331,6 +1351,7 @@ $('#checkout').addEventListener('click', e=>{
     renderAll(); return;
   }
   if(a==='upi'){ rt.selUpi = act.dataset.k; rt.selBank=null; rt.nbMode=null; renderAll(); return; }
+  if(a==='upiany'){ rt.selUpi = rt.selUpi==='any' ? null : 'any'; rt.selBank=null; rt.nbMode=null; renderAll(); if(rt.selUpi==='any'){ const f=document.querySelector('[data-role=vpa]'); if(f&&f.focus)f.focus(); } return; }
   if(a==='nbmode'){ rt.nbMode = rt.nbMode===act.dataset.k ? null : act.dataset.k; rt.selUpi=null; renderAll(); return; }
   if(a==='bank'){ rt.selBank = act.dataset.k; rt.selUpi=null; renderAll(); return; }
   if(a==='recur'){ b.props.on = !b.props.on; renderAll(); return; }
@@ -1355,6 +1376,11 @@ $('#checkout').addEventListener('click', e=>{
     return;
   }
   if(a==='pay'){ runPayFlow(); return; }
+});
+
+/* keep typed UPI ID across re-renders (no re-render on input) */
+$('#checkout').addEventListener('input', e=>{
+  if(e.target.dataset && e.target.dataset.role==='vpa') rt.vpa = e.target.value;
 });
 
 /* inline text editing */
@@ -1522,8 +1548,42 @@ function nbQrFlow(ov){
   setTimeout(()=>showOutcome(ov, 'Net-Banking QR (NBBL)'), 2400);
 }
 
+/* UPI collect — payment request sent to the payer's own UPI ID */
+function upiCollectFlow(ov, vpa){
+  const t = computeTotals();
+  let secs = 4*60 + 59;
+  const mmss = s => Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+  ov.innerHTML = `<div class="pr-wrap">
+    <div class="uc-badge">${svg(IC.upi)}</div>
+    <div class="po-title">Approve payment in your UPI app</div>
+    <div class="po-sub cv-sub">We've sent a payment request of <b>${fmt(t.total)}</b> to <b>${esc(vpa)}</b>.<br>Open the UPI app where this ID is active and approve the request to finish paying.</div>
+    <div class="pr-count">Approve within&nbsp;<b><span id="ucTimer">${mmss(secs)}</span></b></div>
+    ${wsNote}
+    <div class="uc-pow cv-sub">Powered by <b>UPI</b> · NPCI</div>
+    <button class="po-close" data-po="close" style="margin-top:16px;">Can't pay with UPI? Choose another method</button>
+  </div>`;
+  countTimer = setInterval(()=>{
+    secs--;
+    const el = document.getElementById('ucTimer');
+    if(el) el.textContent = mmss(Math.max(secs,0));
+    if(secs<=0) stopCountdown();
+  }, 1000);
+  setTimeout(()=>{ if(ov.classList.contains('show') && document.getElementById('ucTimer')){ stopCountdown(); showOutcome(ov); } }, 3800);
+}
+
 function runPayFlow(){
   const ov = $('#payOverlay');
+  if(rt.selUpi==='any'){
+    const vpa = (rt.vpa||'').trim();
+    if(!/^[\w.\-]{2,}@[A-Za-z]{2,}$/.test(vpa)){
+      toast('Enter a valid UPI ID — e.g. name@okhdfc');
+      document.querySelector('[data-role=vpa]')?.focus?.();
+      return;
+    }
+    ov.classList.add('show');
+    upiCollectFlow(ov, vpa);
+    return;
+  }
   ov.classList.add('show');
   if(rt.nbMode){
     const bank = BANKS.find(b=>b.k===rt.selBank) || BANKS[0];
@@ -1543,7 +1603,7 @@ $('#payOverlay').addEventListener('click', e=>{
   const a = po.dataset.po;
   if(a==='close'){ stopCountdown(); ov.classList.remove('show'); return; }
   if(a==='retry'){ stopCountdown(); ov.classList.remove('show'); toast('Re-attempt the payment — choose a method and hit Pay'); return; }
-  if(a==='reinit'){ stopCountdown(); ov.classList.remove('show'); rt.selUpi=null; rt.selBank=null; rt.nbMode=null; rt.appliedCode=''; rt.appliedPct=0; renderAll(); toast('New payment session created'); return; }
+  if(a==='reinit'){ stopCountdown(); ov.classList.remove('show'); rt.selUpi=null; rt.selBank=null; rt.nbMode=null; rt.vpa=''; rt.appliedCode=''; rt.appliedPct=0; renderAll(); toast('New payment session created'); return; }
   if(a==='nbLogin'){
     const bank = BANKS.find(b=>b.k===rt.selBank) || BANKS[0];
     showProcessing(ov, bank.n + ' NetBanking');
@@ -1779,7 +1839,7 @@ function exportHTML(){
     "  if(e.target.closest('[data-lm-close]')||e.target.id==='legalModal'){document.getElementById('legalModal').style.display='none';return;}",
     "  var acc=e.target.closest('[data-act=acc]');",
     "  if(acc){var m=acc.closest('.b-method');if(!m.classList.contains('flat')){var was=m.classList.contains('open');document.querySelectorAll('.b-method').forEach(function(x){x.classList.remove('open')});if(!was)m.classList.add('open');}return;}",
-    "  var sel=e.target.closest('.upi-app,.nb-bank,.nb-crow');",
+    "  var sel=e.target.closest('.upi-app,.upi-any,.nb-bank,.nb-crow');",
     "  if(sel){sel.parentElement.querySelectorAll('.sel').forEach(function(x){x.classList.remove('sel')});sel.classList.add('sel');return;}",
     "  var ch=e.target.closest('.dc-chip');",
     "  if(ch){var was2=ch.classList.contains('on');document.querySelectorAll('.dc-chip').forEach(function(x){x.classList.remove('on')});if(!was2)ch.classList.add('on');return;}",
