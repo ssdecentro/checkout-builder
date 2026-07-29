@@ -230,11 +230,6 @@ input,select,textarea{font-family:inherit;}
 .upi-app .ua-radio{width:16px;height:16px;min-width:16px;border-radius:50%;border:1.7px solid var(--co-pay-border);transition:all .13s;}
 .upi-app.sel .ua-radio{border-width:5px;border-color:var(--co-accent);}
 
-/* card entry */
-.card-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
-.card-brands{display:flex;gap:6px;align-items:center;margin-bottom:10px;}
-.card-brands .cb{height:20px;padding:0 7px;border:1px solid var(--co-pay-border);border-radius:5px;font-size:8.5px;font-weight:800;letter-spacing:.4px;display:flex;align-items:center;color:var(--co-pay-sub);}
-
 /* netbanking */
 .nb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
 .checkout-shell.mobile .nb-grid{grid-template-columns:1fr 1fr;}
@@ -243,15 +238,6 @@ input,select,textarea{font-family:inherit;}
 .nb-bank.sel{border-color:var(--co-accent);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--co-accent) 18%,transparent);}
 .nb-bank .nb-ic{width:26px;height:26px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;}
 .nb-bank .nb-name{font-size:10.5px;font-weight:600;}
-
-/* wallets */
-.wl-row{display:flex;flex-direction:column;gap:8px;}
-.wl-item{display:flex;align-items:center;gap:11px;border:1px solid var(--co-pay-border);border-radius:var(--co-r);padding:10px 12px;cursor:pointer;transition:all .13s;}
-.wl-item:hover{border-color:var(--co-accent);}
-.wl-item.sel{border-color:var(--co-accent);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--co-accent) 18%,transparent);}
-.wl-item .wl-logo{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;}
-.wl-item .wl-name{font-size:12.5px;font-weight:600;flex:1;}
-.wl-item .wl-bal{font-size:11px;}
 
 /* pay button */
 .b-pay button.paybtn{width:100%;height:50px;border-radius:var(--co-r);background:var(--co-accent);color:var(--co-accent-ink);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;transition:filter .15s, transform .1s;letter-spacing:.1px;}
@@ -265,6 +251,77 @@ input,select,textarea{font-family:inherit;}
 .b-secure .sc-item{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;}
 .b-secure .sc-item svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .b-secure .sc-sep{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.3;}
+
+/* invoice ref */
+.b-inv{display:flex;align-items:center;gap:8px;font-size:12px;}
+.b-inv svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.6;}
+.b-inv .iv-num{font-weight:700;margin-left:auto;font-variant-numeric:tabular-nums;}
+
+/* address blocks */
+.b-addr .ad-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.b-addr .ad-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;}
+.b-addr .ad-same{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;user-select:none;}
+.b-addr .ad-check{width:16px;height:16px;min-width:16px;border-radius:5px;border:1.6px solid var(--co-pay-border);display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.b-addr .ad-check.on{background:var(--co-accent);border-color:var(--co-accent);}
+.b-addr .ad-check svg{width:10px;height:10px;stroke:var(--co-accent-ink);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none;}
+.b-addr .ad-check.on svg{display:block;}
+
+/* custom field */
+.b-custom-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;}
+.b-custom-row .cf-v{font-weight:600;text-align:right;word-break:break-word;}
+
+/* discount code chips */
+.dc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.dc-chip{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:100px;border:1px dashed var(--co-sum-border);cursor:pointer;transition:all .13s;letter-spacing:.3px;}
+.co-payment .dc-chip{border-color:var(--co-pay-border);}
+.dc-chip:hover{border-color:var(--co-accent);color:var(--co-accent);}
+.dc-chip.on{border-style:solid;border-color:var(--co-accent);color:var(--co-accent);background:color-mix(in srgb,var(--co-accent) 8%,transparent);}
+.dc-chip .pct{opacity:.65;font-weight:600;}
+
+/* QR block */
+.b-qrd{display:flex;gap:16px;align-items:center;}
+.b-qrd .qr-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:10px;line-height:0;}
+.b-qrd .qr-card svg{width:132px;height:132px;display:block;}
+.b-qrd .qr-side{flex:1;min-width:0;}
+.b-qrd .qr-t{font-size:13px;font-weight:700;margin-bottom:5px;}
+.b-qrd .qr-s{font-size:11.5px;line-height:1.55;}
+.b-qrd .qr-timer{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-accent) 10%,transparent);color:var(--co-accent);}
+.b-qrm{display:none;font-size:12px;line-height:1.6;padding:10px 12px;border:1px dashed var(--co-pay-border);border-radius:var(--co-r);}
+.checkout-shell.mobile .b-qrd{display:none;}
+.checkout-shell.mobile .b-qrm{display:block;}
+
+/* merchant footer */
+.b-mfoot{font-size:11px;line-height:1.6;}
+.b-mfoot .mf-links{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-weight:600;}
+.b-mfoot .mf-links a{color:inherit;cursor:pointer;text-decoration:none;opacity:.8;}
+.b-mfoot .mf-links a:hover{opacity:1;text-decoration:underline;}
+.b-mfoot .mf-sup{display:flex;flex-wrap:wrap;gap:5px 14px;justify-content:center;margin-top:7px;opacity:.85;}
+.b-mfoot .mf-soc{display:flex;gap:10px;justify-content:center;margin-top:9px;}
+.b-mfoot .mf-soc a{width:26px;height:26px;border-radius:50%;border:1px solid var(--co-pay-border);display:flex;align-items:center;justify-content:center;color:inherit;opacity:.75;}
+.b-mfoot .mf-soc a:hover{opacity:1;border-color:var(--co-accent);color:var(--co-accent);}
+.b-mfoot .mf-soc svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.co-summary .b-mfoot .mf-soc a{border-color:var(--co-sum-border);}
+
+/* pay outcome screens */
+.po-ring.fail{background:color-mix(in srgb,#ef4444 13%,transparent);}
+.po-ring.fail svg{stroke:#ef4444;}
+.po-ring.exp{background:color-mix(in srgb,#f59e0b 14%,transparent);}
+.po-ring.exp svg{stroke:#d97706;}
+.po-btnrow{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
+.po-primary{height:40px;padding:0 22px;border-radius:var(--co-r);background:var(--co-accent);color:var(--co-accent-ink);font-size:12.5px;font-weight:700;}
+.po-primary:hover{filter:brightness(1.1);}
+.po-ws{margin-top:16px;font-size:10px;display:inline-flex;align-items:center;gap:6px;opacity:.55;}
+.po-ws .ws-dot{width:6px;height:6px;border-radius:50%;background:#10b981;animation:dlpulse 1.2s infinite;}
+
+/* mock netbanking journey */
+.po-bank{width:min(400px,90%);margin:0 auto;text-align:left;border:1px solid var(--co-pay-border);border-radius:12px;overflow:hidden;background:var(--co-pay-field);}
+.po-bank .pb-head{display:flex;align-items:center;gap:10px;padding:13px 16px;color:#fff;font-size:13px;font-weight:700;}
+.po-bank .pb-head .nb-ic{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;}
+.po-bank .pb-body{padding:18px 16px;}
+.po-bank .pb-note{font-size:10px;text-align:center;margin-top:12px;opacity:.6;}
+.po-bank .b-field + .b-field{margin-top:12px;}
+.po-bank .pb-amt{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:14px;padding:10px 12px;border-radius:8px;background:var(--co-pay-hover);border:1px solid var(--co-pay-border);}
+.po-bank .pb-amt b{font-size:14px;}
 
 /* success overlay */
 .pay-overlay{position:absolute;inset:0;background:var(--co-pay-bg);display:none;align-items:center;justify-content:center;z-index:40;border-radius:inherit;}
@@ -367,6 +424,9 @@ input,select,textarea{font-family:inherit;}
   .nb-grid{grid-template-columns:1fr 1fr;}
   .card-row{grid-template-columns:1fr 1fr;}
   .b-heading{font-size:20px;}
+  .b-qrd{display:none;}
+  .b-qrm{display:block;}
+  .b-addr .ad-grid{grid-template-columns:1fr 1fr;}
 }
 @media (max-width:640px){
   .topbar{padding:0 10px;gap:6px;}
@@ -454,6 +514,29 @@ input,select,textarea{font-family:inherit;}
           <div class="sw on" id="poweredSw"></div>
         </div>
       </div>
+      <div class="dz-section">
+        <div class="dz-label">Merchant details</div>
+        <div class="ins-field"><label>Support email</label><input type="text" id="mSupEmail" placeholder="support@yourbrand.com"></div>
+        <div class="ins-field"><label>Support number</label><input type="text" id="mSupPhone" placeholder="+91 80 4000 0000"></div>
+        <div class="ins-field"><label>Country</label>
+          <select class="dz-select" id="mCountry">
+            <option>India</option><option>Singapore</option><option>UAE</option>
+            <option>United States</option><option>United Kingdom</option>
+            <option>Indonesia</option><option>Philippines</option>
+          </select>
+        </div>
+        <div class="ins-field"><label>Social links</label>
+          <input type="text" id="mSocWeb" placeholder="Website URL" style="margin-bottom:6px;">
+          <input type="text" id="mSocLi" placeholder="LinkedIn URL" style="margin-bottom:6px;">
+          <input type="text" id="mSocX" placeholder="X / Twitter URL" style="margin-bottom:6px;">
+          <input type="text" id="mSocIg" placeholder="Instagram URL">
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline" style="flex:1;justify-content:center;" data-legal="tnc">T&amp;C…</button>
+          <button class="btn btn-outline" style="flex:1;justify-content:center;" data-legal="privacy">Privacy…</button>
+        </div>
+        <div class="ins-note" style="margin-top:10px;">Paste or upload T&amp;C / Privacy Policy content at template-creation time — payers read it in a pop-up. Shown via the <b>Merchant footer</b> block.</div>
+      </div>
     </div>
   </aside>
 
@@ -463,7 +546,14 @@ input,select,textarea{font-family:inherit;}
       <div class="checkout-shell" id="shell">
         <div class="canvas-toolbar">
           <div class="ct-label"><span class="dot"></span><span id="ctMode">Editing — drag, click &amp; type directly on the page</span></div>
-          <div class="ct-zoom" id="blockCount"></div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="mini-seg" id="simSeg" style="display:none;width:auto;" title="Simulate the web-socket payment status from the backend">
+              <button class="on" data-sim="success">Success</button>
+              <button data-sim="failed">Failed</button>
+              <button data-sim="expired">Expired</button>
+            </div>
+            <div class="ct-zoom" id="blockCount"></div>
+          </div>
         </div>
         <div class="checkout theme-navy edit-mode" id="checkout">
           <div class="co-col co-summary" id="regionSummary" data-region="summary"></div>
@@ -501,6 +591,35 @@ input,select,textarea{font-family:inherit;}
   </div>
 </div>
 
+<!-- LEGAL CONTENT — payer view -->
+<div class="modal-wrap" id="legalView">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-head">
+      <div class="mh-t" id="lvTitle">Terms &amp; Conditions</div>
+      <button class="modal-x" data-close="legalView"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div style="flex:1;overflow:auto;padding:20px;font-size:13px;line-height:1.7;color:#475569;white-space:pre-wrap;" id="lvBody"></div>
+  </div>
+</div>
+
+<!-- LEGAL CONTENT — merchant edit -->
+<div class="modal-wrap" id="legalEdit">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-head">
+      <div><div class="mh-t" id="leTitle">Terms &amp; Conditions</div><div class="mh-s">Paste content, or upload a .txt / .md file</div></div>
+      <button class="modal-x" data-close="legalEdit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div style="padding:16px 20px;">
+      <textarea id="leText" style="width:100%;min-height:220px;border:1px solid #e2e8f0;border-radius:10px;padding:12px;font-size:13px;line-height:1.6;color:#1c2024;resize:vertical;outline:none;" placeholder="Paste your policy content here…"></textarea>
+    </div>
+    <div class="modal-foot" style="justify-content:space-between;">
+      <button class="btn btn-outline" id="leUpload">Upload .txt / .md</button>
+      <input type="file" id="leFile" accept=".txt,.md,text/plain,text/markdown" hidden>
+      <button class="btn btn-black" id="leSave">Save content</button>
+    </div>
+  </div>
+</div>
+
 <button class="fab-panel" id="fabPanel"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Blocks &amp; Design</button>
 <div class="drawer-scrim" id="drawerScrim"></div>
 
@@ -520,6 +639,11 @@ const nid = () => 'b' + (uid++);
 
 const state = {
   design: { theme:'theme-light', accent:'#096ef2', accentInk:'#ffffff', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null },
+  merchant: {
+    supportEmail:'support@aurora.co', supportPhone:'+91 80 4000 1234', country:'India',
+    socials:{ web:'https://aurora.co', li:'', x:'', ig:'' },
+    tnc:'', privacy:''
+  },
   blocks: { summary:[], payment:[] }
 };
 let mode = 'edit', device = 'desktop', selId = null;
@@ -550,7 +674,7 @@ function computeTotals(){
 }
 
 function snapshot(){
-  undoStack.push(JSON.stringify({blocks:state.blocks, design:state.design}));
+  undoStack.push(JSON.stringify({blocks:state.blocks, design:state.design, merchant:state.merchant}));
   if(undoStack.length > 60) undoStack.shift();
   $('#undoBtn').disabled = false;
 }
@@ -559,7 +683,8 @@ function undo(){
   if(!s) return;
   const o = JSON.parse(s);
   state.blocks = o.blocks; state.design = o.design;
-  selId = null; renderAll(); syncDesignUI();
+  if(o.merchant) state.merchant = o.merchant;
+  selId = null; renderAll(); syncDesignUI(); syncMerchantUI();
   $('#undoBtn').disabled = undoStack.length === 0;
 }
 
@@ -593,7 +718,37 @@ const IC = {
   del:'<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>',
   chev:'<path d="m6 9 6 6 6-6"/>',
   lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>',
+  invoice:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 13h6M9 17h4"/>',
+  addr:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+  ship:'<path d="M3 7h13v10H3zM16 10h4l1 3v4h-5"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>',
+  custom:'<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3"/>',
+  qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h1M18 18h3v3h-3z"/>',
+  mfoot:'<path d="M4 4h16v12H4z"/><path d="M4 20h16M8 8h8M8 12h5"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.9 5.7 3.9 9S14.5 18.4 12 21c-2.5-2.6-3.9-5.7-3.9-9S9.5 5.6 12 3Z"/>',
+  linkedin:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.1M12 17v-4a2 2 0 0 1 4 0v4"/>',
+  x:'<path d="m4 4 16 16M20 4 4 20"/>',
+  instagram:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5v.1"/>',
+  mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  phoneIc:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z"/>',
 };
+
+/* deterministic mock UPI QR (visual only) */
+function qrSvg(){
+  const n = 25, cell = 4, pad = 2;
+  let seed = 987654321;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const m = Array.from({length:n}, () => Array.from({length:n}, () => rnd() > .52));
+  const finder = (r,c) => { for(let i=0;i<7;i++)for(let j=0;j<7;j++){
+    const ring = i===0||i===6||j===0||j===6, core = i>=2&&i<=4&&j>=2&&j<=4;
+    m[r+i][c+j] = ring || core; } };
+  finder(0,0); finder(0,n-7); finder(n-7,0);
+  let rects = '';
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++) if(m[r][c])
+    rects += `<rect x="${pad+c*cell}" y="${pad+r*cell}" width="${cell}" height="${cell}"/>`;
+  const s = n*cell + pad*2;
+  return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg"><rect width="${s}" height="${s}" fill="#fff"/><g fill="#000">${rects}</g></svg>`;
+}
 const svg = (d, cls='') => `<svg class="${cls}" viewBox="0 0 24 24">${d}</svg>`;
 
 const UPI_APPS = {
@@ -609,11 +764,8 @@ const BANKS = [
   {k:'sbi',n:'SBI',c:'#1f4e9c',ab:'SB'},{k:'axis',n:'Axis Bank',c:'#97144d',ab:'AX'},
   {k:'kotak',n:'Kotak',c:'#ed1c24',ab:'KO'},{k:'yes',n:'Yes Bank',c:'#00509e',ab:'YB'},
 ];
-const WALLETS = [
-  {k:'mobikwik',n:'MobiKwik',c:'#2e3192',ab:'MK',bal:'₹1,250 available'},
-  {k:'freecharge',n:'Freecharge',c:'#7a2ff4',ab:'FC',bal:'₹480 available'},
-  {k:'amazonpay',n:'Amazon Pay balance',c:'#ff9900',ab:'AP',bal:'₹2,100 available'},
-];
+/* Cards & wallets intentionally omitted — payment modes arrive from consumer-URN
+   configuration on the backend; V1 exposes UPI intent, UPI QR and netbanking. */
 
 /* ═══════════════════════ BLOCK REGISTRY ═══════════════════════ */
 const REG = {
@@ -643,16 +795,25 @@ const REG = {
     render:()=>`<div class="b-divider"></div>`
   },
   item: {
-    group:'order', name:'Product line item', sub:'Name, price & quantity', region:'summary', icon:IC.item,
-    defaults:()=>({name:'Aurora Desk Lamp — Brass', price:3499, qty:1, showQty:true}),
-    fields:[{k:'name',label:'Product name',t:'text'},{k:'price',label:'Unit price (₹)',t:'number'},{k:'showQty',label:'Show quantity stepper',t:'toggle'}],
+    group:'order', name:'Product line item', sub:'Name, price, image & qty', region:'summary', icon:IC.item,
+    defaults:()=>({name:'Aurora Desk Lamp — Brass', price:3499, qty:1, showQty:true, img:null}),
+    fields:[{k:'name',label:'Product name',t:'text'},{k:'price',label:'Unit price (₹)',t:'number'},{k:'img',label:'Product image',t:'img'},{k:'showQty',label:'Show quantity stepper',t:'toggle'}],
     render:(b,live)=>{
       const p = b.props;
-      return `<div class="b-item"><div class="it-thumb">${esc(initials(p.name))}</div>
+      const thumb = p.img
+        ? `<div class="it-thumb" style="background:#fff;padding:0;overflow:hidden;"><img src="${p.img}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>`
+        : `<div class="it-thumb">${esc(initials(p.name))}</div>`;
+      return `<div class="b-item">${thumb}
         <div><div class="it-name" ${ce(live)} data-ei="name">${esc(p.name)}</div><div class="it-price cv-sub">${fmt(p.price)}${p.qty>1?' × '+p.qty:''}</div></div>
         ${p.showQty?`<div class="it-qty"><button data-act="qty-" title="Decrease">−</button><span class="q">${p.qty}</span><button data-act="qty+" title="Increase">+</button></div>`:''}
       </div>`;
     }
+  },
+  invoice: {
+    group:'order', name:'Invoice number', sub:'Order / invoice reference', region:'summary', icon:IC.invoice,
+    defaults:()=>({label:'Invoice', value:'INV-2026-0142'}),
+    fields:[{k:'label',label:'Label',t:'text'},{k:'value',label:'Invoice ID / number',t:'text'}],
+    render:(b,live)=>`<div class="b-inv">${svg(IC.invoice)}<span class="cv-sub" ${ce(live)} data-ei="label">${esc(b.props.label)}</span><span class="iv-num" ${ce(live)} data-ei="value">${esc(b.props.value)}</span></div>`
   },
   totals: {
     group:'order', name:'Order totals', sub:'Subtotal, tax & total', region:'summary', icon:IC.totals,
@@ -670,10 +831,14 @@ const REG = {
     }
   },
   discount: {
-    group:'order', name:'Discount code', sub:'Promo code input', region:'summary', icon:IC.discount,
-    defaults:()=>({code:'DECENTRO10', pct:10}),
-    fields:[{k:'code',label:'Valid code (demo)',t:'text'},{k:'pct',label:'Discount %',t:'number'}],
-    render:(b)=>`<div class="b-discount-wrap"><div class="b-discount"><input placeholder="Discount code" data-role="dcode" value="${esc(rt.appliedCode)}"><button data-act="applyDc">Apply</button></div>${rt.appliedCode?`<div class="dc-ok">✓ ${esc(rt.appliedCode)} applied — ${b.props.pct}% off</div>`:''}</div>`
+    group:'order', name:'Discount codes', sub:'Multiple codes, shown as list', region:'summary', icon:IC.discount,
+    defaults:()=>({codes:[{code:'DECENTRO10',pct:10},{code:'FIRSTPAY',pct:15},{code:'FESTIVE5',pct:5}], showList:true}),
+    fields:[{k:'codes',label:'Codes — one per line, "CODE  %"',t:'codes'},{k:'showList',label:'Show available codes',t:'toggle'}],
+    render:(b)=>{
+      const chips = (b.props.showList && b.props.codes.length)
+        ? `<div class="dc-chips">${b.props.codes.map(c=>`<span class="dc-chip ${rt.appliedCode===c.code?'on':''}" data-act="chip" data-code="${esc(c.code)}" data-pct="${c.pct}">${esc(c.code)} <span class="pct">· ${c.pct}%</span></span>`).join('')}</div>` : '';
+      return `<div class="b-discount-wrap"><div class="b-discount"><input placeholder="Discount code" data-role="dcode" value="${esc(rt.appliedCode)}"><button data-act="applyDc">Apply</button></div>${chips}${rt.appliedCode?`<div class="dc-ok">✓ ${esc(rt.appliedCode)} applied — ${rt.appliedPct}% off</div>`:''}</div>`;
+    }
   },
   recur: {
     group:'order', name:'Recurring order', sub:'UPI Autopay toggle', region:'summary', icon:IC.recur,
@@ -681,17 +846,48 @@ const REG = {
     fields:[{k:'label',label:'Label',t:'text'},{k:'sub',label:'Sub-text',t:'text'},{k:'on',label:'On by default',t:'toggle'}],
     render:(b,live)=>`<div class="b-recur"><div><div class="rc-name" ${ce(live)} data-ei="label">${esc(b.props.label)}</div><div class="rc-sub cv-sub" ${ce(live)} data-ei="sub">${esc(b.props.sub)}</div></div><div class="sw ${b.props.on?'on':''}" data-act="recur"></div></div>`
   },
+  payerName: {
+    group:'payer', name:'Payer name', sub:'Full name field', region:'payment', icon:IC.user,
+    defaults:()=>({label:'Full name', placeholder:'Rakesh Sharma'}),
+    fields:[{k:'label',label:'Label',t:'text'},{k:'placeholder',label:'Placeholder',t:'text'}],
+    render:(b)=>`<div class="b-field"><label>${esc(b.props.label)}</label><input type="text" placeholder="${esc(b.props.placeholder)}"></div>`
+  },
   email: {
-    group:'fields', name:'Email field', sub:'Receipt delivery', region:'payment', icon:IC.email,
+    group:'payer', name:'Payer email', sub:'Receipt delivery', region:'payment', icon:IC.email,
     defaults:()=>({label:'Email', placeholder:'you@example.com'}),
     fields:[{k:'label',label:'Label',t:'text'},{k:'placeholder',label:'Placeholder',t:'text'}],
     render:(b)=>`<div class="b-field"><label>${esc(b.props.label)}</label><input type="email" placeholder="${esc(b.props.placeholder)}"></div>`
   },
   phone: {
-    group:'fields', name:'Mobile number', sub:'For payment updates', region:'payment', icon:IC.phone,
+    group:'payer', name:'Payer phone', sub:'For payment updates', region:'payment', icon:IC.phone,
     defaults:()=>({label:'Mobile number', placeholder:'+91 98765 43210'}),
     fields:[{k:'label',label:'Label',t:'text'},{k:'placeholder',label:'Placeholder',t:'text'}],
     render:(b)=>`<div class="b-field"><label>${esc(b.props.label)}</label><input type="tel" placeholder="${esc(b.props.placeholder)}"></div>`
+  },
+  billing: {
+    group:'payer', name:'Billing address', sub:'Line, city, state, PIN', region:'payment', icon:IC.addr,
+    defaults:()=>({title:'Billing address'}),
+    fields:[{k:'title',label:'Title',t:'text'}],
+    render:(b)=>`<div class="b-addr"><div class="ad-title">${svg(IC.addr,'')}<span>${esc(b.props.title)}</span></div>
+      <div class="b-field"><input placeholder="Address line"></div>
+      <div class="ad-grid"><div class="b-field"><input placeholder="City"></div><div class="b-field"><input placeholder="State"></div><div class="b-field"><input placeholder="PIN code"></div></div></div>`
+  },
+  shipping: {
+    group:'payer', name:'Shipping address', sub:'With "same as billing"', region:'payment', icon:IC.ship,
+    defaults:()=>({title:'Shipping address', same:true}),
+    fields:[{k:'title',label:'Title',t:'text'},{k:'same',label:'"Same as billing" on by default',t:'toggle'}],
+    render:(b)=>`<div class="b-addr"><div class="ad-title">${svg(IC.ship,'')}<span>${esc(b.props.title)}</span></div>
+      <div class="ad-same" data-act="sameShip"><span class="ad-check ${b.props.same?'on':''}"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Same as billing address</div>
+      ${b.props.same?'':`<div class="b-field" style="margin-top:10px;"><input placeholder="Address line"></div>
+      <div class="ad-grid"><div class="b-field"><input placeholder="City"></div><div class="b-field"><input placeholder="State"></div><div class="b-field"><input placeholder="PIN code"></div></div>`}</div>`
+  },
+  custom: {
+    group:'payer', name:'Custom field', sub:'Show or collect anything', region:'payment', icon:IC.custom,
+    defaults:()=>({label:'GSTIN', value:'29ABCDE1234F1Z5', kind:'text'}),
+    fields:[{k:'label',label:'Label',t:'text'},{k:'kind',label:'Type',t:'select',options:[{v:'text',l:'Display value (read-only)'},{v:'input',l:'Input — payer fills it'}]},{k:'value',label:'Value / placeholder',t:'text'}],
+    render:(b)=> b.props.kind==='input'
+      ? `<div class="b-field"><label>${esc(b.props.label)}</label><input type="text" placeholder="${esc(b.props.value)}"></div>`
+      : `<div class="b-custom-row"><span class="cv-sub">${esc(b.props.label)}</span><span class="cf-v">${esc(b.props.value)}</span></div>`
   },
   upi: {
     group:'fields', name:'UPI apps', sub:'GPay, PhonePe, Paytm…', region:'payment', icon:IC.upi, method:true,
@@ -704,22 +900,20 @@ const REG = {
         <div class="upi-grid">${apps.map(([k])=>{const a=UPI_APPS[k];return `<div class="upi-app ${rt.selUpi===k?'sel':''}" data-act="upi" data-k="${k}"><div class="ua-logo" style="background:${a.c}">${a.ab}</div><div class="ua-name">${a.name}</div><div class="ua-radio"></div></div>`;}).join('')}</div>`);
     }
   },
-  upiid: {
-    group:'fields', name:'UPI ID', sub:'Collect a VPA directly', region:'payment', icon:IC.upiid, method:true,
-    defaults:()=>({title:'Enter UPI ID', open:false, placeholder:'yourname@bank'}),
-    fields:[{k:'title',label:'Title',t:'text'},{k:'placeholder',label:'Placeholder',t:'text'}],
-    render:(b)=>methodShell(b, IC.upiid, '', `
-      <div class="b-discount"><input placeholder="${esc(b.props.placeholder)}" data-role="vpa"><button data-act="verifyVpa">Verify</button></div>
-      ${rt.upiIdOk?`<div class="dc-ok">✓ Verified — Rakesh S (HDFC Bank)</div>`:''}`)
-  },
-  card: {
-    group:'fields', name:'Card entry', sub:'Credit / debit cards', region:'payment', icon:IC.card, method:true,
-    defaults:()=>({title:'Credit / Debit card', open:false}),
-    fields:[{k:'title',label:'Title',t:'text'}],
-    render:(b)=>methodShell(b, IC.card, '', `
-      <div class="card-brands"><span class="cb">VISA</span><span class="cb">MASTERCARD</span><span class="cb">RUPAY</span><span class="cb">AMEX</span></div>
-      <div class="b-field"><input inputmode="numeric" placeholder="Card number"></div>
-      <div class="card-row"><div class="b-field"><input placeholder="MM / YY"></div><div class="b-field"><input placeholder="CVV"></div></div>`)
+  upiqr: {
+    group:'fields', name:'UPI QR', sub:'Scan-to-pay on desktop', region:'payment', icon:IC.qr, method:true,
+    defaults:()=>({title:'Scan QR to pay', open:false, note:'Scan with any UPI app — GPay, PhonePe, Paytm & more'}),
+    fields:[{k:'title',label:'Title',t:'text'},{k:'note',label:'Helper text',t:'text'}],
+    render:(b)=>methodShell(b, IC.qr, `<span class="bm-badge">DESKTOP</span>`, `
+      <div class="b-qrd">
+        <div class="qr-card">${qrSvg()}</div>
+        <div class="qr-side">
+          <div class="qr-t">Scan &amp; approve on your phone</div>
+          <div class="qr-s cv-sub">${esc(b.props.note)}</div>
+          <div class="qr-timer">${svg(IC.recur)}Refreshes every 8 min</div>
+        </div>
+      </div>
+      <div class="b-qrm cv-sub">On mobile, payers see UPI app buttons (TPAP intent links) instead of a QR — pick an app above to continue.</div>`)
   },
   netbanking: {
     group:'fields', name:'Netbanking', sub:'All major Indian banks', region:'payment', icon:IC.netbanking, method:true,
@@ -728,13 +922,6 @@ const REG = {
     render:(b)=>methodShell(b, IC.netbanking, `<span class="bm-badge" style="background:color-mix(in srgb,#3b82f6 14%,transparent);color:#3b82f6">SECURED</span>`, `
       <div class="nb-grid">${BANKS.map(bk=>`<div class="nb-bank ${rt.selBank===bk.k?'sel':''}" data-act="bank" data-k="${bk.k}"><div class="nb-ic" style="background:${bk.c}">${bk.ab}</div><div class="nb-name">${bk.n}</div></div>`).join('')}</div>
       <div class="upi-note cv-sub" style="margin:0">+ 58 more banks supported</div>`)
-  },
-  wallets: {
-    group:'fields', name:'Wallets', sub:'MobiKwik, Freecharge…', region:'payment', icon:IC.wallets, method:true,
-    defaults:()=>({title:'Wallets', open:false}),
-    fields:[{k:'title',label:'Title',t:'text'}],
-    render:(b)=>methodShell(b, IC.wallets, '', `
-      <div class="wl-row">${WALLETS.map(w=>`<div class="wl-item ${rt.selWallet===w.k?'sel':''}" data-act="wallet" data-k="${w.k}"><div class="wl-logo" style="background:${w.c}">${w.ab}</div><div class="wl-name">${w.n}</div><div class="wl-bal cv-sub">${w.bal}</div></div>`).join('')}</div>`)
   },
   pay: {
     group:'fields', name:'Pay button', sub:'Primary action', region:'payment', icon:IC.pay,
@@ -752,6 +939,29 @@ const REG = {
       <span class="sc-item">${svg(IC.secure)}256-bit encrypted</span><span class="sc-sep"></span>
       <span class="sc-item">PCI DSS compliant</span><span class="sc-sep"></span>
       <span class="sc-item">RBI-regulated rails</span></div>`
+  },
+  mfooter: {
+    group:'fields', name:'Merchant footer', sub:'T&C, policy, support, socials', region:'payment', icon:IC.mfoot,
+    defaults:()=>({showSocials:true, showSupport:true}),
+    fields:[{k:'showSupport',label:'Show support contact',t:'toggle'},{k:'showSocials',label:'Show social links',t:'toggle'}],
+    render:(b)=>{
+      const m = state.merchant;
+      const soc = [['web',IC.globe,m.socials.web],['li',IC.linkedin,m.socials.li],['x',IC.x,m.socials.x],['ig',IC.instagram,m.socials.ig]]
+        .filter(([,,url])=>url)
+        .map(([k,ic,url])=>`<a href="${esc(url)}" target="_blank" rel="noopener" title="${esc(url)}">${svg(ic)}</a>`).join('');
+      return `<div class="b-mfoot cv-sub">
+        <div class="mf-links">
+          <a data-act="legal" data-doc="tnc">Terms &amp; Conditions</a>
+          <a data-act="legal" data-doc="privacy">Privacy Policy</a>
+        </div>
+        ${b.props.showSupport?`<div class="mf-sup">
+          ${m.supportEmail?`<span>${esc(m.supportEmail)}</span>`:''}
+          ${m.supportPhone?`<span>${esc(m.supportPhone)}</span>`:''}
+          ${m.country?`<span>${esc(m.country)}</span>`:''}
+        </div>`:''}
+        ${b.props.showSocials && soc ? `<div class="mf-soc">${soc}</div>` : ''}
+      </div>`;
+    }
   },
 };
 
@@ -774,7 +984,8 @@ function methodShell(b, icon, badge, body){
 const GROUPS = [
   {k:'layout', label:'Layout & Branding'},
   {k:'order',  label:'Order Details'},
-  {k:'fields', label:'Payment Fields'},
+  {k:'payer',  label:'Payer Details'},
+  {k:'fields', label:'Payment & Trust'},
 ];
 function buildPalette(){
   $('#palGroups').innerHTML = GROUPS.map(g=>`
@@ -847,6 +1058,14 @@ function renderInspector(){
     if(f.t==='text') html += `<div class="ins-field"><label>${f.label}</label><input type="text" data-k="${f.k}" value="${esc(v)}"></div>`;
     else if(f.t==='number') html += `<div class="ins-field"><label>${f.label}</label><input type="number" data-k="${f.k}" value="${esc(v)}"></div>`;
     else if(f.t==='toggle') html += `<div class="ins-check"><span class="ic-name">${f.label}</span><div class="sw ${v?'on':''}" data-k="${f.k}" data-t="toggle"></div></div>`;
+    else if(f.t==='select') html += `<div class="ins-field"><label>${f.label}</label><select class="dz-select" data-k="${f.k}">${f.options.map(o=>`<option value="${o.v}" ${v===o.v?'selected':''}>${o.l}</option>`).join('')}</select></div>`;
+    else if(f.t==='img') html += `<div class="ins-field"><label>${f.label}</label>
+      ${v?`<img src="${v}" style="width:100%;max-height:90px;object-fit:contain;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;background:#f8fafc;">`:''}
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-outline" style="flex:1;justify-content:center;" data-imgup="${f.k}">${v?'Replace image…':'Upload image…'}</button>
+        ${v?`<button class="btn btn-outline" style="color:#b91c1c;" data-imgrm="${f.k}">Remove</button>`:''}
+      </div></div>`;
+    else if(f.t==='codes') html += `<div class="ins-field"><label>${f.label}</label><textarea data-k="${f.k}" data-t="codes" style="width:100%;min-height:76px;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.7;resize:vertical;outline:none;">${(v||[]).map(c=>c.code+'  '+c.pct).join('\n')}</textarea></div>`;
     else if(f.t==='apps') html += `<div class="ins-field"><label>${f.label}</label>${Object.entries(UPI_APPS).map(([k,a])=>`<div class="ins-check"><span class="ic-name">${a.name}</span><div class="sw ${b.props.apps[k]?'on':''}" data-app="${k}"></div></div>`).join('')}</div>`;
   });
   if(b.type==='brand') html += `<button class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:8px;" data-tool="uplogo-ins">${state.design.custLogo?'Replace logo…':'Upload logo…'}</button><div class="ins-note">Your logo replaces the monogram automatically — also available under <b>Design → Your brand</b>.</div>`;
@@ -856,20 +1075,46 @@ function renderInspector(){
   body.innerHTML = html;
 }
 
-$('#insBody').addEventListener('input', e=>{
+function insApply(e){
   const k = e.target.dataset.k;
   if(!k || !selId) return;
   const b = findBlock(selId); if(!b) return;
   if(!e.target._snap){ snapshot(); e.target._snap = true; setTimeout(()=>e.target._snap=false, 1200); }
-  b.props[k] = e.target.type==='number' ? +e.target.value : e.target.value;
+  if(e.target.dataset.t==='codes'){
+    b.props[k] = e.target.value.split('\n').map(l=>{
+      const m = l.trim().match(/^(\S+)\s+(\d+)/);
+      return m ? {code:m[1].toUpperCase(), pct:+m[2]} : null;
+    }).filter(Boolean);
+  } else {
+    b.props[k] = e.target.type==='number' ? +e.target.value : e.target.value;
+  }
   const focused = document.activeElement;
   renderRegion(regionOf(b.id)); renderRegion(regionOf(b.id)==='summary'?'payment':'summary');
   if(focused && focused.dataset.k) focused.focus?.();
-});
+}
+$('#insBody').addEventListener('input', insApply);
+$('#insBody').addEventListener('change', e=>{ if(e.target.tagName==='SELECT') insApply(e); });
 $('#insBody').addEventListener('click', e=>{
   const sw = e.target.closest('.sw'); const del = e.target.closest('[data-tool=del-ins]');
   const b = selId && findBlock(selId); if(!b) return;
   if(e.target.closest('[data-tool=uplogo-ins]')){ $('#logoFile').click(); return; }
+  const imgUp = e.target.closest('[data-imgup]');
+  if(imgUp){
+    const k = imgUp.dataset.imgup;
+    const fi = document.createElement('input');
+    fi.type = 'file'; fi.accept = 'image/png,image/jpeg,image/webp,image/svg+xml';
+    fi.onchange = () => {
+      const f = fi.files[0]; if(!f) return;
+      if(f.size > 1.5*1024*1024){ toast('Keep images under 1.5 MB'); return; }
+      const r = new FileReader();
+      r.onload = () => { snapshot(); b.props[k] = r.result; renderAll(); toast('Image added'); };
+      r.readAsDataURL(f);
+    };
+    fi.click();
+    return;
+  }
+  const imgRm = e.target.closest('[data-imgrm]');
+  if(imgRm){ snapshot(); b.props[imgRm.dataset.imgrm] = null; renderAll(); return; }
   if(sw){
     snapshot();
     if(sw.dataset.app){ b.props.apps[sw.dataset.app] = !b.props.apps[sw.dataset.app]; }
@@ -1015,22 +1260,28 @@ $('#checkout').addEventListener('click', e=>{
     b.props.qty = Math.max(1, (+b.props.qty||1) + (a==='qty+'?1:-1));
     renderAll(); return;
   }
-  if(a==='upi'){ rt.selUpi = act.dataset.k; rt.selBank=null; rt.selWallet=null; renderAll(); return; }
-  if(a==='bank'){ rt.selBank = act.dataset.k; rt.selUpi=null; rt.selWallet=null; renderAll(); return; }
-  if(a==='wallet'){ rt.selWallet = act.dataset.k; rt.selUpi=null; rt.selBank=null; renderAll(); return; }
+  if(a==='upi'){ rt.selUpi = act.dataset.k; rt.selBank=null; renderAll(); return; }
+  if(a==='bank'){ rt.selBank = act.dataset.k; rt.selUpi=null; renderAll(); return; }
   if(a==='recur'){ b.props.on = !b.props.on; renderAll(); return; }
+  if(a==='sameShip'){ b.props.same = !b.props.same; renderAll(); return; }
+  if(a==='chip'){
+    const on = rt.appliedCode === act.dataset.code;
+    rt.appliedCode = on ? '' : act.dataset.code;
+    rt.appliedPct  = on ? 0  : +act.dataset.pct;
+    if(!on) toast(act.dataset.code + ' applied — ' + act.dataset.pct + '% off');
+    renderAll(); return;
+  }
   if(a==='applyDc'){
     const input = blkEl.querySelector('[data-role=dcode]');
     const code = (input.value||'').trim().toUpperCase();
-    if(code && code === String(b.props.code).toUpperCase()){ rt.appliedCode = code; rt.appliedPct = +b.props.pct||0; toast('Code applied — '+rt.appliedPct+'% off'); }
-    else { rt.appliedCode=''; rt.appliedPct=0; toast(code?'Invalid code — try '+b.props.code:'Enter a code'); }
+    const hit = (b.props.codes||[]).find(c=>c.code.toUpperCase()===code);
+    if(hit){ rt.appliedCode = hit.code; rt.appliedPct = hit.pct; toast('Code applied — '+hit.pct+'% off'); }
+    else { rt.appliedCode=''; rt.appliedPct=0; toast(code?'Invalid code':'Enter a code'); }
     renderAll(); return;
   }
-  if(a==='verifyVpa'){
-    const input = blkEl.querySelector('[data-role=vpa]');
-    rt.upiIdOk = /.+@.+/.test(input.value||'');
-    if(!rt.upiIdOk) toast('Enter a valid UPI ID, e.g. name@bank');
-    renderAll(); return;
+  if(a==='legal'){
+    openLegal(act.dataset.doc);
+    return;
   }
   if(a==='pay'){ runPayFlow(); return; }
 });
@@ -1053,29 +1304,105 @@ $('#checkout').addEventListener('focusout', e=>{
 document.addEventListener('keydown', e=>{
   const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
   if((e.metaKey||e.ctrlKey) && e.key==='z' && !typing){ e.preventDefault(); undo(); return; }
-  if(e.key==='Escape'){ selId=null; renderAll(); $('#exportModal').classList.remove('show'); return; }
+  if(e.key==='Escape'){ selId=null; renderAll(); ['exportModal','legalView','legalEdit'].forEach(id=>document.getElementById(id).classList.remove('show')); return; }
   if((e.key==='Backspace'||e.key==='Delete') && selId && !typing && mode==='edit'){
     e.preventDefault(); snapshot(); removeBlock(selId); selId=null; renderAll();
   }
 });
 
 /* ═══════════════════════ PAY FLOW (preview) ═══════════════════════ */
+/* In production these states arrive over a web socket from the Decentro backend.
+   The simulator seg (Success / Failed / Expired) stands in for those events. */
+let simOutcome = 'success';
+$('#simSeg').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  simOutcome = btn.dataset.sim;
+  document.querySelectorAll('#simSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+});
+
+const wsNote = `<div class="po-ws cv-sub"><span class="ws-dot"></span>Listening for payment status · web socket</div>`;
+
+function showProcessing(ov, method){
+  ov.innerHTML = `<div class="po-inner"><div class="po-spin"></div><div class="po-title">Processing payment…</div><div class="po-sub cv-sub">Waiting for approval${method?' in '+esc(method):''}</div>${wsNote}</div>`;
+}
+function showOutcome(ov, method){
+  const t = computeTotals();
+  if(simOutcome==='failed'){
+    ov.innerHTML = `<div class="po-inner">
+      <div class="po-ring fail"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+      <div class="po-title">Payment failed</div>
+      <div class="po-sub cv-sub">Your payment could not be completed. If any amount was debited it will be auto-refunded in 5–7 working days.</div>
+      <div class="po-btnrow">
+        <button class="po-primary" data-po="retry">Retry payment</button>
+        <button class="po-close" style="margin-top:0" data-po="close">Back to checkout</button>
+      </div>${wsNote}</div>`;
+    return;
+  }
+  if(simOutcome==='expired'){
+    ov.innerHTML = `<div class="po-inner">
+      <div class="po-ring exp"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <div class="po-title">Link / QR expired</div>
+      <div class="po-sub cv-sub">This payment session has expired. Please re-initiate the steps to proceed further.</div>
+      <div class="po-btnrow">
+        <button class="po-primary" data-po="reinit">Re-initiate payment</button>
+      </div>${wsNote}</div>`;
+    return;
+  }
+  ov.innerHTML = `<div class="po-inner">
+    <div class="po-ring"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <div class="po-title">Payment successful</div>
+    <div class="po-sub cv-sub">via ${esc(method)} · TXN ${'DCT'+Math.floor(100000+Math.random()*899999)}</div>
+    <div class="po-amount">${fmt(t.total)}</div>
+    <button class="po-close" data-po="close">Back to checkout</button>
+  </div>`;
+}
+
+/* mock netbanking redirect journey: redirect → bank login → confirm → outcome */
+function nbJourney(ov, bank){
+  const t = computeTotals();
+  ov.innerHTML = `<div class="po-inner"><div class="po-spin"></div><div class="po-title">Redirecting to ${esc(bank.n)}…</div><div class="po-sub cv-sub">Taking you to your bank's secure NetBanking page</div></div>`;
+  setTimeout(()=>{
+    ov.innerHTML = `<div style="width:100%;padding:20px;">
+      <div class="po-bank">
+        <div class="pb-head" style="background:${bank.c}"><span class="nb-ic">${bank.ab}</span>${esc(bank.n)} NetBanking</div>
+        <div class="pb-body">
+          <div class="pb-amt"><span class="cv-sub">Payable to ${esc((allBlocks().find(x=>x.type==='brand')||{props:{name:'Merchant'}}).props.name)}</span><b>${fmt(t.total)}</b></div>
+          <div class="b-field"><label>Customer ID</label><input placeholder="Enter customer ID"></div>
+          <div class="b-field"><label>Password / IPIN</label><input type="password" placeholder="••••••••"></div>
+          <button class="po-primary" style="width:100%;margin-top:16px;" data-po="nbLogin">Login &amp; Pay ${fmt(t.total)}</button>
+          <div class="pb-note cv-sub">Simulated bank environment — demo only. In production the payer is redirected to the bank's real NetBanking page.</div>
+        </div>
+      </div>
+    </div>`;
+  }, 1300);
+}
+
 function runPayFlow(){
   const ov = $('#payOverlay');
-  const t = computeTotals();
-  const method = rt.selUpi ? UPI_APPS[rt.selUpi].name : rt.selBank ? BANKS.find(b=>b.k===rt.selBank).n+' Netbanking' : rt.selWallet ? WALLETS.find(w=>w.k===rt.selWallet).n : rt.upiIdOk ? 'UPI ID' : 'UPI';
-  ov.innerHTML = `<div class="po-inner"><div class="po-spin"></div><div class="po-title">Processing payment…</div><div class="po-sub cv-sub">Waiting for approval in ${esc(method)}</div></div>`;
   ov.classList.add('show');
-  setTimeout(()=>{
-    ov.innerHTML = `<div class="po-inner">
-      <div class="po-ring"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
-      <div class="po-title">Payment successful</div>
-      <div class="po-sub cv-sub">via ${esc(method)} · TXN ${'DCT'+Math.floor(100000+Math.random()*899999)}</div>
-      <div class="po-amount">${fmt(t.total)}</div>
-      <button class="po-close" onclick="document.getElementById('payOverlay').classList.remove('show')">Back to checkout</button>
-    </div>`;
-  }, 1500);
+  if(rt.selBank){
+    nbJourney(ov, BANKS.find(b=>b.k===rt.selBank));
+    return;
+  }
+  const method = rt.selUpi ? UPI_APPS[rt.selUpi].name : 'UPI';
+  showProcessing(ov, method);
+  setTimeout(()=>showOutcome(ov, method), 1600);
 }
+
+/* overlay button routing */
+$('#payOverlay').addEventListener('click', e=>{
+  const po = e.target.closest('[data-po]'); if(!po) return;
+  const ov = $('#payOverlay');
+  const a = po.dataset.po;
+  if(a==='close'){ ov.classList.remove('show'); return; }
+  if(a==='retry'){ ov.classList.remove('show'); toast('Re-attempt the payment — choose a method and hit Pay'); return; }
+  if(a==='reinit'){ ov.classList.remove('show'); rt.selUpi=null; rt.selBank=null; rt.appliedCode=''; rt.appliedPct=0; renderAll(); toast('New payment session created'); return; }
+  if(a==='nbLogin'){
+    const bank = BANKS.find(b=>b.k===rt.selBank);
+    showProcessing(ov, bank.n + ' NetBanking');
+    setTimeout(()=>showOutcome(ov, bank.n + ' NetBanking'), 1400);
+  }
+});
 
 /* ═══════════════════════ TOP BAR / TABS / DESIGN ═══════════════════════ */
 /* tap-to-add (touch devices have no HTML5 drag) */
@@ -1116,7 +1443,8 @@ $('#modeSeg').addEventListener('click', e=>{
   mode = btn.dataset.mode;
   document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on', b===btn));
   selId = null;
-  $('#ctMode').textContent = mode==='edit' ? 'Editing — drag, click & type directly on the page' : 'Preview — live, interactive checkout';
+  $('#ctMode').textContent = mode==='edit' ? 'Editing — drag, click & type directly on the page' : 'Preview — live checkout · pick a payment outcome to simulate';
+  $('#simSeg').style.display = mode==='preview' ? 'flex' : 'none';
   $('#payOverlay').classList.remove('show');
   renderAll();
 });
@@ -1208,9 +1536,70 @@ $('#methodSeg').addEventListener('click', e=>{
 });
 $('#poweredSw').addEventListener('click', ()=>{ snapshot(); state.design.powered = !state.design.powered; syncDesignUI(); renderAll(); });
 
+/* ═══════════════════════ MERCHANT DETAILS ═══════════════════════ */
+const M_INPUTS = [
+  ['mSupEmail', m=>m.supportEmail, (m,v)=>m.supportEmail=v],
+  ['mSupPhone', m=>m.supportPhone, (m,v)=>m.supportPhone=v],
+  ['mCountry',  m=>m.country,      (m,v)=>m.country=v],
+  ['mSocWeb',   m=>m.socials.web,  (m,v)=>m.socials.web=v],
+  ['mSocLi',    m=>m.socials.li,   (m,v)=>m.socials.li=v],
+  ['mSocX',     m=>m.socials.x,    (m,v)=>m.socials.x=v],
+  ['mSocIg',    m=>m.socials.ig,   (m,v)=>m.socials.ig=v],
+];
+function syncMerchantUI(){
+  M_INPUTS.forEach(([id,get])=>{ const el = document.getElementById(id); if(el) el.value = get(state.merchant) || ''; });
+}
+M_INPUTS.forEach(([id,,set])=>{
+  const el = document.getElementById(id); if(!el) return;
+  el.addEventListener('input', ()=>{
+    if(!el._snap){ snapshot(); el._snap = true; setTimeout(()=>el._snap=false, 1200); }
+    set(state.merchant, el.value);
+    renderRegion('summary'); renderRegion('payment');
+  });
+});
+
+/* legal content — view (payer) + edit (merchant) */
+const LEGAL_TITLES = { tnc:'Terms & Conditions', privacy:'Privacy Policy' };
+function openLegal(doc){
+  const content = state.merchant[doc];
+  $('#lvTitle').textContent = LEGAL_TITLES[doc];
+  $('#lvBody').textContent = content || 'No content added yet.\n\nThe merchant adds this at template-creation time via Design → Merchant details.';
+  $('#legalView').classList.add('show');
+}
+let legalEditing = 'tnc';
+document.querySelectorAll('[data-legal]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    legalEditing = btn.dataset.legal;
+    $('#leTitle').textContent = LEGAL_TITLES[legalEditing];
+    $('#leText').value = state.merchant[legalEditing] || '';
+    $('#legalEdit').classList.add('show');
+  });
+});
+$('#leSave').addEventListener('click', ()=>{
+  snapshot();
+  state.merchant[legalEditing] = $('#leText').value;
+  $('#legalEdit').classList.remove('show');
+  toast(LEGAL_TITLES[legalEditing] + ' saved');
+  renderRegion('summary'); renderRegion('payment');
+});
+$('#leUpload').addEventListener('click', ()=>$('#leFile').click());
+$('#leFile').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ $('#leText').value = r.result; toast(f.name + ' loaded — hit Save'); };
+  r.readAsText(f);
+  e.target.value = '';
+});
+document.querySelectorAll('[data-close]').forEach(btn=>{
+  btn.addEventListener('click', ()=>document.getElementById(btn.dataset.close).classList.remove('show'));
+});
+['legalView','legalEdit'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) e.target.classList.remove('show'); });
+});
+
 /* ═══════════════════════ EXPORT ═══════════════════════ */
 function collectCheckoutCSS(){
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.wl-|\.card-|\.pay-overlay|\.po-|\.cv-sub|\.sw|\.f-label|\.dc-ok|@keyframes (draw|popin|spin))/;
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.cv-sub|\.sw|\.f-label|\.dc-|@keyframes (draw|popin|spin|dlpulse))/;
   const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell)/;
   let css = '';
   for(const sheet of document.styleSheets){
@@ -1231,18 +1620,35 @@ function exportHTML(){
   const d = state.design;
   const renderStatic = region => state.blocks[region].map(b=>`<div class="blk">${REG[b.type].render(b, true)}</div>`).join('\n');
   const powered = d.powered ? `<div class="powered"><span>Powered by ${logoSvg(12)} · RBI-regulated payment rails</span></div>` : '';
+  const legalJson = JSON.stringify({tnc:state.merchant.tnc||'', privacy:state.merchant.privacy||''});
   const runtime = [
+    "var LEGAL=" + legalJson + ";",
+    "/* Payment status (success / failed / expired) is driven by web-socket events from the backend in production. */",
     "document.addEventListener('click',function(e){",
+    "  var lg=e.target.closest('[data-act=legal]');",
+    "  if(lg){document.getElementById('lmTitle').textContent=lg.dataset.doc==='tnc'?'Terms & Conditions':'Privacy Policy';document.getElementById('lmBody').textContent=LEGAL[lg.dataset.doc]||'No content provided.';document.getElementById('legalModal').style.display='flex';return;}",
+    "  if(e.target.closest('[data-lm-close]')||e.target.id==='legalModal'){document.getElementById('legalModal').style.display='none';return;}",
     "  var acc=e.target.closest('[data-act=acc]');",
     "  if(acc){var m=acc.closest('.b-method');if(!m.classList.contains('flat')){var was=m.classList.contains('open');document.querySelectorAll('.b-method').forEach(function(x){x.classList.remove('open')});if(!was)m.classList.add('open');}return;}",
-    "  var sel=e.target.closest('.upi-app,.nb-bank,.wl-item');",
+    "  var sel=e.target.closest('.upi-app,.nb-bank');",
     "  if(sel){sel.parentElement.querySelectorAll('.sel').forEach(function(x){x.classList.remove('sel')});sel.classList.add('sel');return;}",
-    "  var sw=e.target.closest('.sw');if(sw){sw.classList.toggle('on');return;}",
+    "  var ch=e.target.closest('.dc-chip');",
+    "  if(ch){var was2=ch.classList.contains('on');document.querySelectorAll('.dc-chip').forEach(function(x){x.classList.remove('on')});if(!was2)ch.classList.add('on');return;}",
+    "  var sw=e.target.closest('.sw, .ad-check');if(sw){sw.classList.toggle('on');return;}",
     "  var pay=e.target.closest('[data-act=pay]');",
-    "  if(pay){var ov=document.getElementById('payOverlay');ov.innerHTML='<div class=\"po-inner\"><div class=\"po-spin\"></div><div class=\"po-title\">Processing payment…</div></div>';ov.classList.add('show');",
+    "  if(pay){var ov=document.getElementById('payOverlay');ov.innerHTML='<div class=\"po-inner\"><div class=\"po-spin\"></div><div class=\"po-title\">Processing payment…</div><div class=\"po-ws cv-sub\"><span class=\"ws-dot\"></span>Listening for payment status · web socket</div></div>';ov.classList.add('show');",
     "    setTimeout(function(){ov.innerHTML='<div class=\"po-inner\"><div class=\"po-ring\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#10b981\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></div><div class=\"po-title\">Payment successful</div><button class=\"po-close\" onclick=\"document.getElementById(&quot;payOverlay&quot;).classList.remove(&quot;show&quot;)\">Back</button></div>';},1500);return;}",
     "});"
   ].join('\n');
+  const legalModal = `<div id="legalModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);align-items:center;justify-content:center;z-index:100;padding:24px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
+      <b id="lmTitle" style="font-size:14px;color:#1c2024;"></b>
+      <button data-lm-close style="font-size:16px;color:#475569;line-height:1;">✕</button>
+    </div>
+    <div id="lmBody" style="flex:1;overflow:auto;padding:18px;font-size:13px;line-height:1.7;color:#475569;white-space:pre-wrap;"></div>
+  </div>
+</div>`;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1267,6 +1673,9 @@ ${collectCheckoutCSS()}
   .co-col{padding:26px 22px 32px;}
   .upi-grid{grid-template-columns:1fr;}
   .nb-grid{grid-template-columns:1fr 1fr;}
+  .b-qrd{display:none;}
+  .b-qrm{display:block;}
+  .b-addr .ad-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -1283,6 +1692,7 @@ ${renderStatic('payment')}
 </div>
 ${powered}
 </div>
+${legalModal}
 <script>
 ${runtime}
 <\/script>
@@ -1330,6 +1740,7 @@ function seed(){
   const S = (t,p)=>{ const b = addBlock(t,'summary'); Object.assign(b.props, p||{}); };
   const P = (t,p)=>{ const b = addBlock(t,'payment'); Object.assign(b.props, p||{}); };
   S('brand', {name:'Aurora & Co.'});
+  S('invoice');
   S('item',  {name:'Aurora Desk Lamp — Brass', price:3499, qty:1});
   S('item',  {name:'Filament Bulb Set (×3)', price:899, qty:1});
   S('recur');
@@ -1337,18 +1748,22 @@ function seed(){
   S('totals');
   S('discount');
   P('heading', {text:'Payment details'});
+  P('payerName');
   P('email');
+  P('phone');
   P('upi');
-  P('card');
+  P('upiqr');
   P('netbanking');
   P('pay');
   P('secure');
+  P('mfooter');
 }
 document.getElementById('tbLogo').innerHTML = logoSvg(24);
 document.getElementById('poweredLine').innerHTML = '<span style="display:inline-flex;align-items:center;gap:7px;vertical-align:middle;">Powered by ' + logoSvg(12) + ' · RBI-regulated payment rails</span>';
 buildPalette();
 seed();
 syncDesignUI();
+syncMerchantUI();
 renderAll();
 </script>
 </body>
