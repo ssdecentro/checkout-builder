@@ -143,12 +143,16 @@ input,select,textarea{font-family:inherit;}
 .edit-mode .blk{cursor:pointer;}
 .edit-mode .blk:hover{box-shadow:0 0 0 1.5px #93c5fd;}
 .edit-mode .blk.sel{box-shadow:0 0 0 2px #2563eb;}
-.blk-tools{position:absolute;top:-14px;right:0;display:none;gap:4px;z-index:20;}
+/* compact toolbar — sits inside the block, never overflows the page */
+.blk-tools{position:absolute;top:3px;right:3px;display:none;gap:1px;z-index:20;padding:2px;background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:7px;box-shadow:0 2px 8px rgba(2,11,30,.14);max-width:calc(100% - 6px);}
 .edit-mode .blk:hover .blk-tools,.edit-mode .blk.sel .blk-tools{display:flex;}
-.blk-tools button{width:26px;height:26px;border-radius:7px;background:#fff;border:1px solid var(--border);color:var(--sub);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.10);}
+.blk-tools button{width:21px;height:21px;min-width:21px;border-radius:5px;background:transparent;border:none;color:var(--sub);display:flex;align-items:center;justify-content:center;padding:0;}
 .blk-tools button:hover{background:var(--surface);color:#000;}
-.blk-tools button svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.blk-tools button svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;}
 .blk-tools .bt-grab{cursor:grab;}
+.blk-tools .bt-del:hover{background:#fef2f2;color:#b91c1c;}
+/* give blocks a little headroom so the toolbar never covers content */
+.edit-mode .blk{padding-top:2px;}
 .blk.drag-ghost{opacity:.35;}
 .drop-line{height:3px;border-radius:2px;background:#2563eb;margin:8px 0;animation:dlpulse 1s infinite;}
 @keyframes dlpulse{50%{opacity:.5;}}
@@ -284,7 +288,10 @@ input,select,textarea{font-family:inherit;}
 .b-inv .iv-num{font-weight:700;margin-left:auto;font-variant-numeric:tabular-nums;}
 
 /* address blocks */
-.b-addr .ad-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+/* matches .b-field label — 12px / 600 / muted, for consistency across all fields */
+.b-addr .ad-title{font-size:12px;font-weight:600;color:var(--co-pay-sub);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.co-summary .b-addr .ad-title{color:var(--co-sum-sub);}
+.b-addr .ad-title svg{width:14px;height:14px;min-width:14px;stroke:currentColor;fill:none;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;}
 .b-addr .ad-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;}
 .b-addr .ad-same{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;user-select:none;}
 .b-addr .ad-check{width:16px;height:16px;min-width:16px;border-radius:5px;border:1.6px solid var(--co-pay-border);display:flex;align-items:center;justify-content:center;transition:all .13s;}
@@ -322,6 +329,8 @@ input,select,textarea{font-family:inherit;}
 .b-mfoot .mf-links a{color:inherit;cursor:pointer;text-decoration:none;opacity:.8;}
 .b-mfoot .mf-links a:hover{opacity:1;text-decoration:underline;}
 .b-mfoot .mf-sup{display:flex;flex-wrap:wrap;gap:5px 14px;justify-content:center;margin-top:7px;opacity:.85;}
+.b-mfoot .mf-help{margin-top:10px;padding:9px 12px;border:1px dashed var(--co-pay-border);border-radius:10px;font-size:10.5px;line-height:1.6;text-align:center;}
+.co-summary .b-mfoot .mf-help{border-color:var(--co-sum-border);}
 .b-mfoot .mf-soc{display:flex;gap:10px;justify-content:center;margin-top:9px;}
 .b-mfoot .mf-soc a{width:26px;height:26px;border-radius:50%;border:1px solid var(--co-pay-border);display:flex;align-items:center;justify-content:center;color:inherit;opacity:.75;}
 .b-mfoot .mf-soc a:hover{opacity:1;border-color:var(--co-accent);color:var(--co-accent);}
@@ -368,6 +377,13 @@ input,select,textarea{font-family:inherit;}
 .pr-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center;}
 .pr-btn{height:40px;padding:0 26px;border-radius:100px;font-size:12.5px;font-weight:700;background:var(--co-accent);color:var(--co-accent-ink);}
 .pr-btn:hover{filter:brightness(1.1);}
+.pr-help{margin-top:12px;font-size:11px;line-height:1.6;max-width:420px;border:1px dashed var(--co-pay-border);border-radius:10px;padding:12px 14px;text-align:left;}
+.pr-help b{font-weight:700;}
+.pr-help .ph-head{text-align:center;font-weight:700;font-size:11.5px;color:var(--co-pay-text);margin-bottom:8px;}
+.co-summary .pr-help .ph-head{color:var(--co-sum-text);}
+.pr-help .ph-body{text-align:left;}
+.pr-help .ph-fine{text-align:left;margin-top:10px;padding-top:10px;border-top:1px solid var(--co-pay-border);opacity:.85;}
+.pr-help .ph-mail{font-weight:700;color:var(--co-accent);word-break:break-word;}
 .pr-trust{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#2f80ed;margin-top:14px;}
 .pr-trust svg{width:14px;height:14px;fill:#2f80ed;}
 @media (max-width:640px){
@@ -805,7 +821,7 @@ const IC = {
   user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>',
   invoice:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 13h6M9 17h4"/>',
   addr:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
-  ship:'<path d="M3 7h13v10H3zM16 10h4l1 3v4h-5"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>',
+  ship:'<path d="M2.6 6.4h10.8v9.8H2.6z"/><path d="M13.4 9.4h3.7l2.9 3.5v3.3h-6.6"/><path d="M2.6 16.2h1.9M9.1 16.2h2.6M18.3 16.2h1.7"/><circle cx="6.6" cy="17.9" r="1.8"/><circle cx="15.6" cy="17.9" r="1.8"/>',
   custom:'<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3"/>',
   qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h1M18 18h3v3h-3z"/>',
   mfoot:'<path d="M4 4h16v12H4z"/><path d="M4 20h16M8 8h8M8 12h5"/>',
@@ -897,7 +913,7 @@ const REG = {
     group:'order', name:'Invoice number', sub:'Order / invoice reference', region:'summary', icon:IC.invoice,
     defaults:()=>({label:'Invoice', value:'INV-2026-0142'}),
     fields:[{k:'label',label:'Label',t:'text'},{k:'value',label:'Invoice ID / number',t:'text'}],
-    render:(b,live)=>`<div class="b-inv">${svg(IC.invoice)}<span class="cv-sub" ${ce(live)} data-ei="label">${esc(b.props.label)}</span><span class="iv-num" ${ce(live)} data-ei="value">${esc(b.props.value)}</span></div>`
+    render:(b,live)=>`<div class="b-inv"><span class="cv-sub" ${ce(live)} data-ei="label">${esc(b.props.label)}</span><span class="iv-num" ${ce(live)} data-ei="value">${esc(b.props.value)}</span></div>`
   },
   totals: {
     group:'order', name:'Order totals', sub:'Subtotal, tax & total', region:'summary', icon:IC.totals,
@@ -952,7 +968,7 @@ const REG = {
     group:'payer', name:'Billing address', sub:'Line, city, state, PIN', region:'payment', icon:IC.addr,
     defaults:()=>({title:'Billing address'}),
     fields:[{k:'title',label:'Title',t:'text'}],
-    render:(b)=>`<div class="b-addr"><div class="ad-title">${svg(IC.addr,'')}<span>${esc(b.props.title)}</span></div>
+    render:(b)=>`<div class="b-addr"><div class="ad-title"><span>${esc(b.props.title)}</span></div>
       <div class="b-field"><input placeholder="Address line"></div>
       <div class="ad-grid"><div class="b-field"><input placeholder="City"></div><div class="b-field"><input placeholder="State"></div><div class="b-field"><input placeholder="PIN code"></div></div></div>`
   },
@@ -960,7 +976,7 @@ const REG = {
     group:'payer', name:'Shipping address', sub:'With "same as billing"', region:'payment', icon:IC.ship,
     defaults:()=>({title:'Shipping address', same:true}),
     fields:[{k:'title',label:'Title',t:'text'},{k:'same',label:'"Same as billing" on by default',t:'toggle'}],
-    render:(b)=>`<div class="b-addr"><div class="ad-title">${svg(IC.ship,'')}<span>${esc(b.props.title)}</span></div>
+    render:(b)=>`<div class="b-addr"><div class="ad-title"><span>${esc(b.props.title)}</span></div>
       <div class="ad-same" data-act="sameShip"><span class="ad-check ${b.props.same?'on':''}"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Same as billing address</div>
       ${b.props.same?'':`<div class="b-field" style="margin-top:10px;"><input placeholder="Address line"></div>
       <div class="ad-grid"><div class="b-field"><input placeholder="City"></div><div class="b-field"><input placeholder="State"></div><div class="b-field"><input placeholder="PIN code"></div></div>`}</div>`
@@ -1052,8 +1068,8 @@ const REG = {
   },
   mfooter: {
     group:'fields', name:'Merchant footer', sub:'T&C, policy, support, socials', region:'payment', icon:IC.mfoot,
-    defaults:()=>({showSocials:true, showSupport:true}),
-    fields:[{k:'showSupport',label:'Show support contact',t:'toggle'},{k:'showSocials',label:'Show social links',t:'toggle'}],
+    defaults:()=>({showSocials:true, showSupport:true, showHelpNote:true}),
+    fields:[{k:'showSupport',label:'Show support contact',t:'toggle'},{k:'showHelpNote',label:'Refund / grievance note',t:'toggle'},{k:'showSocials',label:'Show social links',t:'toggle'}],
     render:(b)=>{
       const m = state.merchant;
       const soc = [['web',IC.globe,m.socials.web],['li',IC.linkedin,m.socials.li],['x',IC.x,m.socials.x],['ig',IC.instagram,m.socials.ig]]
@@ -1068,6 +1084,9 @@ const REG = {
           ${m.supportEmail?`<span>${esc(m.supportEmail)}</span>`:''}
           ${m.supportPhone?`<span>${esc(m.supportPhone)}</span>`:''}
           ${m.country?`<span>${esc(m.country)}</span>`:''}
+        </div>`:''}
+        ${b.props.showHelpNote?`<div class="mf-help">
+          For refunds, chargebacks or any payment-related support, contact <b>${esc((allBlocks().find(x=>x.type==='brand')||{props:{name:'the merchant'}}).props.name)}</b> via their Help / Support section${m.supportEmail?` or ${esc(m.supportEmail)}`:''}. Decentro processes this payment on the merchant's behalf.
         </div>`:''}
         ${b.props.showSocials && soc ? `<div class="mf-soc">${soc}</div>` : ''}
       </div>`;
@@ -1124,7 +1143,7 @@ function renderRegion(region){
       <button data-tool="up" title="Move up"><svg viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg></button>
       <button data-tool="down" title="Move down"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
       <button data-tool="dup" title="Duplicate">${svg(IC.dup)}</button>
-      <button data-tool="del" title="Delete">${svg(IC.del)}</button></div>` : '';
+      <button class="bt-del" data-tool="del" title="Delete">${svg(IC.del)}</button></div>` : '';
     return `<div class="blk ${selId===b.id?'sel':''}" data-id="${b.id}">${tools}${d.render(b, mode==='preview')}</div>`;
   }).join('');
 }
@@ -1514,6 +1533,12 @@ function showOutcome(ov){
     ${o.countdown?`<div class="pr-count">Redirecting in&nbsp;<b><span id="ppCount">5</span> sec</b></div>`:''}
     ${o.actions||''}
     <div class="pr-note cv-sub">${o.note(esc(brand))}</div>
+    <div class="pr-help cv-sub">
+      <div class="ph-head">Need help with this payment?</div>
+      <div class="ph-body">For refunds, chargebacks, order issues or any other payment-related support,
+        please contact <b>${esc(brand)}</b> via their app's Help / Support section${state.merchant.supportEmail?` or write to <span class="ph-mail">${esc(state.merchant.supportEmail)}</span>`:''}${state.merchant.supportPhone?` (${esc(state.merchant.supportPhone)})`:''}.</div>
+      <div class="ph-fine">Decentro only processes this payment on the merchant's behalf and cannot action refunds or disputes directly.</div>
+    </div>
     <div class="pr-trust"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5.25 3.8 10.15 9 11.35C17.2 22.15 21 17.25 21 11.996V6l-9-4Zm-1.5 14.5-3.5-3.5 1.41-1.41 2.09 2.08 5.09-5.08L17 10l-6.5 6.5Z"/></svg>100% Trusted &amp; Secure Payments</div>
     ${o.countdown?'':'<button class="po-close" data-po="close">Back to checkout</button>'}
   </div>`;
