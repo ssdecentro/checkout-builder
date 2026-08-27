@@ -526,7 +526,9 @@ input,select,textarea{font-family:inherit;}
 .logo-drop .ld-actions span{color:var(--sub);cursor:pointer;}
 .logo-drop .ld-actions span:hover{color:#000;text-decoration:underline;}
 .logo-drop .ld-actions .ld-rm{color:#b91c1c;}
+.b-brand{min-height:32px;}
 .b-brand .bb-img{height:32px;max-width:170px;object-fit:contain;display:block;}
+.b-brand .bb-empty{font-size:11px;font-style:italic;opacity:.55;}
 .bb-up{margin-left:auto;font-size:10.5px;font-weight:600;padding:5px 10px;border-radius:100px;border:1.5px dashed currentColor;color:inherit;opacity:.55;transition:opacity .15s;}
 .bb-up:hover{opacity:1;}
 
@@ -943,18 +945,26 @@ const BANKS = [
 const REG = {
   brand: {
     group:'layout', name:'Brand header', sub:'Logo + business name', region:'summary', icon:IC.brand,
-    defaults:()=>({name:'Aurora & Co.', showName:true}),
-    fields:[{k:'name',label:'Business name',t:'text'},{k:'showName',label:'Show business name',t:'toggle'}],
+    defaults:()=>({name:'Aurora & Co.', showLogo:true, showName:true}),
+    fields:[
+      {k:'name',label:'Business name',t:'text'},
+      {k:'showLogo',label:'Show logo',t:'toggle'},
+      {k:'showName',label:'Show business name',t:'toggle'},
+    ],
+    /* fully modular: logo + name · logo only · name only */
     render:(b,live)=>{
       const logo = state.design.custLogo;
-      const mark = logo
-        ? `<img class="bb-img" src="${logo}" alt="${esc(b.props.name)}">`
-        : `<div class="bb-logo">${esc(initials(b.props.name))}</div>`;
-      /* name always available — with or without an uploaded logo */
-      const name = b.props.showName
+      const wantLogo = b.props.showLogo, wantName = b.props.showName;
+      const mark = !wantLogo ? ''
+        : logo ? `<img class="bb-img" src="${logo}" alt="${esc(b.props.name)}">`
+               : `<div class="bb-logo">${esc(initials(b.props.name))}</div>`;
+      const name = wantName
         ? `<div class="bb-name" ${ce(live)} data-ei="name">${esc(b.props.name)}</div>` : '';
-      const chip = (!logo && !live) ? `<button class="bb-up" data-act="uplogo" title="Upload your logo">+ Add logo</button>` : '';
-      return `<div class="b-brand">${mark}${name}${chip}</div>`;
+      const chip = (wantLogo && !logo && !live)
+        ? `<button class="bb-up" data-act="uplogo" title="Upload your logo">+ Add logo</button>` : '';
+      const empty = (!wantLogo && !wantName && !live)
+        ? `<div class="bb-empty">Brand header hidden — enable logo or business name in the inspector</div>` : '';
+      return `<div class="b-brand">${mark}${name}${chip}${empty}</div>`;
     }
   },
   heading: {
@@ -1326,7 +1336,7 @@ function renderInspector(){
     else if(f.t==='codes') html += `<div class="ins-field"><label>${f.label}</label><textarea data-k="${f.k}" data-t="codes" style="width:100%;min-height:76px;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.7;resize:vertical;outline:none;">${(v||[]).map(c=>c.code+'  '+c.pct).join('\n')}</textarea></div>`;
     else if(f.t==='apps') html += `<div class="ins-field"><label>${f.label}</label>${Object.entries(UPI_APPS).map(([k,a])=>`<div class="ins-check"><span class="ic-name">${a.name}</span><div class="sw ${b.props.apps[k]?'on':''}" data-app="${k}"></div></div>`).join('')}</div>`;
   });
-  if(b.type==='brand') html += `<button class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:8px;" data-tool="uplogo-ins">${state.design.custLogo?'Replace logo…':'Upload logo…'}</button><div class="ins-note">Your logo replaces the monogram automatically — also available under <b>Design → Your brand</b>.</div>`;
+  if(b.type==='brand') html += `<button class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:8px;" data-tool="uplogo-ins">${state.design.custLogo?'Replace logo…':'Upload logo…'}</button><div class="ins-note">Mix and match: <b>logo + name</b>, <b>logo only</b>, or <b>name only</b>. With "Show logo" on and nothing uploaded, a monogram stands in. Also under <b>Design → Your brand</b>.</div>`;
   if(b.type==='discount') html += `<div class="ins-note">In Preview, typing this code and hitting Apply gives the discount — great for live demos.</div>`;
   if(b.type==='upi') html += `<div class="ins-note">Tip: keep 4–6 apps max. Fewer choices = faster checkouts.</div>`;
   html += `<button class="ins-del" data-tool="del-ins">Delete block</button>`;
