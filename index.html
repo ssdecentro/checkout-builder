@@ -152,6 +152,9 @@ input,select,textarea{font-family:inherit;}
 
 .co-stage{display:none;}
 .co-stage.on{display:block;animation:stagein .22s ease;}
+/* page-level chrome shown on every step */
+.co-persist{margin-top:18px;}
+.co-persist > .blk:first-child{margin-top:0;}
 @keyframes stagein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 .co-stage-head{margin-bottom:16px;}
 .co-stage-head .sh-k{font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--co-pay-sub);}
@@ -215,7 +218,8 @@ input,select,textarea{font-family:inherit;}
 .b-divider{height:1px;background:var(--co-sum-border);}
 .co-payment .b-divider{background:var(--co-pay-border);}
 
-.b-item{display:flex;align-items:center;gap:14px;}
+/* min-height keeps the row identical whether or not a product image is set */
+.b-item{display:flex;align-items:center;gap:14px;min-height:52px;}
 .b-item .it-thumb{width:52px;height:52px;min-width:52px;border-radius:12px;background:linear-gradient(135deg,var(--co-accent),#0000 220%);opacity:.92;display:flex;align-items:center;justify-content:center;color:var(--co-accent-ink);font-weight:700;font-size:16px;}
 .b-item .it-name{font-size:14px;font-weight:600;}
 .b-item .it-price{font-size:12.5px;margin-top:2px;}
@@ -578,6 +582,7 @@ input,select,textarea{font-family:inherit;}
   .btn{padding:0 11px;}
   .seg button{padding:0 10px;}
   .canvas-toolbar{flex-direction:column;align-items:flex-start;gap:4px;}
+  .b-item{min-height:44px;}
   .b-item .it-thumb{width:44px;height:44px;min-width:44px;}
   .bm-head{flex-wrap:wrap;row-gap:2px;}
   .sim-wrap > span{display:none;}
@@ -938,11 +943,19 @@ const BANKS = [
 const REG = {
   brand: {
     group:'layout', name:'Brand header', sub:'Logo + business name', region:'summary', icon:IC.brand,
-    defaults:()=>({name:'Aurora & Co.'}),
-    fields:[{k:'name',label:'Business name',t:'text'}],
-    render:(b,live)=>`<div class="b-brand">${state.design.custLogo
-      ? `<img class="bb-img" src="${state.design.custLogo}" alt="${esc(b.props.name)}">`
-      : `<div class="bb-logo">${esc(initials(b.props.name))}</div><div class="bb-name" ${ce(live)} data-ei="name">${esc(b.props.name)}</div>${live?'':`<button class="bb-up" data-act="uplogo" title="Upload your logo">+ Add logo</button>`}`}</div>`
+    defaults:()=>({name:'Aurora & Co.', showName:true}),
+    fields:[{k:'name',label:'Business name',t:'text'},{k:'showName',label:'Show business name',t:'toggle'}],
+    render:(b,live)=>{
+      const logo = state.design.custLogo;
+      const mark = logo
+        ? `<img class="bb-img" src="${logo}" alt="${esc(b.props.name)}">`
+        : `<div class="bb-logo">${esc(initials(b.props.name))}</div>`;
+      /* name always available — with or without an uploaded logo */
+      const name = b.props.showName
+        ? `<div class="bb-name" ${ce(live)} data-ei="name">${esc(b.props.name)}</div>` : '';
+      const chip = (!logo && !live) ? `<button class="bb-up" data-act="uplogo" title="Upload your logo">+ Add logo</button>` : '';
+      return `<div class="b-brand">${mark}${name}${chip}</div>`;
+    }
   },
   heading: {
     group:'layout', name:'Heading', sub:'Large section title', region:'payment', icon:IC.heading,
@@ -967,9 +980,10 @@ const REG = {
     fields:[{k:'name',label:'Product name',t:'text'},{k:'price',label:'Unit price (₹)',t:'number'},{k:'img',label:'Product image',t:'img'},{k:'showQty',label:'Show quantity stepper',t:'toggle'}],
     render:(b,live)=>{
       const p = b.props;
+      /* no image uploaded → text only, no placeholder tile (row height is held by CSS) */
       const thumb = p.img
         ? `<div class="it-thumb" style="background:#fff;padding:0;overflow:hidden;"><img src="${p.img}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>`
-        : `<div class="it-thumb">${esc(initials(p.name))}</div>`;
+        : '';
       return `<div class="b-item">${thumb}
         <div><div class="it-name" ${ce(live)} data-ei="name">${esc(p.name)}</div><div class="it-price cv-sub">${fmt(p.price)}${p.qty>1?' × '+p.qty:''}</div></div>
         ${p.showQty?`<div class="it-qty"><button data-act="qty-" title="Decrease">−</button><span class="q">${p.qty}</span><button data-act="qty+" title="Increase">+</button></div>`:''}
@@ -1209,6 +1223,9 @@ function blkHTML(b){
 /* step 1 collects contact details only — name, email, mobile. Everything else is step 2. */
 const STEP1_TYPES = ['payerName','email','phone'];
 const isStep1 = b => STEP1_TYPES.includes(b.type);
+/* page-level chrome — renders below both steps, so it's visible on step 1 and step 2 */
+const PERSIST_TYPES = ['secure','mfooter','divider'];
+const isPersist = b => PERSIST_TYPES.includes(b.type);
 
 function stepperHTML(){
   const at2 = rt.step===2;
@@ -1239,8 +1256,10 @@ function renderRegion(region){
     el.innerHTML = list.map(blkHTML).join('');
     return;
   }
-  /* ── two-step: split the payment column into stages ── */
-  const s1 = list.filter(isStep1), s2 = list.filter(b=>!isStep1(b));
+  /* ── two-step: split the payment column into stages + persistent chrome ── */
+  const s1 = list.filter(isStep1);
+  const s2 = list.filter(b=>!isStep1(b) && !isPersist(b));
+  const sp = list.filter(isPersist);
   const show1 = rt.step===1, show2 = rt.step===2;
   el.innerHTML = `${stepperHTML()}
     <div class="co-stage ${show1?'on':''}" data-stage="1">
@@ -1252,7 +1271,8 @@ function renderRegion(region){
       <div class="co-stage-head"><div class="sh-k">Step 2 of 2</div><div class="sh-t">Choose how to pay</div></div>
       ${s1.length?recapHTML():''}
       ${s2.length ? s2.map(blkHTML).join('') : `<div class="region-empty">Drag payment blocks here — UPI, QR, Banking Connect, Pay button</div>`}
-    </div>`;
+    </div>
+    ${sp.length ? `<div class="co-persist">${sp.map(blkHTML).join('')}</div>` : ''}`;
 }
 
 function renderAll(){
@@ -1458,8 +1478,16 @@ $('#checkout').addEventListener('click', e=>{
       if(tool.dataset.tool==='up' || tool.dataset.tool==='down'){
         const region = regionOf(id); const list = state.blocks[region];
         const i = list.findIndex(x=>x.id===id);
-        const j = tool.dataset.tool==='up' ? i-1 : i+1;
+        const dir = tool.dataset.tool==='up' ? -1 : 1;
+        /* in two-step, only swap with a neighbour in the same stage so blocks
+           can't silently jump between step 1, step 2 and the persistent footer */
+        const bucket = b => state.design.flow!=='twostep' || region!=='payment' ? 0
+                          : isStep1(b) ? 1 : isPersist(b) ? 3 : 2;
+        const mine = bucket(list[i]);
+        let j = i + dir;
+        while(j>=0 && j<list.length && bucket(list[j])!==mine) j += dir;
         if(j>=0 && j<list.length){ snapshot(); [list[i],list[j]]=[list[j],list[i]]; selId=id; renderAll(); }
+        else toast('Already first in this section');
         return;
       }
       if(tool.dataset.tool==='dup'){
@@ -2023,12 +2051,21 @@ function collectCheckoutCSS(){
   return css;
 }
 function exportHTML(){
+  /* never ship values typed while previewing — export must start blank */
+  const rtSnapshot = { payer:{...rt.payer}, vpa:rt.vpa, appliedCode:rt.appliedCode, appliedPct:rt.appliedPct, step:rt.step };
+  rt.payer = {name:'',email:'',phone:''}; rt.vpa = ''; rt.appliedCode = ''; rt.appliedPct = 0; rt.step = 1;
+  try{ return buildExportHTML(); }
+  finally{ Object.assign(rt, rtSnapshot); rt.payer = rtSnapshot.payer; }
+}
+function buildExportHTML(){
   const d = state.design;
   const staticBlks = list => list.map(b=>`<div class="blk">${REG[b.type].render(b, true)}</div>`).join('\n');
   const renderStatic = region => {
     const list = state.blocks[region];
     if(region==='summary' || d.flow!=='twostep') return staticBlks(list);
-    const s1 = list.filter(isStep1), s2 = list.filter(b=>!isStep1(b));
+    const s1 = list.filter(isStep1);
+    const s2 = list.filter(b=>!isStep1(b) && !isPersist(b));
+    const sp = list.filter(isPersist);
     return `${stepperHTML()}
     <div class="co-stage on" data-stage="1">
       <div class="co-stage-head"><div class="sh-k">Step 1 of 2</div><div class="sh-t">Your details</div></div>
@@ -2039,7 +2076,8 @@ function exportHTML(){
       <div class="co-stage-head"><div class="sh-k">Step 2 of 2</div><div class="sh-t">Choose how to pay</div></div>
       ${s1.length?`<div class="co-recap"><div class="rc-i"><div class="rc-n" id="rcName">Your details</div><div class="rc-c cv-sub" id="rcContact"></div></div><button class="rc-e" data-act="editDetails">Edit</button></div>`:''}
       ${staticBlks(s2)}
-    </div>`;
+    </div>
+    ${sp.length ? `<div class="co-persist">${staticBlks(sp)}</div>` : ''}`;
   };
   const powered = d.powered ? `<div class="powered"><span>Powered by ${logoSvg(12)} · RBI-regulated payment rails</span></div>` : '';
   const legalJson = JSON.stringify({tnc:state.merchant.tnc||'', privacy:state.merchant.privacy||''});
@@ -2134,6 +2172,8 @@ ${collectCheckoutCSS()}
   .b-qrd{display:none;}
   .b-qrm{display:block;}
   .b-addr .ad-grid{grid-template-columns:1fr 1fr;}
+  .b-item{min-height:44px;}
+  .b-item .it-thumb{width:44px;height:44px;min-width:44px;}
   .co-steps .cs-lbl{display:none;}
   .co-steps .cs-line{min-width:24px;}
   .co-stage-head .sh-t{font-size:18px;}
