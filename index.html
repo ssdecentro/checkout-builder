@@ -137,6 +137,50 @@ input,select,textarea{font-family:inherit;}
   --co-pay-bg:#0b1428; --co-pay-text:#f1f5f9; --co-pay-sub:#8ea0bf; --co-pay-border:rgba(148,163,184,.22); --co-pay-field:rgba(255,255,255,.05); --co-pay-hover:rgba(255,255,255,.04);
 }
 
+/* ───────── TWO-STEP FLOW ───────── */
+.co-steps{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.co-steps .cs{display:flex;align-items:center;gap:8px;min-width:0;}
+.co-steps .cs-dot{width:24px;height:24px;min-width:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:var(--co-pay-field);border:1.5px solid var(--co-pay-border);color:var(--co-pay-sub);transition:all .18s;}
+.co-steps .cs-dot svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+.co-steps .cs-lbl{font-size:12px;font-weight:600;color:var(--co-pay-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.co-steps .cs.on .cs-dot{background:var(--co-accent);border-color:var(--co-accent);color:var(--co-accent-ink);}
+.co-steps .cs.on .cs-lbl{color:var(--co-pay-text);font-weight:700;}
+.co-steps .cs.done .cs-dot{background:color-mix(in srgb,var(--co-accent) 16%,transparent);border-color:var(--co-accent);color:var(--co-accent);}
+.co-steps .cs-line{flex:1;height:1.5px;background:var(--co-pay-border);min-width:14px;border-radius:2px;overflow:hidden;}
+.co-steps .cs-line i{display:block;height:100%;width:0;background:var(--co-accent);transition:width .3s ease;}
+.co-steps.at2 .cs-line i{width:100%;}
+
+.co-stage{display:none;}
+.co-stage.on{display:block;animation:stagein .22s ease;}
+@keyframes stagein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.co-stage-head{margin-bottom:16px;}
+.co-stage-head .sh-k{font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--co-pay-sub);}
+.co-stage-head .sh-t{font-size:20px;font-weight:800;font-family:var(--co-font-head);margin-top:3px;}
+
+.co-recap{display:flex;align-items:center;gap:12px;border:1px solid var(--co-pay-border);background:var(--co-pay-field);border-radius:var(--co-r);padding:11px 14px;margin-bottom:18px;}
+.co-recap .rc-i{flex:1;min-width:0;}
+.co-recap .rc-n{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.co-recap .rc-c{font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.co-recap .rc-e{font-size:11.5px;font-weight:700;color:var(--co-accent);flex:none;padding:6px 10px;border-radius:8px;}
+.co-recap .rc-e:hover{background:color-mix(in srgb,var(--co-accent) 10%,transparent);}
+
+.co-nav{display:flex;gap:10px;align-items:center;margin-top:20px;}
+.co-nav .nav-back{flex:none;height:46px;padding:0 16px;border-radius:var(--co-r);border:1px solid var(--co-pay-border);color:inherit;font-size:13px;font-weight:700;background:transparent;}
+.co-nav .nav-back:hover{background:var(--co-pay-hover);}
+.co-nav .nav-next{flex:1;height:46px;border-radius:var(--co-r);background:var(--co-accent);color:var(--co-accent-ink);font-size:14.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter .15s,transform .1s;}
+.co-nav .nav-next:hover{filter:brightness(1.1);}
+.co-nav .nav-next:active{transform:scale(.99);}
+.co-nav .nav-next svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+
+.b-field.err input{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12);}
+.b-field .fe{display:none;font-size:11px;font-weight:600;color:#ef4444;margin-top:5px;}
+.b-field.err .fe{display:block;}
+
+/* edit-mode step switcher on the canvas */
+.step-switch{display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:3px;}
+.step-switch button{height:24px;padding:0 12px;border-radius:100px;font-size:11px;font-weight:600;color:var(--sub);white-space:nowrap;}
+.step-switch button.on{background:#000;color:#fff;}
+
 /* block wrapper + edit chrome */
 .blk{position:relative;border-radius:8px;transition:box-shadow .12s;}
 .blk + .blk{margin-top:18px;}
@@ -515,9 +559,17 @@ input,select,textarea{font-family:inherit;}
   .b-qrd{display:none;}
   .b-qrm{display:block;}
   .b-addr .ad-grid{grid-template-columns:1fr 1fr;}
+  .co-steps{margin-bottom:18px;}
+  .co-stage-head .sh-t{font-size:18px;}
 }
 @media (max-width:640px){
   .topbar{padding:0 10px;gap:6px;}
+  .co-steps .cs-lbl{display:none;}
+  .co-steps .cs-line{min-width:24px;}
+  .co-steps{gap:8px;}
+  .co-nav{position:sticky;bottom:0;background:var(--co-pay-bg);padding:10px 0 2px;margin-top:16px;z-index:5;}
+  .co-recap{padding:10px 12px;}
+  .step-switch button{padding:0 9px;font-size:10.5px;}
   .tb-name{display:none;}
   .tb-left{gap:8px;}
   .tb-left > .tb-logo > span[style*="width:1px"]{display:none;}
@@ -605,6 +657,14 @@ input,select,textarea{font-family:inherit;}
         <div class="dz-flex"><input type="range" class="dz-range" id="radiusRange" min="0" max="22" step="1" value="10"><span class="dz-val" id="radiusVal">10px</span></div>
       </div>
       <div class="dz-section">
+        <div class="dz-label">Checkout flow</div>
+        <div class="mini-seg" id="flowSeg">
+          <button class="on" data-flow="single">Single page</button>
+          <button data-flow="twostep">Two step</button>
+        </div>
+        <div class="ins-note" style="margin-top:9px;">Two step collects <b>name, email and mobile</b> on step&nbsp;1, then payment on step&nbsp;2. Every other block — addresses, invoice, custom fields, payment methods — stays on step&nbsp;2. The order summary is visible throughout.</div>
+      </div>
+      <div class="dz-section">
         <div class="dz-label">Payment methods layout</div>
         <div class="mini-seg" id="methodSeg">
           <button class="on" data-ml="accordion">Accordion</button>
@@ -650,7 +710,13 @@ input,select,textarea{font-family:inherit;}
       <div class="checkout-shell" id="shell">
         <div class="canvas-toolbar">
           <div class="ct-label"><span class="dot"></span><span id="ctMode">Editing — drag, click &amp; type directly on the page</span></div>
-          <div class="ct-zoom" id="blockCount"></div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="step-switch" id="stepSwitch" style="display:none;">
+              <button class="on" data-st="1">Step 1 · Details</button>
+              <button data-st="2">Step 2 · Payment</button>
+            </div>
+            <div class="ct-zoom" id="blockCount"></div>
+          </div>
         </div>
         <div class="checkout theme-navy edit-mode" id="checkout">
           <div class="co-col co-summary" id="regionSummary" data-region="summary"></div>
@@ -738,7 +804,7 @@ let uid = 1;
 const nid = () => 'b' + (uid++);
 
 const state = {
-  design: { theme:'theme-light', accent:'#096ef2', accentInk:'#ffffff', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null },
+  design: { theme:'theme-light', accent:'#096ef2', accentInk:'#ffffff', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'single' },
   merchant: {
     supportEmail:'support@aurora.co', supportPhone:'+91 80 4000 1234', country:'India', vpa:'aurora@upi',
     socials:{ web:'https://aurora.co', li:'', x:'', ig:'' },
@@ -750,7 +816,8 @@ let mode = 'edit', device = 'desktop', selId = null;
 const undoStack = [];
 
 /* runtime (preview-only) */
-const rt = { appliedPct:0, appliedCode:'', selUpi:null, selBank:null, nbMode:null };
+const rt = { appliedPct:0, appliedCode:'', selUpi:null, selBank:null, nbMode:null, vpa:'',
+             step:1, payer:{name:'',email:'',phone:''} };
 
 /* ═══════════════════════ HELPERS ═══════════════════════ */
 const $ = s => document.querySelector(s);
@@ -950,19 +1017,19 @@ const REG = {
     group:'payer', name:'Payer name', sub:'Full name field', region:'payment', icon:IC.user,
     defaults:()=>({label:'Full name', placeholder:'Rakesh Sharma'}),
     fields:[{k:'label',label:'Label',t:'text'},{k:'placeholder',label:'Placeholder',t:'text'}],
-    render:(b)=>`<div class="b-field"><label>${esc(b.props.label)}</label><input type="text" placeholder="${esc(b.props.placeholder)}"></div>`
+    render:(b)=>`<div class="b-field" data-vf="name"><label>${esc(b.props.label)}</label><input type="text" data-role="pname" value="${esc(rt.payer.name)}" placeholder="${esc(b.props.placeholder)}"><div class="fe">Enter the name on this order</div></div>`
   },
   email: {
     group:'payer', name:'Payer email', sub:'Receipt delivery', region:'payment', icon:IC.email,
     defaults:()=>({label:'Email', placeholder:'you@example.com'}),
     fields:[{k:'label',label:'Label',t:'text'},{k:'placeholder',label:'Placeholder',t:'text'}],
-    render:(b)=>`<div class="b-field"><label>${esc(b.props.label)}</label><input type="email" placeholder="${esc(b.props.placeholder)}"></div>`
+    render:(b)=>`<div class="b-field" data-vf="email"><label>${esc(b.props.label)}</label><input type="email" data-role="pemail" value="${esc(rt.payer.email)}" placeholder="${esc(b.props.placeholder)}"><div class="fe">Enter a valid email address</div></div>`
   },
   phone: {
     group:'payer', name:'Payer phone', sub:'For payment updates', region:'payment', icon:IC.phone,
     defaults:()=>({label:'Mobile number', placeholder:'+91 98765 43210'}),
     fields:[{k:'label',label:'Label',t:'text'},{k:'placeholder',label:'Placeholder',t:'text'}],
-    render:(b)=>`<div class="b-field"><label>${esc(b.props.label)}</label><input type="tel" placeholder="${esc(b.props.placeholder)}"></div>`
+    render:(b)=>`<div class="b-field" data-vf="phone"><label>${esc(b.props.label)}</label><input type="tel" data-role="pphone" value="${esc(rt.payer.phone)}" placeholder="${esc(b.props.placeholder)}"><div class="fe">Enter a valid 10-digit mobile number</div></div>`
   },
   billing: {
     group:'payer', name:'Billing address', sub:'Line, city, state, PIN', region:'payment', icon:IC.addr,
@@ -1129,6 +1196,37 @@ function buildPalette(){
 }
 
 /* ═══════════════════════ RENDER ═══════════════════════ */
+function blkHTML(b){
+  const d = REG[b.type];
+  const tools = mode==='edit' ? `<div class="blk-tools">
+    <button class="bt-grab" data-tool="grab" title="Drag to reorder">${svg(IC.grab)}</button>
+    <button data-tool="up" title="Move up"><svg viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg></button>
+    <button data-tool="down" title="Move down"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+    <button data-tool="dup" title="Duplicate">${svg(IC.dup)}</button>
+    <button class="bt-del" data-tool="del" title="Delete">${svg(IC.del)}</button></div>` : '';
+  return `<div class="blk ${selId===b.id?'sel':''}" data-id="${b.id}">${tools}${d.render(b, mode==='preview')}</div>`;
+}
+/* step 1 collects contact details only — name, email, mobile. Everything else is step 2. */
+const STEP1_TYPES = ['payerName','email','phone'];
+const isStep1 = b => STEP1_TYPES.includes(b.type);
+
+function stepperHTML(){
+  const at2 = rt.step===2;
+  return `<div class="co-steps ${at2?'at2':''}">
+    <div class="cs ${at2?'done':'on'}"><span class="cs-dot">${at2?'<svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10"/></svg>':'1'}</span><span class="cs-lbl">Your details</span></div>
+    <div class="cs-line"><i></i></div>
+    <div class="cs ${at2?'on':''}"><span class="cs-dot">2</span><span class="cs-lbl">Payment</span></div>
+  </div>`;
+}
+function recapHTML(){
+  const nm = rt.payer.name || 'Your details';
+  const parts = [rt.payer.email, rt.payer.phone].filter(Boolean);
+  return `<div class="co-recap">
+    <div class="rc-i"><div class="rc-n">${esc(nm)}</div>${parts.length?`<div class="rc-c cv-sub">${esc(parts.join(' · '))}</div>`:''}</div>
+    <button class="rc-e" data-act="editDetails">Edit</button>
+  </div>`;
+}
+
 function renderRegion(region){
   const el = $(region==='summary' ? '#regionSummary' : '#regionPayment');
   const list = state.blocks[region];
@@ -1136,16 +1234,25 @@ function renderRegion(region){
     el.innerHTML = `<div class="region-empty">Drop ${region==='summary'?'order summary':'payment'} blocks here</div>`;
     return;
   }
-  el.innerHTML = list.map(b=>{
-    const d = REG[b.type];
-    const tools = mode==='edit' ? `<div class="blk-tools">
-      <button class="bt-grab" data-tool="grab" title="Drag to reorder">${svg(IC.grab)}</button>
-      <button data-tool="up" title="Move up"><svg viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg></button>
-      <button data-tool="down" title="Move down"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
-      <button data-tool="dup" title="Duplicate">${svg(IC.dup)}</button>
-      <button class="bt-del" data-tool="del" title="Delete">${svg(IC.del)}</button></div>` : '';
-    return `<div class="blk ${selId===b.id?'sel':''}" data-id="${b.id}">${tools}${d.render(b, mode==='preview')}</div>`;
-  }).join('');
+  /* single-page (or the summary column) renders flat */
+  if(region==='summary' || state.design.flow!=='twostep'){
+    el.innerHTML = list.map(blkHTML).join('');
+    return;
+  }
+  /* ── two-step: split the payment column into stages ── */
+  const s1 = list.filter(isStep1), s2 = list.filter(b=>!isStep1(b));
+  const show1 = rt.step===1, show2 = rt.step===2;
+  el.innerHTML = `${stepperHTML()}
+    <div class="co-stage ${show1?'on':''}" data-stage="1">
+      <div class="co-stage-head"><div class="sh-k">Step 1 of 2</div><div class="sh-t">Your details</div></div>
+      ${s1.length ? s1.map(blkHTML).join('') : `<div class="region-empty">Add Payer name, Payer email or Payer phone — they appear here on step 1</div>`}
+      <div class="co-nav"><button class="nav-next" data-act="toStep2">Continue to payment ${svg('<path d="M5 12h14M13 6l6 6-6 6"/>')}</button></div>
+    </div>
+    <div class="co-stage ${show2?'on':''}" data-stage="2">
+      <div class="co-stage-head"><div class="sh-k">Step 2 of 2</div><div class="sh-t">Choose how to pay</div></div>
+      ${s1.length?recapHTML():''}
+      ${s2.length ? s2.map(blkHTML).join('') : `<div class="region-empty">Drag payment blocks here — UPI, QR, Banking Connect, Pay button</div>`}
+    </div>`;
 }
 
 function renderAll(){
@@ -1159,6 +1266,8 @@ function renderAll(){
   renderRegion('payment');
   $('#blockCount').textContent = allBlocks().length + ' blocks · ' + (device==='desktop'?'940px':'420px');
   $('#poweredLine').style.display = state.design.powered ? '' : 'none';
+  $('#stepSwitch').style.display = (state.design.flow==='twostep' && mode==='edit') ? 'flex' : 'none';
+  document.querySelectorAll('#stepSwitch button').forEach(x=>x.classList.toggle('on', +x.dataset.st===rt.step));
   renderInspector();
 }
 
@@ -1410,17 +1519,44 @@ $('#checkout').addEventListener('click', e=>{
     else { rt.appliedCode=''; rt.appliedPct=0; toast(code?'Invalid code':'Enter a code'); }
     renderAll(); return;
   }
-  if(a==='legal'){
-    openLegal(act.dataset.doc);
-    return;
-  }
+  if(a==='legal'){ openLegal(act.dataset.doc); return; }
+  if(a==='toStep2'){ if(validateStep1()) goStep(2); else toast('Please complete the highlighted fields'); return; }
+  if(a==='editDetails'){ goStep(1); return; }
   if(a==='pay'){ runPayFlow(); return; }
 });
 
-/* keep typed UPI ID across re-renders (no re-render on input) */
+/* keep typed values across re-renders (no re-render on input) */
 $('#checkout').addEventListener('input', e=>{
-  if(e.target.dataset && e.target.dataset.role==='vpa') rt.vpa = e.target.value;
+  const r = e.target.dataset && e.target.dataset.role;
+  if(r==='vpa') rt.vpa = e.target.value;
+  if(r==='pname')  rt.payer.name  = e.target.value;
+  if(r==='pemail') rt.payer.email = e.target.value;
+  if(r==='pphone') rt.payer.phone = e.target.value;
+  if(r && r.startsWith('p')) e.target.closest('.b-field')?.classList.remove('err');
 });
+
+/* ── step 1 validation ── */
+function validateStep1(){
+  let ok = true, first = null;
+  document.querySelectorAll('.co-stage[data-stage="1"] .b-field[data-vf]').forEach(f=>{
+    const kind = f.dataset.vf, input = f.querySelector('input');
+    const v = (input.value||'').trim();
+    let good = true;
+    if(kind==='name')  good = v.length >= 2;
+    if(kind==='email') good = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    if(kind==='phone') good = v.replace(/\D/g,'').length >= 10;
+    f.classList.toggle('err', !good);
+    if(!good){ ok = false; if(!first) first = input; }
+  });
+  if(first && first.focus) first.focus();
+  return ok;
+}
+function goStep(n){
+  rt.step = n;
+  renderRegion('payment');
+  const co = $('#checkout');
+  if(co.scrollIntoView) co.scrollIntoView({behavior:'smooth', block:'start'});
+}
 
 /* inline text editing */
 $('#checkout').addEventListener('focusin', e=>{
@@ -1695,6 +1831,7 @@ $('#modeSeg').addEventListener('click', e=>{
   mode = btn.dataset.mode;
   document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on', b===btn));
   selId = null;
+  if(state.design.flow==='twostep') rt.step = 1;   /* preview always starts at step 1 */
   $('#ctMode').textContent = mode==='edit' ? 'Editing — drag, click & type directly on the page' : 'Preview — live checkout · pick a payment outcome to simulate';
   $('#simWrap').style.display = mode==='preview' ? 'flex' : 'none';
   stopCountdown();
@@ -1741,6 +1878,7 @@ function syncDesignUI(){
   $('#radiusRange').value = state.design.radius;
   $('#radiusVal').textContent = state.design.radius+'px';
   document.querySelectorAll('#methodSeg button').forEach(b=>b.classList.toggle('on', b.dataset.ml===state.design.methodLayout));
+  document.querySelectorAll('#flowSeg button').forEach(b=>b.classList.toggle('on', b.dataset.flow===state.design.flow));
   $('#poweredSw').classList.toggle('on', state.design.powered);
 }
 $('#themeRow').addEventListener('click', e=>{
@@ -1786,6 +1924,20 @@ $('#logoFile').addEventListener('change', e=>{
 $('#methodSeg').addEventListener('click', e=>{
   const btn = e.target.closest('button'); if(!btn) return;
   snapshot(); state.design.methodLayout = btn.dataset.ml; syncDesignUI(); renderAll();
+});
+$('#flowSeg').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  snapshot();
+  state.design.flow = btn.dataset.flow;
+  rt.step = 1;
+  syncDesignUI(); renderAll();
+  toast(state.design.flow==='twostep' ? 'Two-step flow on — payer blocks moved to step 1' : 'Single-page flow');
+});
+$('#stepSwitch').addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  rt.step = +btn.dataset.st;
+  document.querySelectorAll('#stepSwitch button').forEach(x=>x.classList.toggle('on', x===btn));
+  renderRegion('payment');
 });
 $('#poweredSw').addEventListener('click', ()=>{ snapshot(); state.design.powered = !state.design.powered; syncDesignUI(); renderAll(); });
 
@@ -1853,8 +2005,8 @@ document.querySelectorAll('[data-close]').forEach(btn=>{
 
 /* ═══════════════════════ EXPORT ═══════════════════════ */
 function collectCheckoutCSS(){
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.cv-sub|\.sw|\.f-label|\.dc-|@keyframes (draw|popin|spin|dlpulse))/;
-  const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell)/;
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|@keyframes (draw|popin|spin|dlpulse|stagein))/;
+  const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell|step-switch)/;
   let css = '';
   for(const sheet of document.styleSheets){
     let rules;
@@ -1872,13 +2024,64 @@ function collectCheckoutCSS(){
 }
 function exportHTML(){
   const d = state.design;
-  const renderStatic = region => state.blocks[region].map(b=>`<div class="blk">${REG[b.type].render(b, true)}</div>`).join('\n');
+  const staticBlks = list => list.map(b=>`<div class="blk">${REG[b.type].render(b, true)}</div>`).join('\n');
+  const renderStatic = region => {
+    const list = state.blocks[region];
+    if(region==='summary' || d.flow!=='twostep') return staticBlks(list);
+    const s1 = list.filter(isStep1), s2 = list.filter(b=>!isStep1(b));
+    return `${stepperHTML()}
+    <div class="co-stage on" data-stage="1">
+      <div class="co-stage-head"><div class="sh-k">Step 1 of 2</div><div class="sh-t">Your details</div></div>
+      ${staticBlks(s1)}
+      <div class="co-nav"><button class="nav-next" data-act="toStep2">Continue to payment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+    </div>
+    <div class="co-stage" data-stage="2">
+      <div class="co-stage-head"><div class="sh-k">Step 2 of 2</div><div class="sh-t">Choose how to pay</div></div>
+      ${s1.length?`<div class="co-recap"><div class="rc-i"><div class="rc-n" id="rcName">Your details</div><div class="rc-c cv-sub" id="rcContact"></div></div><button class="rc-e" data-act="editDetails">Edit</button></div>`:''}
+      ${staticBlks(s2)}
+    </div>`;
+  };
   const powered = d.powered ? `<div class="powered"><span>Powered by ${logoSvg(12)} · RBI-regulated payment rails</span></div>` : '';
   const legalJson = JSON.stringify({tnc:state.merchant.tnc||'', privacy:state.merchant.privacy||''});
   const runtime = [
     "var LEGAL=" + legalJson + ";",
     "/* Payment status (success / failed / expired) is driven by web-socket events from the backend in production. */",
+    "function goStep(n){",
+    "  document.querySelectorAll('.co-stage').forEach(function(s){s.classList.toggle('on', s.dataset.stage===String(n));});",
+    "  var st=document.querySelector('.co-steps'); if(st){",
+    "    st.classList.toggle('at2', n===2);",
+    "    var cs=st.querySelectorAll('.cs');",
+    "    cs[0].className='cs '+(n===2?'done':'on'); cs[0].querySelector('.cs-dot').innerHTML = n===2?'<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m5 13 4 4 10-10\"/></svg>':'1';",
+    "    cs[1].className='cs '+(n===2?'on':'');",
+    "  }",
+    "  var t=document.querySelector('.checkout'); if(t&&t.scrollIntoView)t.scrollIntoView({behavior:'smooth',block:'start'});",
+    "}",
+    "function validateStep1(){",
+    "  var ok=true, first=null;",
+    "  document.querySelectorAll('.co-stage[data-stage=\"1\"] .b-field[data-vf]').forEach(function(f){",
+    "    var k=f.dataset.vf, i=f.querySelector('input'), v=(i.value||'').trim(), good=true;",
+    "    if(k==='name') good=v.length>=2;",
+    "    if(k==='email') good=/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v);",
+    "    if(k==='phone') good=v.replace(/\\D/g,'').length>=10;",
+    "    f.classList.toggle('err',!good); if(!good){ok=false; if(!first)first=i;}",
+    "  });",
+    "  if(first)first.focus();",
+    "  return ok;",
+    "}",
+    "function syncRecap(){",
+    "  var g=function(k){var el=document.querySelector('[data-role='+k+']');return el?el.value.trim():'';};",
+    "  var n=document.getElementById('rcName'), c=document.getElementById('rcContact');",
+    "  if(n) n.textContent = g('pname') || 'Your details';",
+    "  if(c) c.textContent = [g('pemail'),g('pphone')].filter(Boolean).join(' \\u00b7 ');",
+    "}",
+    "document.addEventListener('input',function(e){",
+    "  if(e.target.dataset && /^p(name|email|phone)$/.test(e.target.dataset.role||'')){",
+    "    var f=e.target.closest('.b-field'); if(f)f.classList.remove('err');",
+    "  }",
+    "});",
     "document.addEventListener('click',function(e){",
+    "  if(e.target.closest('[data-act=toStep2]')){ if(validateStep1()){ syncRecap(); goStep(2);} return; }",
+    "  if(e.target.closest('[data-act=editDetails]')){ goStep(1); return; }",
     "  var lg=e.target.closest('[data-act=legal]');",
     "  if(lg){document.getElementById('lmTitle').textContent=lg.dataset.doc==='tnc'?'Terms & Conditions':'Privacy Policy';document.getElementById('lmBody').textContent=LEGAL[lg.dataset.doc]||'No content provided.';document.getElementById('legalModal').style.display='flex';return;}",
     "  if(e.target.closest('[data-lm-close]')||e.target.id==='legalModal'){document.getElementById('legalModal').style.display='none';return;}",
@@ -1931,6 +2134,10 @@ ${collectCheckoutCSS()}
   .b-qrd{display:none;}
   .b-qrm{display:block;}
   .b-addr .ad-grid{grid-template-columns:1fr 1fr;}
+  .co-steps .cs-lbl{display:none;}
+  .co-steps .cs-line{min-width:24px;}
+  .co-stage-head .sh-t{font-size:18px;}
+  .co-nav{position:sticky;bottom:0;background:var(--co-pay-bg);padding:10px 0 2px;margin-top:16px;z-index:5;}
 }
 </style>
 </head>
