@@ -379,8 +379,6 @@ input,select,textarea{font-family:inherit;}
 .b-mfoot .mf-links a{color:inherit;cursor:pointer;text-decoration:none;opacity:.8;}
 .b-mfoot .mf-links a:hover{opacity:1;text-decoration:underline;}
 .b-mfoot .mf-sup{display:flex;flex-wrap:wrap;gap:5px 14px;justify-content:center;margin-top:7px;opacity:.85;}
-.b-mfoot .mf-help{margin-top:10px;padding:9px 12px;border:1px dashed var(--co-pay-border);border-radius:10px;font-size:10.5px;line-height:1.6;text-align:center;}
-.co-summary .b-mfoot .mf-help{border-color:var(--co-sum-border);}
 .b-mfoot .mf-soc{display:flex;gap:10px;justify-content:center;margin-top:9px;}
 .b-mfoot .mf-soc a{width:26px;height:26px;border-radius:50%;border:1px solid var(--co-pay-border);display:flex;align-items:center;justify-content:center;color:inherit;opacity:.75;}
 .b-mfoot .mf-soc a:hover{opacity:1;border-color:var(--co-accent);color:var(--co-accent);}
@@ -1161,8 +1159,8 @@ const REG = {
   },
   mfooter: {
     group:'fields', name:'Merchant footer', sub:'T&C, policy, support, socials', region:'payment', icon:IC.mfoot,
-    defaults:()=>({showSocials:true, showSupport:true, showHelpNote:true}),
-    fields:[{k:'showSupport',label:'Show support contact',t:'toggle'},{k:'showHelpNote',label:'Refund / grievance note',t:'toggle'},{k:'showSocials',label:'Show social links',t:'toggle'}],
+    defaults:()=>({showSocials:true, showSupport:true}),
+    fields:[{k:'showSupport',label:'Show support contact',t:'toggle'},{k:'showSocials',label:'Show social links',t:'toggle'}],
     render:(b)=>{
       const m = state.merchant;
       const soc = [['web',IC.globe,m.socials.web],['li',IC.linkedin,m.socials.li],['x',IC.x,m.socials.x],['ig',IC.instagram,m.socials.ig]]
@@ -1177,9 +1175,6 @@ const REG = {
           ${m.supportEmail?`<span>${esc(m.supportEmail)}</span>`:''}
           ${m.supportPhone?`<span>${esc(m.supportPhone)}</span>`:''}
           ${m.country?`<span>${esc(m.country)}</span>`:''}
-        </div>`:''}
-        ${b.props.showHelpNote?`<div class="mf-help">
-          For refunds, chargebacks or any payment-related support, contact <b>${esc((allBlocks().find(x=>x.type==='brand')||{props:{name:'the merchant'}}).props.name)}</b> via their Help / Support section${m.supportEmail?` or ${esc(m.supportEmail)}`:''}. Decentro processes this payment on the merchant's behalf.
         </div>`:''}
         ${b.props.showSocials && soc ? `<div class="mf-soc">${soc}</div>` : ''}
       </div>`;
