@@ -243,7 +243,9 @@ input,select,textarea{font-family:inherit;}
 .b-discount button{height:40px;padding:0 16px;border-radius:var(--co-r);border:1px solid var(--co-sum-border);color:inherit;font-size:12px;font-weight:700;}
 .co-payment .b-discount button{border-color:var(--co-pay-border);}
 .b-discount button:hover{border-color:var(--co-accent);color:var(--co-accent);}
-.b-discount .dc-ok{font-size:11px;font-weight:600;color:#10b981;margin-top:6px;}
+/* .dc-ok is a sibling of .b-discount, not a child — must not be nested in the selector */
+.dc-ok{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;line-height:1.4;color:#10b981;margin-top:9px;padding:5px 10px;border-radius:100px;background:color-mix(in srgb,#10b981 12%,transparent);}
+.dc-ok svg{width:11px;height:11px;min-width:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
 
 .b-recur{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .b-recur .rc-name{font-size:13.5px;font-weight:600;}
@@ -1028,7 +1030,7 @@ const REG = {
     render:(b)=>{
       const chips = (b.props.showList && b.props.codes.length)
         ? `<div class="dc-chips">${b.props.codes.map(c=>`<span class="dc-chip ${rt.appliedCode===c.code?'on':''}" data-act="chip" data-code="${esc(c.code)}" data-pct="${c.pct}">${esc(c.code)} <span class="pct">· ${c.pct}%</span></span>`).join('')}</div>` : '';
-      return `<div class="b-discount-wrap"><div class="b-discount"><input placeholder="Discount code" data-role="dcode" value="${esc(rt.appliedCode)}"><button data-act="applyDc">Apply</button></div>${chips}${rt.appliedCode?`<div class="dc-ok">✓ ${esc(rt.appliedCode)} applied — ${rt.appliedPct}% off</div>`:''}</div>`;
+      return `<div class="b-discount-wrap"><div class="b-discount"><input placeholder="Discount code" data-role="dcode" value="${esc(rt.appliedCode)}"><button data-act="applyDc">Apply</button></div>${chips}${rt.appliedCode?`<div class="dc-ok"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>${esc(rt.appliedCode)} applied · ${rt.appliedPct}% off</span></div>`:''}</div>`;
     }
   },
   recur: {
@@ -1230,12 +1232,19 @@ function blkHTML(b){
     <button class="bt-del" data-tool="del" title="Delete">${svg(IC.del)}</button></div>` : '';
   return `<div class="blk ${selId===b.id?'sel':''}" data-id="${b.id}">${tools}${d.render(b, mode==='preview')}</div>`;
 }
-/* step 1 collects contact details only — name, email, mobile. Everything else is step 2. */
-const STEP1_TYPES = ['payerName','email','phone'];
-const isStep1 = b => STEP1_TYPES.includes(b.type);
-/* page-level chrome — renders below both steps, so it's visible on step 1 and step 2 */
-const PERSIST_TYPES = ['secure','mfooter','divider'];
-const isPersist = b => PERSIST_TYPES.includes(b.type);
+/* ── two-step placement ──
+   Sensible defaults, but every block can be moved between steps in the inspector,
+   and a block added while viewing a step stays on that step. */
+const STEP1_TYPES = ['payerName','email','phone'];        // contact details
+const PERSIST_TYPES = ['secure','mfooter','divider'];      // page chrome → both steps
+function defaultStep(type){
+  if(STEP1_TYPES.includes(type)) return 1;
+  if(PERSIST_TYPES.includes(type)) return 'both';
+  return 2;
+}
+function blockStep(b){ return b.props.__step || defaultStep(b.type); }
+const isStep1  = b => blockStep(b) === 1;
+const isPersist = b => blockStep(b) === 'both';
 
 function stepperHTML(){
   const at2 = rt.step===2;
@@ -1336,6 +1345,16 @@ function renderInspector(){
     else if(f.t==='codes') html += `<div class="ins-field"><label>${f.label}</label><textarea data-k="${f.k}" data-t="codes" style="width:100%;min-height:76px;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.7;resize:vertical;outline:none;">${(v||[]).map(c=>c.code+'  '+c.pct).join('\n')}</textarea></div>`;
     else if(f.t==='apps') html += `<div class="ins-field"><label>${f.label}</label>${Object.entries(UPI_APPS).map(([k,a])=>`<div class="ins-check"><span class="ic-name">${a.name}</span><div class="sw ${b.props.apps[k]?'on':''}" data-app="${k}"></div></div>`).join('')}</div>`;
   });
+  /* two-step placement control — available on every payment-column block */
+  if(state.design.flow==='twostep' && regionOf(b.id)==='payment'){
+    const cur = String(blockStep(b));
+    html = `<div class="ins-field"><label>Show on</label>
+      <select class="dz-select" data-k="__step" data-t="step">
+        <option value="1" ${cur==='1'?'selected':''}>Step 1 · Your details</option>
+        <option value="2" ${cur==='2'?'selected':''}>Step 2 · Payment</option>
+        <option value="both" ${cur==='both'?'selected':''}>Both steps (always visible)</option>
+      </select></div>` + html;
+  }
   if(b.type==='brand') html += `<button class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:8px;" data-tool="uplogo-ins">${state.design.custLogo?'Replace logo…':'Upload logo…'}</button><div class="ins-note">Mix and match: <b>logo + name</b>, <b>logo only</b>, or <b>name only</b>. With "Show logo" on and nothing uploaded, a monogram stands in. Also under <b>Design → Your brand</b>.</div>`;
   if(b.type==='discount') html += `<div class="ins-note">In Preview, typing this code and hitting Apply gives the discount — great for live demos.</div>`;
   if(b.type==='upi') html += `<div class="ins-note">Tip: keep 4–6 apps max. Fewer choices = faster checkouts.</div>`;
@@ -1348,6 +1367,13 @@ function insApply(e){
   if(!k || !selId) return;
   const b = findBlock(selId); if(!b) return;
   if(!e.target._snap){ snapshot(); e.target._snap = true; setTimeout(()=>e.target._snap=false, 1200); }
+  if(e.target.dataset.t==='step'){
+    const v = e.target.value;
+    b.props.__step = (v==='both') ? 'both' : +v;
+    if(v!=='both') rt.step = +v;          /* jump the canvas to where the block now lives */
+    renderAll();
+    return;
+  }
   if(e.target.dataset.t==='codes'){
     b.props[k] = e.target.value.split('\n').map(l=>{
       const m = l.trim().match(/^(\S+)\s+(\d+)/);
@@ -1396,6 +1422,11 @@ $('#insBody').addEventListener('click', e=>{
 function addBlock(type, region, index){
   const d = REG[type];
   const b = { id:nid(), type, props:d.defaults() };
+  /* in two-step, a block added while viewing a step belongs to that step
+     (page-chrome blocks stay on both) */
+  if(state.design.flow==='twostep' && region==='payment' && defaultStep(type)!=='both'){
+    b.props.__step = rt.step;
+  }
   const list = state.blocks[region];
   list.splice(index==null?list.length:index, 0, b);
   return b;
@@ -1678,13 +1709,13 @@ function illusInvalid(){
 
 /* ── result screens (copy per Decentro payment-link designs; states arrive over web socket) ── */
 const OUTCOMES = {
-  success: { title:'Payment Successful', sub:b=>`Your payment was successful and has been accepted by ${b}.`, note:b=>`Please contact ${b} for the final status.`, ill:()=>illusVault('open','check'), txn:true, card:true, countdown:true },
-  pending: { title:'Payment Pending', sub:()=>`The payment on this link is under process. Please wait for some time.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusVault('open','clock'), txn:true, card:true },
+  success: { title:'Payment Successful', sub:b=>`Your payment was successful and has been accepted by ${b}.`, note:null, ill:()=>illusVault('open','check'), txn:true, card:true, countdown:true },
+  pending: { title:'Payment Pending', sub:()=>`The payment on this link is under process. Please wait for some time.`, note:b=>`This payment will reflect shortly. If it doesn't update, please contact ${b} for the final status.`, ill:()=>illusVault('open','clock'), txn:true, card:true },
   hold:    { title:'Unconfirmed Payment Status', sub:()=>`Your payment was successful but has been placed On-Hold.`, note:b=>`Please contact ${b} for the updated status.`, ill:()=>illusVault('open','hold'), txn:true, card:true },
   failed:  { title:'Payment Failed', sub:()=>`This payment is failed.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusVault('closed','fail'), txn:true, card:true, actions:`<div class="pr-actions"><button class="pr-btn" data-po="retry">Retry payment</button></div>` },
-  expired: { title:'Payment Link Expired', sub:()=>`This payment link is expired.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusVault('closed','warn'), txn:false, card:true, actions:`<div class="pr-actions"><button class="pr-btn" data-po="reinit">Re-initiate payment</button></div>` },
+  expired: { title:'Payment Link Expired', sub:()=>`This payment link is expired.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusVault('closed','warn'), txn:false, card:true },
   refund:  { title:'Refund Initiated', sub:b=>`Your payment was successful and has been rejected by ${b}.`, note:()=>`You should receive your full refund within 7 business days.`, ill:()=>illusVault('open','refund'), txn:true, card:true },
-  invalid: { title:'Invalid Link', sub:()=>`This link doesn't belong to Decentro.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusInvalid(), txn:false, card:false },
+  invalid: { title:'Invalid Link', sub:()=>`This link doesn't belong to Decentro.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusInvalid(), txn:false, card:false, help:false },
 };
 let countTimer = null;
 function stopCountdown(){ if(countTimer){ clearInterval(countTimer); countTimer = null; } }
@@ -1706,13 +1737,13 @@ function showOutcome(ov){
     </div>`:''}
     ${o.countdown?`<div class="pr-count">Redirecting in&nbsp;<b><span id="ppCount">5</span> sec</b></div>`:''}
     ${o.actions||''}
-    <div class="pr-note cv-sub">${o.note(esc(brand))}</div>
-    <div class="pr-help cv-sub">
+    ${o.note ? `<div class="pr-note cv-sub">${o.note(esc(brand))}</div>` : ''}
+    ${o.help===false ? '' : `<div class="pr-help cv-sub">
       <div class="ph-head">Need help with this payment?</div>
       <div class="ph-body">For refunds, chargebacks, order issues or any other payment-related support,
         please contact <b>${esc(brand)}</b> via their app's Help / Support section${state.merchant.supportEmail?` or write to <span class="ph-mail">${esc(state.merchant.supportEmail)}</span>`:''}${state.merchant.supportPhone?` (${esc(state.merchant.supportPhone)})`:''}.</div>
       <div class="ph-fine">Decentro only processes this payment on the merchant's behalf and cannot action refunds or disputes directly.</div>
-    </div>
+    </div>`}
     <div class="pr-trust"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5.25 3.8 10.15 9 11.35C17.2 22.15 21 17.25 21 11.996V6l-9-4Zm-1.5 14.5-3.5-3.5 1.41-1.41 2.09 2.08 5.09-5.08L17 10l-6.5 6.5Z"/></svg>100% Trusted &amp; Secure Payments</div>
     ${o.countdown?'':'<button class="po-close" data-po="close">Back to checkout</button>'}
   </div>`;
