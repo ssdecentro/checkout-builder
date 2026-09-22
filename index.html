@@ -137,6 +137,37 @@ input,select,textarea{font-family:inherit;}
   --co-pay-bg:#0b1428; --co-pay-text:#f1f5f9; --co-pay-sub:#8ea0bf; --co-pay-border:rgba(148,163,184,.22); --co-pay-field:rgba(255,255,255,.05); --co-pay-hover:rgba(255,255,255,.04);
 }
 
+/* ───────── SESSION EXPIRY TIMER ───────── */
+/* the host must not form a containing block */
+#timerHost{display:contents;}
+.ct-sentinel{height:1px;margin-bottom:-1px;}
+.ct-spacer{height:0;transition:height .18s;}
+/* resting state — card-width banner, same elevation as the checkout card */
+.co-timer{display:flex;align-items:center;gap:13px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:13px 18px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(2,11,30,.10),0 1px 3px rgba(2,11,30,.06);transition:border-radius .18s, padding .18s;}
+/* docked — full-width header bar pinned to the top of the scroll area */
+.co-timer.docked{position:fixed;z-index:45;margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;padding:12px 22px;box-shadow:0 6px 22px rgba(2,11,30,.16);}
+.co-timer.docked .ct-in{max-width:940px;margin:0 auto;}
+.co-timer .ct-in{display:flex;align-items:center;gap:13px;width:100%;min-width:0;}
+.co-timer .ct-ic{width:22px;height:22px;min-width:22px;display:flex;align-items:center;justify-content:center;}
+.co-timer .ct-ic svg{width:19px;height:19px;stroke:#dc2626;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.co-timer .ct-tx{flex:1;min-width:0;}
+.co-timer .ct-t{font-size:13.5px;font-weight:700;color:#b91c1c;line-height:1.35;}
+.co-timer .ct-t b{font-variant-numeric:tabular-nums;}
+.co-timer .ct-s{font-size:11.5px;color:#dc2626;opacity:.82;margin-top:2px;line-height:1.4;}
+.co-timer .ct-r{margin-left:auto;flex:none;font-size:11.5px;font-weight:700;color:#b91c1c;white-space:nowrap;}
+.co-timer.urgent{background:#fee2e2;border-color:#fca5a5;animation:tpulse 1.6s ease-in-out infinite;}
+@keyframes tpulse{50%{border-color:#ef4444;}}
+.co-timer.done{background:#f1f5f9;border-color:#e2e8f0;}
+.co-timer.done .ct-t,.co-timer.done .ct-s,.co-timer.done .ct-r{color:#64748b;}
+.co-timer.done .ct-ic svg{stroke:#94a3b8;}
+/* mobile: just "Payment session expires in MM:SS" */
+@media (max-width:640px){
+  .co-timer{padding:11px 13px;gap:9px;top:8px;}
+  .co-timer .ct-r,.co-timer .ct-s{display:none;}
+  .co-timer .ct-t{font-size:12.5px;}
+  .co-timer.done .ct-s{display:block;font-size:11px;}
+}
+
 /* ───────── TWO-STEP FLOW ───────── */
 .co-steps{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
 .co-steps .cs{display:flex;align-items:center;gap:8px;min-width:0;}
@@ -366,7 +397,7 @@ input,select,textarea{font-family:inherit;}
 .b-qrd .qr-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:10px;line-height:0;}
 .b-qrd .qr-card svg{width:132px;height:132px;display:block;}
 .b-qrd .qr-side{flex:1;min-width:0;}
-.b-qrd .qr-t{font-size:13px;font-weight:700;margin-bottom:5px;}
+.b-qrd .qr-t{font-size:12.5px;font-weight:600;line-height:1.55;margin-bottom:5px;}
 .b-qrd .qr-s{font-size:11.5px;line-height:1.55;}
 .b-qrd .qr-timer{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-accent) 10%,transparent);color:var(--co-accent);}
 .b-qrm{display:none;font-size:12px;line-height:1.6;padding:10px 12px;border:1px dashed var(--co-pay-border);border-radius:var(--co-r);}
@@ -475,6 +506,38 @@ input,select,textarea{font-family:inherit;}
 .po-amount{font-size:30px;font-weight:800;margin-top:14px;font-family:var(--co-font-head);}
 .po-close{margin-top:22px;height:38px;padding:0 20px;border-radius:var(--co-r);border:1px solid var(--co-pay-border);color:inherit;font-size:12px;font-weight:700;}
 .po-close:hover{background:var(--co-pay-hover);}
+
+/* ───────────────────────── DEV MODE ───────────────────────── */
+.btn.on{background:#000;color:#fff;border-color:#000;}
+body.dev-mode .canvas-wrap{cursor:crosshair;}
+body.dev-mode .blk-tools{display:none !important;}
+.dev-hover{outline:1.5px dashed #2563eb !important;outline-offset:1px;}
+.dev-sel{outline:2px solid #2563eb !important;outline-offset:1px;box-shadow:0 0 0 4px rgba(37,99,235,.14) !important;}
+.dev-badge{position:fixed;z-index:95;background:#2563eb;color:#fff;font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;pointer-events:none;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2);display:none;}
+.dev-badge.show{display:block;}
+
+.dv-crumbs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;}
+.dv-crumb{font-family:ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;padding:3px 7px;border-radius:5px;background:var(--surface);border:1px solid var(--border);color:var(--sub);cursor:pointer;}
+.dv-crumb:hover{border-color:#000;color:#000;}
+.dv-crumb.on{background:#2563eb;border-color:#2563eb;color:#fff;}
+.dv-sel{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:7px 9px;margin-bottom:12px;word-break:break-all;line-height:1.5;}
+.dv-tabs{display:flex;gap:3px;background:var(--surface);border-radius:8px;padding:3px;margin-bottom:10px;}
+.dv-tabs button{flex:1;height:26px;border-radius:6px;font-size:11px;font-weight:600;color:var(--sub);}
+.dv-tabs button.on{background:#fff;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.dv-code{position:relative;background:#0f172a;border-radius:8px;margin-bottom:10px;}
+.dv-code pre{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;line-height:1.65;color:#cbd5e1;padding:11px 12px;white-space:pre-wrap;word-break:break-word;max-height:none;overflow:visible;}
+.dv-code .k{color:#7dd3fc;} .dv-code .v{color:#fca5a5;} .dv-code .s{color:#c4b5fd;} .dv-code .c{color:#64748b;font-style:italic;}
+.dv-copy{position:absolute;top:7px;right:7px;height:22px;padding:0 9px;border-radius:5px;background:rgba(255,255,255,.12);color:#e2e8f0;font-size:10px;font-weight:700;}
+.dv-copy:hover{background:rgba(255,255,255,.22);}
+.dv-sec{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;}
+.dv-kv{display:flex;justify-content:space-between;gap:10px;font-size:11px;padding:5px 0;border-bottom:1px solid #f1f5f9;}
+.dv-kv:last-child{border-bottom:none;}
+.dv-kv .dk{color:var(--muted);font-weight:600;flex:none;}
+.dv-kv .dv{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right;word-break:break-all;}
+.dv-swatch{display:inline-block;width:10px;height:10px;border-radius:3px;border:1px solid rgba(0,0,0,.15);vertical-align:-1px;margin-right:5px;}
+.dv-hint{font-size:11px;line-height:1.6;color:var(--muted);background:var(--surface);border-radius:8px;padding:10px 12px;}
+.dv-actions{display:flex;gap:7px;margin-bottom:12px;}
+.dv-actions .btn{flex:1;justify-content:center;height:30px;font-size:11px;}
 
 /* ───────────────────────── INSPECTOR ───────────────────────── */
 .inspector{width:290px;min-width:290px;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;}
@@ -629,6 +692,7 @@ input,select,textarea{font-family:inherit;}
       <button class="on" data-mode="edit"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg><span>Edit</span></button>
       <button data-mode="preview"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><span>Preview</span></button>
     </div>
+    <button class="btn btn-outline" id="devBtn" title="Dev mode — click any element to copy its HTML &amp; CSS"><svg viewBox="0 0 24 24"><path d="m8 17-5-5 5-5M16 7l5 5-5 5M14 4l-4 16"/></svg><span>Dev</span></button>
     <button class="btn btn-outline" id="clearBtn">Clear canvas</button>
     <button class="btn btn-black" id="exportBtn"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Export HTML</button>
   </div>
@@ -662,6 +726,19 @@ input,select,textarea{font-family:inherit;}
       <div class="dz-section">
         <div class="dz-label">Corner radius</div>
         <div class="dz-flex"><input type="range" class="dz-range" id="radiusRange" min="0" max="22" step="1" value="10"><span class="dz-val" id="radiusVal">10px</span></div>
+      </div>
+      <div class="dz-section">
+        <div class="dz-label">Session expiry timer</div>
+        <div class="dz-toggle-row">
+          <div><div class="tr-name">Show timer banner</div><div class="tr-sub">Above the checkout card</div></div>
+          <div class="sw on" id="timerSw"></div>
+        </div>
+        <div class="dz-flex" style="margin-top:6px;">
+          <span style="font-size:11px;font-weight:600;color:var(--sub);">Duration</span>
+          <input type="range" class="dz-range" id="timerRange" min="1" max="30" step="1" value="10" style="flex:1;margin:0 10px;">
+          <span class="dz-val" id="timerVal">10 min</span>
+        </div>
+        <div class="ins-note" style="margin-top:9px;">Counts down in Preview and in the exported page. On zero it flips to the <b>Payment Link Expired</b> screen.</div>
       </div>
       <div class="dz-section">
         <div class="dz-label">Checkout flow</div>
@@ -725,6 +802,7 @@ input,select,textarea{font-family:inherit;}
             <div class="ct-zoom" id="blockCount"></div>
           </div>
         </div>
+        <div id="timerHost"></div>
         <div class="checkout theme-navy edit-mode" id="checkout">
           <div class="co-col co-summary" id="regionSummary" data-region="summary"></div>
           <div class="co-col co-payment" id="regionPayment" data-region="payment"></div>
@@ -793,6 +871,7 @@ input,select,textarea{font-family:inherit;}
 <button class="fab-panel" id="fabPanel"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Blocks &amp; Design</button>
 <div class="drawer-scrim" id="drawerScrim"></div>
 
+<div class="dev-badge" id="devBadge"></div>
 <div class="toast" id="toast"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span id="toastMsg"></span></div>
 
 <script>
@@ -811,7 +890,7 @@ let uid = 1;
 const nid = () => 'b' + (uid++);
 
 const state = {
-  design: { theme:'theme-light', accent:'#096ef2', accentInk:'#ffffff', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'single' },
+  design: { theme:'theme-light', accent:'#096ef2', accentInk:'#ffffff', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'single', timer:true, timerMins:10 },
   merchant: {
     supportEmail:'support@aurora.co', supportPhone:'+91 80 4000 1234', country:'India', vpa:'aurora@upi',
     socials:{ web:'https://aurora.co', li:'', x:'', ig:'' },
@@ -1097,21 +1176,20 @@ const REG = {
           <div class="uv-hint cv-sub">We'll send a payment request to this UPI ID — approve it in whichever app you use.</div>
         </div>`:''}` : '';
       return methodShell(b, IC.upi, `<span class="bm-badge">INSTANT</span>`, `
-        <div class="upi-note cv-sub">Choose your UPI app — you'll approve the payment there</div>
+        <div class="upi-note cv-sub">Choose your UPI app to complete the payment</div>
         <div class="upi-grid">${apps.map(([k])=>{const a=UPI_APPS[k];return `<div class="upi-app ${rt.selUpi===k?'sel':''}" data-act="upi" data-k="${k}"><div class="ua-logo" style="background:${a.c}">${a.ab}</div><div class="ua-name">${a.name}</div><div class="ua-radio"></div></div>`;}).join('')}</div>
         ${anyRow}`);
     }
   },
   upiqr: {
     group:'fields', name:'UPI QR', sub:'Scan-to-pay on desktop', region:'payment', icon:IC.qr, method:true,
-    defaults:()=>({title:'Scan QR to pay', open:false, note:'Scan with any UPI app — GPay, PhonePe, Paytm & more'}),
+    defaults:()=>({title:'Scan QR to pay', open:false, note:'Scan the QR with your phone and pay via any UPI app'}),
     fields:[{k:'title',label:'Title',t:'text'},{k:'note',label:'Helper text',t:'text'}],
     render:(b)=>methodShell(b, IC.qr, `<span class="bm-badge">DESKTOP</span>`, `
       <div class="b-qrd">
         <div class="qr-card">${qrSvg()}</div>
         <div class="qr-side">
-          <div class="qr-t">Scan &amp; approve on your phone</div>
-          <div class="qr-s cv-sub">${esc(b.props.note)}</div>
+          <div class="qr-t">${esc(b.props.note)}</div>
           <div class="qr-timer">${svg(IC.recur)}Refreshes every 8 min</div>
         </div>
       </div>
@@ -1301,6 +1379,7 @@ function renderAll(){
   $('#blockCount').textContent = allBlocks().length + ' blocks · ' + (device==='desktop'?'940px':'420px');
   $('#poweredLine').style.display = state.design.powered ? '' : 'none';
   $('#stepSwitch').style.display = (state.design.flow==='twostep' && mode==='edit') ? 'flex' : 'none';
+  if(!tInt) renderTimer();
   document.querySelectorAll('#stepSwitch button').forEach(x=>x.classList.toggle('on', +x.dataset.st===rt.step));
   renderInspector();
 }
@@ -1308,6 +1387,7 @@ function renderAll(){
 /* ═══════════════════════ INSPECTOR ═══════════════════════ */
 function renderInspector(){
   const body = $('#insBody');
+  if(devMode){ document.querySelector('.inspector').classList.add('open'); renderDevPanel(); return; }
   const b = selId && findBlock(selId);
   /* on narrow screens the inspector is a slide-in drawer — open it only with a selection */
   document.querySelector('.inspector').classList.toggle('open', !!b);
@@ -1492,6 +1572,7 @@ $('#checkout').addEventListener('mousedown', e=>{
   if(grab && mode==='edit'){ grab.closest('.blk').draggable = true; }
 });
 $('#checkout').addEventListener('click', e=>{
+  if(devMode) return;                       /* dev mode owns canvas clicks */
   const blk = e.target.closest('.blk');
   const tool = e.target.closest('[data-tool]');
   const act = e.target.closest('[data-act]');
@@ -1901,6 +1982,7 @@ $('#modeSeg').addEventListener('click', e=>{
   stopCountdown();
   $('#payOverlay').classList.remove('show');
   renderAll();
+  renderTimer();          /* restart / freeze the session clock with the mode */
 });
 $('#deviceSeg').addEventListener('click', e=>{
   const btn = e.target.closest('button'); if(!btn) return;
@@ -1943,6 +2025,9 @@ function syncDesignUI(){
   $('#radiusVal').textContent = state.design.radius+'px';
   document.querySelectorAll('#methodSeg button').forEach(b=>b.classList.toggle('on', b.dataset.ml===state.design.methodLayout));
   document.querySelectorAll('#flowSeg button').forEach(b=>b.classList.toggle('on', b.dataset.flow===state.design.flow));
+  $('#timerSw').classList.toggle('on', state.design.timer);
+  $('#timerRange').value = state.design.timerMins;
+  $('#timerVal').textContent = state.design.timerMins + ' min';
   $('#poweredSw').classList.toggle('on', state.design.powered);
 }
 $('#themeRow').addEventListener('click', e=>{
@@ -2067,9 +2152,322 @@ document.querySelectorAll('[data-close]').forEach(btn=>{
   document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) e.target.classList.remove('show'); });
 });
 
+/* ═══════════════════════ SESSION TIMER ═══════════════════════ */
+const mmss = s => Math.floor(Math.max(s,0)/60).toString().padStart(2,'0') + ':' + (Math.max(s,0)%60).toString().padStart(2,'0');
+function timerHTML(secs){
+  const urgent = secs <= 120 && secs > 0, done = secs <= 0;
+  return `<div class="ct-sentinel" id="ctSentinel"></div>
+  <div class="co-timer ${urgent?'urgent':''} ${done?'done':''}" id="coTimer">
+    <span class="ct-in">
+      <span class="ct-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.25"/><path d="M12 7.6V12l3.1 1.9"/></svg></span>
+      <span class="ct-tx">
+        <span class="ct-t">${done ? 'Payment session expired' : `Payment session expires in <b id="ctClock">${mmss(secs)}</b>`}</span>
+        ${done ? `<span class="ct-s">Please ask the merchant for a fresh payment link.</span>` : ''}
+      </span>
+      <span class="ct-r">Secure checkout</span>
+    </span>
+  </div>
+  <div class="ct-spacer" id="ctSpacer"></div>`;
+}
+let tSecs = 0, tTotal = 0, tInt = null;
+function stopTimer(){ if(tInt){ clearInterval(tInt); tInt = null; } }
+function renderTimer(){
+  const host = $('#timerHost');
+  if(!state.design.timer){ host.innerHTML = ''; stopTimer(); if(dockIO){ dockIO.disconnect(); dockIO=null; } return; }
+  tTotal = state.design.timerMins * 60;
+  if(mode!=='preview'){ stopTimer(); tSecs = tTotal; host.innerHTML = timerHTML(tSecs); initDock(); return; }
+  /* preview: run it */
+  stopTimer();
+  tSecs = tTotal;
+  host.innerHTML = timerHTML(tSecs);
+  initDock();
+  tInt = setInterval(()=>{
+    tSecs--;
+    const clock = document.getElementById('ctClock');
+    if(clock) clock.textContent = mmss(tSecs);
+    const el = document.getElementById('coTimer');
+    if(el) el.classList.toggle('urgent', tSecs<=120 && tSecs>0);
+    if(tSecs<=0){
+      stopTimer();
+      host.innerHTML = timerHTML(0);
+      initDock();
+      simOutcome = 'expired';
+      const sel = $('#simSel'); if(sel) sel.value = 'expired';
+      const ov = $('#payOverlay'); ov.classList.add('show'); showOutcome(ov);
+      toast('Session expired — showing the expired screen');
+    }
+  }, 1000);
+}
+/* dock the banner into a full-width header bar once it scrolls out of view */
+let dockIO = null;
+function initDock(){
+  if(dockIO){ dockIO.disconnect(); dockIO = null; }
+  const sentinel = document.getElementById('ctSentinel');
+  const banner   = document.getElementById('coTimer');
+  const spacer   = document.getElementById('ctSpacer');
+  const scroller = document.querySelector('.canvas-wrap');
+  if(!sentinel || !banner || !scroller) return;
+  const place = () => {
+    if(!banner.classList.contains('docked')) return;
+    const r = scroller.getBoundingClientRect();
+    banner.style.left  = r.left + 'px';
+    banner.style.top   = r.top + 'px';
+    banner.style.width = r.width + 'px';
+  };
+  dockIO = new IntersectionObserver(([e])=>{
+    const docked = !e.isIntersecting;
+    banner.classList.toggle('docked', docked);
+    if(docked){ spacer.style.height = banner.offsetHeight + 14 + 'px'; place(); }
+    else { spacer.style.height = '0px'; banner.style.left = banner.style.top = banner.style.width = ''; }
+  }, {root:scroller, threshold:0});
+  dockIO.observe(sentinel);
+  scroller.addEventListener('scroll', place, {passive:true});
+  window.addEventListener('resize', place);
+}
+
+$('#timerSw').addEventListener('click', ()=>{
+  snapshot(); state.design.timer = !state.design.timer; syncDesignUI(); renderTimer();
+});
+$('#timerRange').addEventListener('input', e=>{
+  state.design.timerMins = +e.target.value;
+  $('#timerVal').textContent = e.target.value + ' min';
+  renderTimer();
+});
+
+/* ═══════════════════════ DEV MODE ═══════════════════════
+   Click any element on the canvas to read its HTML, the CSS rules that
+   actually match it, and the resolved design tokens — then copy. */
+let devMode = false, devEl = null, devTab = 'html';
+
+$('#devBtn').addEventListener('click', ()=>{
+  devMode = !devMode;
+  document.body.classList.toggle('dev-mode', devMode);
+  $('#devBtn').classList.toggle('on', devMode);
+  clearDevMarks();
+  devEl = null;
+  $('#devBadge').classList.remove('show');
+  if(devMode){ document.querySelector('.inspector').classList.add('open'); toast('Dev mode on — click any element to inspect it'); }
+  else { toast('Dev mode off'); }
+  renderInspector();
+});
+function clearDevMarks(){
+  document.querySelectorAll('.dev-hover').forEach(x=>x.classList.remove('dev-hover'));
+  if(!devMode) document.querySelectorAll('.dev-sel').forEach(x=>x.classList.remove('dev-sel'));
+}
+
+/* hover highlight + label */
+document.addEventListener('mouseover', e=>{
+  if(!devMode) return;
+  const wrap = document.querySelector('.canvas-wrap');
+  if(!wrap.contains(e.target)) { $('#devBadge').classList.remove('show'); return; }
+  document.querySelectorAll('.dev-hover').forEach(x=>x.classList.remove('dev-hover'));
+  e.target.classList.add('dev-hover');
+  const b = $('#devBadge'), r = e.target.getBoundingClientRect();
+  b.textContent = shortSel(e.target) + '  ' + Math.round(r.width) + '×' + Math.round(r.height);
+  b.style.left = Math.max(6, r.left) + 'px';
+  b.style.top  = (r.top > 26 ? r.top - 22 : r.bottom + 6) + 'px';
+  b.classList.add('show');
+}, true);
+
+/* capture clicks before the builder's own handlers */
+document.addEventListener('click', e=>{
+  if(!devMode) return;
+  const wrap = document.querySelector('.canvas-wrap');
+  if(!wrap.contains(e.target)) return;
+  e.preventDefault(); e.stopPropagation();
+  selectDevEl(e.target);
+}, true);
+
+function selectDevEl(el){
+  document.querySelectorAll('.dev-sel').forEach(x=>x.classList.remove('dev-sel'));
+  devEl = el;
+  el.classList.add('dev-sel');
+  renderInspector();
+}
+
+function shortSel(el){
+  if(!el || !el.tagName) return '';
+  let s = el.tagName.toLowerCase();
+  if(el.id) return s + '#' + el.id;
+  const cls = [...el.classList].filter(c=>!/^dev-(hover|sel)$/.test(c) && c!=='sel');
+  if(cls.length) s += '.' + cls.slice(0,3).join('.');
+  return s;
+}
+function fullSel(el){
+  const path = [];
+  let n = el;
+  while(n && n.nodeType===1 && !n.classList.contains('canvas-wrap')){
+    path.unshift(shortSel(n));
+    n = n.parentElement;
+  }
+  return path.slice(-4).join(' > ');
+}
+
+/* every CSS rule in the document that matches this element (media queries included) */
+function cssRulesFor(el){
+  const out = [];
+  const walk = (rules, cond) => {
+    for(const r of rules){
+      if(r.cssRules && (r.conditionText || r.media)){          /* @media */
+        walk(r.cssRules, r.conditionText || r.media.mediaText);
+      } else if(r.selectorText){
+        const hits = r.selectorText.split(',').map(s=>s.trim()).filter(p=>{
+          try{ return el.matches(p.replace(/::?(hover|active|focus|focus-visible|before|after)[^\s,]*/g,'')); }
+          catch(e){ return false; }
+        });
+        if(hits.length && r.style.cssText) out.push({sel:hits.join(', '), body:r.style.cssText, cond});
+      }
+    }
+  };
+  for(const sheet of document.styleSheets){
+    let rules; try{ rules = sheet.cssRules; }catch(e){ continue; }   /* cross-origin */
+    if(rules) walk(rules);
+  }
+  /* de-dupe, builder-only chrome removed */
+  const seen = new Set();
+  return out.filter(r=>{
+    if(/dev-(hover|sel)|blk-tools|\.sel\b/.test(r.sel)) return false;
+    const k = r.cond + '|' + r.sel + '|' + r.body;
+    if(seen.has(k)) return false; seen.add(k); return true;
+  });
+}
+function cssText(el){
+  const rules = cssRulesFor(el);
+  if(!rules.length) return '/* No authored CSS rule matches this element —\n   see the Computed tab for its resolved styles. */';
+  const fmt = body => body.split(/;\s*/).filter(Boolean).map(p=>'  '+p+';').join('\n');
+  const plain = rules.filter(r=>!r.cond), media = rules.filter(r=>r.cond);
+  let s = plain.map(r=>`${r.sel} {\n${fmt(r.body)}\n}`).join('\n\n');
+  const byCond = {};
+  media.forEach(r=>{ (byCond[r.cond] = byCond[r.cond]||[]).push(r); });
+  Object.keys(byCond).forEach(c=>{
+    s += `\n\n@media ${c} {\n` + byCond[c].map(r=>`  ${r.sel} {\n${fmt(r.body).split('\n').map(l=>'  '+l).join('\n')}\n  }`).join('\n') + `\n}`;
+  });
+  return s;
+}
+
+/* clean, production-ready markup — builder chrome stripped */
+function htmlText(el){
+  const c = el.cloneNode(true);
+  c.querySelectorAll('.blk-tools').forEach(x=>x.remove());
+  const scrub = n => {
+    if(n.nodeType!==1) return;
+    n.classList.remove('dev-hover','dev-sel');
+    if(!n.getAttribute('class')) n.removeAttribute('class');
+    ['contenteditable','spellcheck','data-ei','data-tool','draggable'].forEach(a=>n.removeAttribute(a));
+    [...n.children].forEach(scrub);
+  };
+  scrub(c);
+  return prettyHTML(c.outerHTML);
+}
+function prettyHTML(html){
+  const VOID = /^(area|base|br|col|embed|hr|img|input|link|meta|source|track|wbr|path|circle|rect|line|polygon|polyline|ellipse|stop|use)$/i;
+  let out = '', depth = 0;
+  html.replace(/></g, '>\n<').split('\n').forEach(line=>{
+    const l = line.trim(); if(!l) return;
+    const closing = /^<\//.test(l);
+    const tag = (l.match(/^<\/?([a-zA-Z0-9-]+)/)||[])[1] || '';
+    const selfClose = /\/>$/.test(l) || VOID.test(tag);
+    const opensAndCloses = /^<[^>]+>.*<\/[a-zA-Z0-9-]+>$/.test(l);
+    if(closing) depth = Math.max(0, depth-1);
+    out += '  '.repeat(depth) + l + '\n';
+    if(!closing && !selfClose && !opensAndCloses) depth++;
+  });
+  return out.trim();
+}
+
+const DEV_TOKENS = ['--co-accent','--co-accent-ink','--co-r','--co-font-head','--co-pay-bg','--co-pay-text','--co-pay-sub','--co-pay-border','--co-pay-field','--co-sum-bg','--co-sum-text','--co-sum-border'];
+const DEV_COMPUTED = ['display','position','width','height','padding','margin','font-family','font-size','font-weight','line-height','letter-spacing','color','background','background-color','background-image','background-size','background-position','border','border-radius','box-shadow','backdrop-filter','gap','flex','grid-template-columns','align-items','justify-content','opacity','z-index','overflow','transition','cursor'];
+
+function computedText(el){
+  const cs = getComputedStyle(el);
+  const lines = [];
+  DEV_COMPUTED.forEach(p=>{
+    let v = cs.getPropertyValue(p).trim();
+    if(!v || v==='none' || v==='normal' || v==='auto' || v==='0px' || v==='rgba(0, 0, 0, 0)') return;
+    if(p==='background' && v.length>160) return;
+    lines.push(`  ${p}: ${v};`);
+  });
+  const toks = DEV_TOKENS.map(t=>{ const v = cs.getPropertyValue(t).trim(); return v?`  ${t}: ${v};`:''; }).filter(Boolean);
+  return `/* computed */\n${shortSel(el)} {\n${lines.join('\n')}\n}` +
+         (toks.length?`\n\n/* design tokens in scope */\n:root {\n${toks.join('\n')}\n}`:'');
+}
+function highlight(code, isHTML){
+  const e = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if(isHTML) return e(code)
+    .replace(/(&lt;\/?)([a-zA-Z0-9-]+)/g,'$1<span class="k">$2</span>')
+    .replace(/([a-zA-Z-]+)=(&quot;|")(.*?)\2/g,'<span class="v">$1</span>=<span class="s">"$3"</span>');
+  return e(code)
+    .replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="c">$1</span>')
+    .replace(/^(\s*)([a-zA-Z-]+)(:)/gm,'$1<span class="v">$2</span>$3')
+    .replace(/^([^\s@/][^{\n]*)(\{)/gm,'<span class="k">$1</span>$2');
+}
+
+function renderDevPanel(){
+  $('#insTitle').textContent = 'Dev inspector';
+  $('#insSub').textContent = devEl ? fullSel(devEl) : 'Click an element on the canvas';
+  const body = $('#insBody');
+  if(!devEl){
+    body.innerHTML = `<div class="dv-hint"><b>Dev mode is on.</b><br><br>
+      Click any element on the canvas — a block, the checkout card, the page background, a button — to see its
+      clean HTML, every CSS rule that matches it, and the resolved design tokens. Each panel has its own Copy button.
+      <br><br>Tip: use the breadcrumb to step up to a parent (for the card shell, shadow or dotted background).</div>`;
+    return;
+  }
+  /* ancestor breadcrumb */
+  const chain = []; let n = devEl;
+  while(n && n.nodeType===1 && !n.classList.contains('canvas')){ chain.unshift(n); n = n.parentElement; }
+  const crumbs = chain.slice(-6).map((el,i,a)=>
+    `<span class="dv-crumb ${el===devEl?'on':''}" data-crumb="${i}">${esc(shortSel(el))}</span>`).join('');
+  window.__devChain = chain.slice(-6);
+
+  const code = devTab==='html' ? htmlText(devEl) : devTab==='css' ? cssText(devEl) : computedText(devEl);
+  body.innerHTML = `
+    <div class="dv-crumbs">${crumbs}</div>
+    <div class="dv-sel">${esc(fullSel(devEl))}</div>
+    <div class="dv-tabs">
+      <button class="${devTab==='html'?'on':''}" data-dtab="html">HTML</button>
+      <button class="${devTab==='css'?'on':''}" data-dtab="css">CSS</button>
+      <button class="${devTab==='computed'?'on':''}" data-dtab="computed">Computed</button>
+    </div>
+    <div class="dv-code"><button class="dv-copy" data-dcopy="tab">Copy</button><pre>${highlight(code, devTab==='html')}</pre></div>
+    <div class="dv-actions">
+      <button class="btn btn-outline" data-dcopy="both">Copy HTML + CSS</button>
+    </div>
+    <div class="dv-sec">Box</div>
+    ${(()=>{ const r = devEl.getBoundingClientRect(), cs = getComputedStyle(devEl);
+      const sw = v => /^rgb|^#/.test(v) ? `<span class="dv-swatch" style="background:${v}"></span>` : '';
+      return [['size', Math.round(r.width)+' × '+Math.round(r.height)+' px'],
+              ['padding', cs.padding],['margin', cs.margin],['radius', cs.borderRadius],
+              ['color', sw(cs.color)+cs.color],['background', sw(cs.backgroundColor)+cs.backgroundColor],
+              ['font', cs.fontSize+' / '+cs.fontWeight]]
+        .filter(([,v])=>v && !/^0px$/.test(String(v)))
+        .map(([k,v])=>`<div class="dv-kv"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('');
+    })()}`;
+}
+$('#insBody').addEventListener('click', e=>{
+  if(!devMode) return;
+  const tab = e.target.closest('[data-dtab]');
+  if(tab){ devTab = tab.dataset.dtab; renderDevPanel(); return; }
+  const crumb = e.target.closest('[data-crumb]');
+  if(crumb){ selectDevEl(window.__devChain[+crumb.dataset.crumb]); return; }
+  const cp = e.target.closest('[data-dcopy]');
+  if(cp && devEl){
+    const txt = cp.dataset.dcopy==='both'
+      ? `<!-- HTML -->\n${htmlText(devEl)}\n\n/* CSS */\n${cssText(devEl)}`
+      : (devTab==='html' ? htmlText(devEl) : devTab==='css' ? cssText(devEl) : computedText(devEl));
+    devCopy(txt);
+  }
+}, true);
+function devCopy(txt){
+  const done = ()=>toast('Copied to clipboard');
+  if(navigator.clipboard?.writeText) navigator.clipboard.writeText(txt).then(done).catch(fb); else fb();
+  function fb(){ const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){ toast('Copy failed'); } ta.remove(); }
+}
+
 /* ═══════════════════════ EXPORT ═══════════════════════ */
 function collectCheckoutCSS(){
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|@keyframes (draw|popin|spin|dlpulse|stagein))/;
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse))/;
   const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell|step-switch)/;
   let css = '';
   for(const sheet of document.styleSheets){
@@ -2120,6 +2518,38 @@ function buildExportHTML(){
   const runtime = [
     "var LEGAL=" + legalJson + ";",
     "/* Payment status (success / failed / expired) is driven by web-socket events from the backend in production. */",
+    d.timer ? [
+    "/* dock the timer into a full-width header bar on scroll */",
+    "(function(){",
+    "  var sent=document.getElementById('ctSentinel'), bar=document.getElementById('coTimer'), sp=document.getElementById('ctSpacer');",
+    "  if(!sent||!bar||!sp||!window.IntersectionObserver) return;",
+    "  new IntersectionObserver(function(en){",
+    "    var docked=!en[0].isIntersecting;",
+    "    bar.classList.toggle('docked', docked);",
+    "    if(docked){ sp.style.height=(bar.offsetHeight+14)+'px'; bar.style.left='0px'; bar.style.top='0px'; bar.style.width='100%'; }",
+    "    else { sp.style.height='0px'; bar.style.left=bar.style.top=bar.style.width=''; }",
+    "  },{threshold:0}).observe(sent);",
+    "})();",
+    "/* session expiry countdown */",
+    "(function(){",
+    "  var total=" + (d.timerMins*60) + ", s=total, el=document.getElementById('coTimer');",
+    "  if(!el) return;",
+    "  var pad=function(n){return String(n).padStart(2,'0');};",
+    "  var t=setInterval(function(){",
+    "    s--;",
+    "    var c=document.getElementById('ctClock');",
+    "    if(c) c.textContent = pad(Math.floor(Math.max(s,0)/60))+':'+pad(Math.max(s,0)%60);",
+    "    el.classList.toggle('urgent', s<=120 && s>0);",
+    "    if(s<=0){",
+    "      clearInterval(t); el.classList.add('done'); el.classList.remove('urgent');",
+    "      el.querySelector('.ct-t').textContent='Payment session expired';",
+    "      el.querySelector('.ct-s').textContent='Please ask the merchant for a fresh payment link.';",
+    "      var ov=document.getElementById('payOverlay');",
+    "      if(ov){ ov.innerHTML='<div class=\"pr-wrap\"><div class=\"po-title\">Payment Link Expired</div><div class=\"po-sub cv-sub\">This payment link is expired.</div><div class=\"pr-note cv-sub\">Please connect with the merchant/ sender of this link to share a new one with you.</div></div>'; ov.classList.add('show'); }",
+    "    }",
+    "  },1000);",
+    "})();"
+    ].join('\n') : '',
     "function goStep(n){",
     "  document.querySelectorAll('.co-stage').forEach(function(s){s.classList.toggle('on', s.dataset.stage===String(n));});",
     "  var st=document.querySelector('.co-steps'); if(st){",
@@ -2190,10 +2620,12 @@ function buildExportHTML(){
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Montserrat',sans-serif;background:#eef2f7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+/* align-items:flex-start + margin:auto centres when it fits and never clips the
+   top once the page overflows — required for the sticky timer to behave */
+body{font-family:'Montserrat',sans-serif;background:#f8fafc;background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:22px 22px;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
 input{font-family:inherit;}
-.page{width:100%;max-width:940px;}
+.page{width:100%;max-width:940px;margin:auto;}
 .blk + .blk{margin-top:18px;}
 .powered{width:100%;text-align:center;font-size:11px;color:#94a3b8;margin-top:16px;}
 .powered span{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;}
@@ -2219,6 +2651,7 @@ ${collectCheckoutCSS()}
 </head>
 <body>
 <div class="page">
+${d.timer ? timerHTML(d.timerMins*60) : ''}
 <div class="checkout ${d.theme}" style="--co-accent:${d.accent};--co-accent-ink:${d.accentInk};--co-font-head:${d.font};--co-r:${d.radius}px">
   <div class="co-col co-summary">
 ${renderStatic('summary')}
