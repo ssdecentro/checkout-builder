@@ -511,6 +511,11 @@ input,select,textarea{font-family:inherit;}
 .btn.on{background:#000;color:#fff;border-color:#000;}
 body.dev-mode .canvas-wrap{cursor:crosshair;}
 body.dev-mode .blk-tools{display:none !important;}
+/* Dev mode: keep the status overlay inside the checkout card instead of covering
+   the viewport, so the inspector panel stays visible while inspecting it */
+body.dev-mode .pay-overlay.show{position:absolute;top:0;left:0;right:0;bottom:0;z-index:40;border-radius:inherit;}
+body.dev-mode .inspector{position:relative;z-index:90;}
+body.dev-mode .topbar{z-index:95;}
 .dev-hover{outline:1.5px dashed #2563eb !important;outline-offset:1px;}
 .dev-sel{outline:2px solid #2563eb !important;outline-offset:1px;box-shadow:0 0 0 4px rgba(37,99,235,.14) !important;}
 .dev-badge{position:fixed;z-index:95;background:#2563eb;color:#fff;font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;pointer-events:none;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2);display:none;}
@@ -536,6 +541,13 @@ body.dev-mode .blk-tools{display:none !important;}
 .dv-kv .dv{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right;word-break:break-all;}
 .dv-swatch{display:inline-block;width:10px;height:10px;border-radius:3px;border:1px solid rgba(0,0,0,.15);vertical-align:-1px;margin-right:5px;}
 .dv-hint{font-size:11px;line-height:1.6;color:var(--muted);background:var(--surface);border-radius:8px;padding:10px 12px;}
+.dv-asset{display:flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:8px;padding:7px 9px;margin-bottom:6px;}
+.dv-asset .da-prev{width:28px;height:28px;min-width:28px;border-radius:6px;background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.dv-asset .da-prev svg{width:16px;height:16px;}
+.dv-asset .da-prev img{max-width:100%;max-height:100%;object-fit:contain;}
+.dv-asset .da-n{flex:1;min-width:0;font-family:ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dv-asset .da-b{flex:none;height:24px;padding:0 9px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:10px;font-weight:700;color:var(--sub);}
+.dv-asset .da-b:hover{border-color:#000;color:#000;}
 .dv-actions{display:flex;gap:7px;margin-bottom:12px;}
 .dv-actions .btn{flex:1;justify-content:center;height:30px;font-size:11px;}
 
@@ -1731,7 +1743,17 @@ document.addEventListener('keydown', e=>{
 /* In production these states arrive over a web socket from the Decentro backend.
    The simulator seg (Success / Failed / Expired) stands in for those events. */
 let simOutcome = 'success';
-$('#simSel').addEventListener('change', e=>{ simOutcome = e.target.value; });
+$('#simSel').addEventListener('change', e=>{
+  simOutcome = e.target.value;
+  /* in Preview, show the chosen status screen straight away — no need to run the
+     whole pay flow first (and Dev mode swallows canvas clicks, so this is the way in) */
+  if(mode==='preview'){
+    const ov = $('#payOverlay');
+    ov.classList.add('show');
+    showOutcome(ov);
+    if(devMode) toast('Showing the ' + e.target.value + ' screen — click any element to inspect it');
+  }
+});
 
 const wsNote = `<div class="po-ws cv-sub"><span class="ws-dot"></span>Listening for payment status · web socket</div>`;
 
@@ -1823,7 +1845,8 @@ function showOutcome(ov){
     <div class="pr-trust"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5.25 3.8 10.15 9 11.35C17.2 22.15 21 17.25 21 11.996V6l-9-4Zm-1.5 14.5-3.5-3.5 1.41-1.41 2.09 2.08 5.09-5.08L17 10l-6.5 6.5Z"/></svg>100% Trusted &amp; Secure Payments</div>
     ${o.countdown?'':'<button class="po-close" data-po="close">Back to checkout</button>'}
   </div>`;
-  if(o.countdown){
+  /* Dev mode: never auto-dismiss the card out from under someone inspecting it */
+  if(o.countdown && !devMode){
     let n = 5;
     countTimer = setInterval(()=>{
       n--;
@@ -2243,6 +2266,7 @@ $('#devBtn').addEventListener('click', ()=>{
   devMode = !devMode;
   document.body.classList.toggle('dev-mode', devMode);
   $('#devBtn').classList.toggle('on', devMode);
+  if(devMode) stopCountdown();     /* freeze any running auto-redirect */
   clearDevMarks();
   devEl = null;
   $('#devBadge').classList.remove('show');
@@ -2402,6 +2426,83 @@ function highlight(code, isHTML){
     .replace(/^([^\s@/][^{\n]*)(\{)/gm,'<span class="k">$1</span>$2');
 }
 
+/* ── downloadable assets: every SVG icon and image in the selection ── */
+function assetsIn(el){
+  const out = [];
+  const push = (type, node) => { if(!out.some(a=>a.el===node)) out.push({type, el:node}); };
+  if(el.tagName && el.tagName.toLowerCase()==='svg') push('svg', el);
+  if(el.tagName === 'IMG') push('img', el);
+  el.querySelectorAll('svg').forEach(s=>push('svg', s));
+  el.querySelectorAll('img').forEach(i=>push('img', i));
+  return out;
+}
+function assetName(a, i){
+  let base = '';
+  let n = a.el;
+  for(let up=0; up<3 && n; up++, n = n.parentElement){
+    const cls = [...(n.classList||[])].filter(c=>!/^dev-|^blk$|^sel$/.test(c))[0];
+    if(cls){ base = cls; break; }
+  }
+  base = (base || (a.type==='svg' ? 'icon' : 'image')).replace(/[^a-z0-9-]/gi,'-').toLowerCase();
+  return `decentro-${base}${i?'-'+(i+1):''}.${a.type==='svg' ? 'svg' : (String(a.el.src||'').match(/^data:image\/(\w+)/)||[,'png'])[1]}`;
+}
+/* icons take stroke/fill from CSS — bake the computed values in so the file
+   stands alone outside the page */
+function svgFile(svg){
+  const c = svg.cloneNode(true);
+  const cs = getComputedStyle(svg);
+  c.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  if(!c.getAttribute('viewBox') && svg.viewBox?.baseVal?.width)
+    c.setAttribute('viewBox', `0 0 ${svg.viewBox.baseVal.width} ${svg.viewBox.baseVal.height}`);
+  const r = svg.getBoundingClientRect();
+  if(!c.getAttribute('width'))  c.setAttribute('width',  Math.round(r.width)  || 24);
+  if(!c.getAttribute('height')) c.setAttribute('height', Math.round(r.height) || 24);
+  const stroke = cs.stroke, fill = cs.fill;
+  if(!c.getAttribute('stroke') && stroke && stroke!=='none') c.setAttribute('stroke', stroke);
+  if(!c.getAttribute('fill')) c.setAttribute('fill', fill && fill!=='none' ? fill : 'none');
+  if(!c.getAttribute('stroke-width') && cs.strokeWidth && cs.strokeWidth!=='0px') c.setAttribute('stroke-width', parseFloat(cs.strokeWidth));
+  if(!c.getAttribute('stroke-linecap')  && cs.strokeLinecap)  c.setAttribute('stroke-linecap',  cs.strokeLinecap);
+  if(!c.getAttribute('stroke-linejoin') && cs.strokeLinejoin) c.setAttribute('stroke-linejoin', cs.strokeLinejoin);
+  c.classList.remove('dev-hover','dev-sel');
+  c.querySelectorAll('.dev-hover,.dev-sel').forEach(x=>x.classList.remove('dev-hover','dev-sel'));
+  const tidy = n => { if(n.nodeType!==1) return;
+    if(!n.getAttribute('class')) n.removeAttribute('class');
+    [...n.children].forEach(tidy); };
+  tidy(c);
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' + c.outerHTML;
+}
+function dlFile(name, content, type){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+function dlAsset(a, name){
+  if(a.type==='svg'){ dlFile(name, svgFile(a.el), 'image/svg+xml'); }
+  else {
+    const el = document.createElement('a');
+    el.href = a.el.src; el.download = name; el.target = '_blank';
+    document.body.appendChild(el); el.click(); el.remove();
+  }
+  toast('Downloaded ' + name);
+}
+window.__devAssets = [];
+function assetsHTML(el){
+  const list = assetsIn(el);
+  window.__devAssets = list;
+  if(!list.length) return '';
+  return `<div class="dv-sec">Assets · ${list.length}</div>` + list.map((a,i)=>{
+    const name = assetName(a, i);
+    const prev = a.type==='svg' ? svgFile(a.el).replace(/^<\?xml[^>]*\?>\n/,'') : `<img src="${a.el.src}" alt="">`;
+    return `<div class="dv-asset">
+      <span class="da-prev">${prev}</span>
+      <span class="da-n">${esc(name)}</span>
+      <button class="da-b" data-dlasset="${i}">Download</button>
+      ${a.type==='svg'?`<button class="da-b" data-cpasset="${i}">Copy</button>`:''}
+    </div>`;
+  }).join('') + `<button class="btn btn-outline" style="width:100%;justify-content:center;height:30px;font-size:11px;margin-top:4px;" data-dlall="sel">Download all ${list.length} asset${list.length>1?'s':''}</button>`;
+}
+
 function renderDevPanel(){
   $('#insTitle').textContent = 'Dev inspector';
   $('#insSub').textContent = devEl ? fullSel(devEl) : 'Click an element on the canvas';
@@ -2410,7 +2511,10 @@ function renderDevPanel(){
     body.innerHTML = `<div class="dv-hint"><b>Dev mode is on.</b><br><br>
       Click any element on the canvas — a block, the checkout card, the page background, a button — to see its
       clean HTML, every CSS rule that matches it, and the resolved design tokens. Each panel has its own Copy button.
-      <br><br>Tip: use the breadcrumb to step up to a parent (for the card shell, shadow or dotted background).</div>`;
+      <br><br>Use the breadcrumb to step up to a parent (card shell, shadow, dotted background).
+      <br><br><b>Status screens:</b> switch to <b>Preview</b>, then pick any state from the <b>Outcome</b> dropdown in the
+      top bar — the card opens immediately and stays put while you inspect it.</div>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;height:32px;font-size:11px;margin-top:12px;" data-dlall="page">Download every icon &amp; image on the page</button>`;
     return;
   }
   /* ancestor breadcrumb */
@@ -2433,6 +2537,7 @@ function renderDevPanel(){
     <div class="dv-actions">
       <button class="btn btn-outline" data-dcopy="both">Copy HTML + CSS</button>
     </div>
+    ${assetsHTML(devEl)}
     <div class="dv-sec">Box</div>
     ${(()=>{ const r = devEl.getBoundingClientRect(), cs = getComputedStyle(devEl);
       const sw = v => /^rgb|^#/.test(v) ? `<span class="dv-swatch" style="background:${v}"></span>` : '';
@@ -2450,6 +2555,19 @@ $('#insBody').addEventListener('click', e=>{
   if(tab){ devTab = tab.dataset.dtab; renderDevPanel(); return; }
   const crumb = e.target.closest('[data-crumb]');
   if(crumb){ selectDevEl(window.__devChain[+crumb.dataset.crumb]); return; }
+  /* asset downloads */
+  const dlOne = e.target.closest('[data-dlasset]');
+  if(dlOne){ const i=+dlOne.dataset.dlasset, a=window.__devAssets[i]; if(a) dlAsset(a, assetName(a,i)); return; }
+  const cpOne = e.target.closest('[data-cpasset]');
+  if(cpOne){ const a=window.__devAssets[+cpOne.dataset.cpasset]; if(a) devCopy(svgFile(a.el)); return; }
+  const dlAll = e.target.closest('[data-dlall]');
+  if(dlAll){
+    const list = dlAll.dataset.dlall==='page' ? assetsIn(document.querySelector('#checkout')) : window.__devAssets;
+    if(!list.length){ toast('No icons or images here'); return; }
+    list.forEach((a,i)=>setTimeout(()=>dlAsset(a, assetName(a,i)), i*220));   /* stagger so the browser allows them */
+    toast('Downloading ' + list.length + ' assets…');
+    return;
+  }
   const cp = e.target.closest('[data-dcopy]');
   if(cp && devEl){
     const txt = cp.dataset.dcopy==='both'
