@@ -118,6 +118,10 @@ input,select,textarea{font-family:inherit;}
 /* ───────────────────── CHECKOUT (the built page) ───────────────────── */
 .checkout{border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(2,11,30,.10),0 1px 3px rgba(2,11,30,.06);display:grid;grid-template-columns:1fr 1.1fr;min-height:560px;position:relative;background:var(--co-pay-bg);}
 .checkout-shell.mobile .checkout{grid-template-columns:1fr;}
+/* ── mobile = flat full-bleed page, not a floating card ── */
+.checkout-shell.mobile .checkout{border-radius:0;box-shadow:none;}
+.checkout-shell.mobile .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
+.checkout-shell.mobile .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
 .co-col{padding:34px 34px 40px;min-width:0;}
 .checkout-shell.mobile .co-col{padding:26px 22px 32px;}
 .co-summary{background:var(--co-sum-bg);color:var(--co-sum-text);}
@@ -169,17 +173,6 @@ input,select,textarea{font-family:inherit;}
 }
 
 /* ───────── TWO-STEP FLOW ───────── */
-.co-steps{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
-.co-steps .cs{display:flex;align-items:center;gap:8px;min-width:0;}
-.co-steps .cs-dot{width:24px;height:24px;min-width:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:var(--co-pay-field);border:1.5px solid var(--co-pay-border);color:var(--co-pay-sub);transition:all .18s;}
-.co-steps .cs-dot svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
-.co-steps .cs-lbl{font-size:12px;font-weight:600;color:var(--co-pay-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.co-steps .cs.on .cs-dot{background:var(--co-accent);border-color:var(--co-accent);color:var(--co-accent-ink);}
-.co-steps .cs.on .cs-lbl{color:var(--co-pay-text);font-weight:700;}
-.co-steps .cs.done .cs-dot{background:color-mix(in srgb,var(--co-accent) 16%,transparent);border-color:var(--co-accent);color:var(--co-accent);}
-.co-steps .cs-line{flex:1;height:1.5px;background:var(--co-pay-border);min-width:14px;border-radius:2px;overflow:hidden;}
-.co-steps .cs-line i{display:block;height:100%;width:0;background:var(--co-accent);transition:width .3s ease;}
-.co-steps.at2 .cs-line i{width:100%;}
 
 .co-stage{display:none;}
 .co-stage.on{display:block;animation:stagein .22s ease;}
@@ -247,6 +240,14 @@ input,select,textarea{font-family:inherit;}
 .b-heading{font-size:24px;font-weight:700;font-family:var(--co-font-head);letter-spacing:-.2px;}
 .b-para{font-size:13px;line-height:1.6;}
 .b-divider{height:1px;background:var(--co-sum-border);}
+/* payment title + description, fenced by light rules */
+.b-payhead .phd-rule{height:1px;background:var(--co-sum-border);}
+.co-payment .b-payhead .phd-rule{background:var(--co-pay-border);}
+.b-payhead .phd-body{padding:14px 0;}
+.b-payhead .phd-t{font-size:17px;font-weight:700;font-family:var(--co-font-head);line-height:1.3;}
+.b-payhead .phd-d{font-size:12.5px;line-height:1.55;margin-top:5px;}
+.b-payhead .phd-t + .phd-d{margin-top:5px;}
+.phd-empty{font-size:11px;font-style:italic;opacity:.55;}
 .co-payment .b-divider{background:var(--co-pay-border);}
 
 /* min-height keeps the row identical whether or not a product image is set */
@@ -640,14 +641,21 @@ body.dev-mode .topbar{z-index:95;}
   .b-qrd{display:none;}
   .b-qrm{display:block;}
   .b-addr .ad-grid{grid-template-columns:1fr 1fr;}
-  .co-steps{margin-bottom:18px;}
   .co-stage-head .sh-t{font-size:18px;}
+}
+/* real phones: edge-to-edge, no card, no dotted gutter */
+@media (max-width:640px){
+  .canvas{padding:0 0 84px;}
+  .canvas-wrap{background-image:none;background:var(--co-pay-bg,#fff);}
+  .canvas-toolbar{padding:10px 12px 0;}
+  .checkout-shell{max-width:100%;}
+  .checkout{border-radius:0;box-shadow:none;min-height:calc(var(--app-h,100vh) - 120px);}
+  .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
+  .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
+  #poweredLine{padding:0 16px;}
 }
 @media (max-width:640px){
   .topbar{padding:0 10px;gap:6px;}
-  .co-steps .cs-lbl{display:none;}
-  .co-steps .cs-line{min-width:24px;}
-  .co-steps{gap:8px;}
   .co-nav{position:sticky;bottom:0;background:var(--co-pay-bg);padding:10px 0 2px;margin-top:16px;z-index:5;}
   .co-recap{padding:10px 12px;}
   .step-switch button{padding:0 9px;font-size:10.5px;}
@@ -1070,6 +1078,24 @@ const REG = {
     fields:[{k:'text',label:'Text',t:'text'}],
     render:(b,live)=>`<div class="b-para cv-sub" ${ce(live)} data-ei="text">${esc(b.props.text)}</div>`
   },
+  payhead: {
+    group:'layout', name:'Payment title', sub:'Title + short description', region:'summary', icon:IC.heading,
+    defaults:()=>({title:'Checkout page', desc:'Complete your details to continue.'}),
+    fields:[{k:'title',label:'Payment title',t:'text'},{k:'desc',label:'Short description',t:'text'}],
+    /* renders nothing when both are blank — merchants without a title get a clean page */
+    render:(b,live)=>{
+      const t = (b.props.title||'').trim(), ds = (b.props.desc||'').trim();
+      if(!t && !ds) return live ? '' : `<div class="phd-empty">Payment title — add a title or description in the inspector</div>`;
+      return `<div class="b-payhead">
+        <div class="phd-rule"></div>
+        <div class="phd-body">
+          ${t ? `<div class="phd-t" ${ce(live)} data-ei="title">${esc(t)}</div>` : ''}
+          ${ds ? `<div class="phd-d cv-sub" ${ce(live)} data-ei="desc">${esc(ds)}</div>` : ''}
+        </div>
+        <div class="phd-rule"></div>
+      </div>`;
+    }
+  },
   divider: {
     group:'layout', name:'Divider', sub:'Thin separator line', region:'summary', icon:IC.divider,
     defaults:()=>({}), fields:[],
@@ -1309,6 +1335,9 @@ function buildPalette(){
 /* ═══════════════════════ RENDER ═══════════════════════ */
 function blkHTML(b){
   const d = REG[b.type];
+  /* a block that renders nothing (e.g. a blank payment title) must not leave an
+     empty wrapper behind — it would still take the inter-block margin */
+  if(mode!=='edit' && !d.render(b, true).trim()) return '';
   const tools = mode==='edit' ? `<div class="blk-tools">
     <button class="bt-grab" data-tool="grab" title="Drag to reorder">${svg(IC.grab)}</button>
     <button data-tool="up" title="Move up"><svg viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg></button>
@@ -1331,14 +1360,6 @@ function blockStep(b){ return b.props.__step || defaultStep(b.type); }
 const isStep1  = b => blockStep(b) === 1;
 const isPersist = b => blockStep(b) === 'both';
 
-function stepperHTML(){
-  const at2 = rt.step===2;
-  return `<div class="co-steps ${at2?'at2':''}">
-    <div class="cs ${at2?'done':'on'}"><span class="cs-dot">${at2?'<svg viewBox="0 0 24 24"><path d="m5 13 4 4 10-10"/></svg>':'1'}</span><span class="cs-lbl">Your details</span></div>
-    <div class="cs-line"><i></i></div>
-    <div class="cs ${at2?'on':''}"><span class="cs-dot">2</span><span class="cs-lbl">Payment</span></div>
-  </div>`;
-}
 function recapHTML(){
   const nm = rt.payer.name || 'Your details';
   const parts = [rt.payer.email, rt.payer.phone].filter(Boolean);
@@ -1365,7 +1386,7 @@ function renderRegion(region){
   const s2 = list.filter(b=>!isStep1(b) && !isPersist(b));
   const sp = list.filter(isPersist);
   const show1 = rt.step===1, show2 = rt.step===2;
-  el.innerHTML = `${stepperHTML()}
+  el.innerHTML = `
     <div class="co-stage ${show1?'on':''}" data-stage="1">
       <div class="co-stage-head"><div class="sh-k">Step 1 of 2</div><div class="sh-t">Your details</div></div>
       ${s1.length ? s1.map(blkHTML).join('') : `<div class="region-empty">Add Payer name, Payer email or Payer phone — they appear here on step 1</div>`}
@@ -2611,14 +2632,17 @@ function exportHTML(){
 }
 function buildExportHTML(){
   const d = state.design;
-  const staticBlks = list => list.map(b=>`<div class="blk">${REG[b.type].render(b, true)}</div>`).join('\n');
+  const staticBlks = list => list.map(b=>{
+    const inner = REG[b.type].render(b, true);
+    return inner.trim() ? `<div class="blk">${inner}</div>` : '';   /* drop empty blocks entirely */
+  }).filter(Boolean).join('\n');
   const renderStatic = region => {
     const list = state.blocks[region];
     if(region==='summary' || d.flow!=='twostep') return staticBlks(list);
     const s1 = list.filter(isStep1);
     const s2 = list.filter(b=>!isStep1(b) && !isPersist(b));
     const sp = list.filter(isPersist);
-    return `${stepperHTML()}
+    return `
     <div class="co-stage on" data-stage="1">
       <div class="co-stage-head"><div class="sh-k">Step 1 of 2</div><div class="sh-t">Your details</div></div>
       ${staticBlks(s1)}
@@ -2631,7 +2655,7 @@ function buildExportHTML(){
     </div>
     ${sp.length ? `<div class="co-persist">${staticBlks(sp)}</div>` : ''}`;
   };
-  const powered = d.powered ? `<div class="powered"><span>Powered by ${logoSvg(12)} · RBI-regulated payment rails</span></div>` : '';
+  const powered = d.powered ? `<div class="powered"><span>Powered by ${logoSvg(12)}</span></div>` : '';
   const legalJson = JSON.stringify({tnc:state.merchant.tnc||'', privacy:state.merchant.privacy||''});
   const runtime = [
     "var LEGAL=" + legalJson + ";",
@@ -2670,12 +2694,6 @@ function buildExportHTML(){
     ].join('\n') : '',
     "function goStep(n){",
     "  document.querySelectorAll('.co-stage').forEach(function(s){s.classList.toggle('on', s.dataset.stage===String(n));});",
-    "  var st=document.querySelector('.co-steps'); if(st){",
-    "    st.classList.toggle('at2', n===2);",
-    "    var cs=st.querySelectorAll('.cs');",
-    "    cs[0].className='cs '+(n===2?'done':'on'); cs[0].querySelector('.cs-dot').innerHTML = n===2?'<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m5 13 4 4 10-10\"/></svg>':'1';",
-    "    cs[1].className='cs '+(n===2?'on':'');",
-    "  }",
     "  var t=document.querySelector('.checkout'); if(t&&t.scrollIntoView)t.scrollIntoView({behavior:'smooth',block:'start'});",
     "}",
     "function validateStep1(){",
@@ -2751,6 +2769,13 @@ input{font-family:inherit;}
 ${collectCheckoutCSS()}
 .pay-overlay.show{top:0;}
 @media (max-width:760px){
+  /* flat, full-device-width page — the card treatment is desktop/tablet only */
+  body{padding:0;background:#fff;background-image:none;align-items:stretch;}
+  .page{max-width:100%;margin:0;}
+  .checkout{border-radius:0;box-shadow:none;min-height:100vh;min-height:100dvh;}
+  .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
+  .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
+  .powered{padding:16px 16px 22px;}
   .checkout{grid-template-columns:1fr;}
   .co-col{padding:26px 22px 32px;}
   .upi-grid{grid-template-columns:1fr;}
@@ -2760,8 +2785,6 @@ ${collectCheckoutCSS()}
   .b-addr .ad-grid{grid-template-columns:1fr 1fr;}
   .b-item{min-height:44px;}
   .b-item .it-thumb{width:44px;height:44px;min-width:44px;}
-  .co-steps .cs-lbl{display:none;}
-  .co-steps .cs-line{min-width:24px;}
   .co-stage-head .sh-t{font-size:18px;}
   .co-nav{position:sticky;bottom:0;background:var(--co-pay-bg);padding:10px 0 2px;margin-top:16px;z-index:5;}
 }
@@ -2829,7 +2852,7 @@ function seed(){
   const S = (t,p)=>{ const b = addBlock(t,'summary'); Object.assign(b.props, p||{}); };
   const P = (t,p)=>{ const b = addBlock(t,'payment'); Object.assign(b.props, p||{}); };
   S('brand', {name:'Aurora & Co.'});
-  S('invoice');
+  S('payhead');
   S('item',  {name:'Aurora Desk Lamp — Brass', price:3499, qty:1});
   S('item',  {name:'Filament Bulb Set (×3)', price:899, qty:1});
   S('recur');
@@ -2848,7 +2871,7 @@ function seed(){
   P('mfooter');
 }
 document.getElementById('tbLogo').innerHTML = logoSvg(24);
-document.getElementById('poweredLine').innerHTML = '<span style="display:inline-flex;align-items:center;gap:7px;vertical-align:middle;">Powered by ' + logoSvg(12) + ' · RBI-regulated payment rails</span>';
+document.getElementById('poweredLine').innerHTML = '<span style="display:inline-flex;align-items:center;gap:7px;vertical-align:middle;">Powered by ' + logoSvg(12) + '</span>';
 buildPalette();
 seed();
 syncDesignUI();
