@@ -106,8 +106,22 @@ input,select,textarea{font-family:inherit;}
 .sw.on::after{left:16px;}
 
 /* canvas */
-.canvas-wrap{flex:1;overflow:auto;position:relative;background:#f8fafc;background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:22px 22px;}
-.canvas{min-height:100%;display:flex;justify-content:center;padding:36px 28px 80px;}
+/* Manifesto backdrop: 48px grid (masked) + soft brand glow blobs */
+.canvas-wrap{flex:1;overflow:auto;position:relative;background:#f0f2f6;isolation:isolate;}
+.canvas-wrap::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(148,158,182,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(148,158,182,.16) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse 85% 90% at 30% 30%,#000 35%,transparent 100%);
+  mask-image:radial-gradient(ellipse 85% 90% at 30% 30%,#000 35%,transparent 100%);}
+.canvas-wrap::after{content:"";position:absolute;z-index:0;pointer-events:none;
+  width:760px;height:760px;right:-260px;top:-300px;
+  background:radial-gradient(closest-side,rgba(0,212,255,.16),transparent);}
+.bg-blob{position:absolute;z-index:0;pointer-events:none;border-radius:50%;}
+.bg-blob.b1{width:620px;height:620px;left:-240px;bottom:-260px;background:radial-gradient(closest-side,rgba(9,110,242,.14),transparent);}
+.bg-blob.b2{width:420px;height:420px;left:38%;top:-200px;background:radial-gradient(closest-side,rgba(61,156,245,.10),transparent);}
+/* Manifesto-style payment rails animating behind the checkout (desktop/tablet only) */
+#flowBg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.canvas{position:relative;z-index:1;min-height:100%;display:flex;justify-content:center;padding:36px 28px 80px;}
 .checkout-shell{transition:max-width .25s ease;width:100%;max-width:940px;}
 .checkout-shell.mobile{max-width:420px;}
 .canvas-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
@@ -646,7 +660,9 @@ body.dev-mode .topbar{z-index:95;}
 /* real phones: edge-to-edge, no card, no dotted gutter */
 @media (max-width:640px){
   .canvas{padding:0 0 84px;}
-  .canvas-wrap{background-image:none;background:var(--co-pay-bg,#fff);}
+  /* phones: flat white page — no grid, blobs or rails */
+  .canvas-wrap{background:var(--co-pay-bg,#fff);}
+  .canvas-wrap::before,.canvas-wrap::after,.bg-blob,#flowBg{display:none;}
   .canvas-toolbar{padding:10px 12px 0;}
   .checkout-shell{max-width:100%;}
   .checkout{border-radius:0;box-shadow:none;min-height:calc(var(--app-h,100vh) - 120px);}
@@ -748,6 +764,12 @@ body.dev-mode .topbar{z-index:95;}
         <div class="dz-flex"><input type="range" class="dz-range" id="radiusRange" min="0" max="22" step="1" value="10"><span class="dz-val" id="radiusVal">10px</span></div>
       </div>
       <div class="dz-section">
+        <div class="dz-toggle-row">
+          <div><div class="tr-name">Animated rails background</div><div class="tr-sub">Desktop only · Manifesto-style payment rails</div></div>
+          <div class="sw on" id="railsSw"></div>
+        </div>
+      </div>
+      <div class="dz-section">
         <div class="dz-label">Session expiry timer</div>
         <div class="dz-toggle-row">
           <div><div class="tr-name">Show timer banner</div><div class="tr-sub">Above the checkout card</div></div>
@@ -810,6 +832,9 @@ body.dev-mode .topbar{z-index:95;}
 
   <!-- CENTER: CANVAS -->
   <main class="canvas-wrap">
+    <span class="bg-blob b1" aria-hidden="true"></span>
+    <span class="bg-blob b2" aria-hidden="true"></span>
+    <canvas id="flowBg" aria-hidden="true"></canvas>
     <div class="canvas">
       <div class="checkout-shell" id="shell">
         <div class="canvas-toolbar">
@@ -910,7 +935,7 @@ let uid = 1;
 const nid = () => 'b' + (uid++);
 
 const state = {
-  design: { theme:'theme-light', accent:'#096ef2', accentInk:'#ffffff', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'single', timer:true, timerMins:10 },
+  design: { theme:'theme-light', accent:'#096ef2', accentInk:'#ffffff', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'single', timer:true, timerMins:10, rails:true },
   merchant: {
     supportEmail:'support@aurora.co', supportPhone:'+91 80 4000 1234', country:'India', vpa:'aurora@upi',
     socials:{ web:'https://aurora.co', li:'', x:'', ig:'' },
@@ -2069,6 +2094,7 @@ function syncDesignUI(){
   $('#radiusVal').textContent = state.design.radius+'px';
   document.querySelectorAll('#methodSeg button').forEach(b=>b.classList.toggle('on', b.dataset.ml===state.design.methodLayout));
   document.querySelectorAll('#flowSeg button').forEach(b=>b.classList.toggle('on', b.dataset.flow===state.design.flow));
+  $('#railsSw').classList.toggle('on', state.design.rails);
   $('#timerSw').classList.toggle('on', state.design.timer);
   $('#timerRange').value = state.design.timerMins;
   $('#timerVal').textContent = state.design.timerMins + ' min';
@@ -2196,6 +2222,80 @@ document.querySelectorAll('[data-close]').forEach(btn=>{
   document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) e.target.classList.remove('show'); });
 });
 
+/* ═══════════════════════ ANIMATED RAILS BACKGROUND ═══════════════════════
+   Ported from the Decentro Manifesto hero: packets streaming along payment
+   rails. Desktop/tablet only — hidden on phones and for reduced-motion users. */
+function initFlowBg(){
+  const cv = document.getElementById('flowBg');
+  if(!cv) return;
+  const cx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let W=0, H=0, dpr=1, pk=[], raf=null, last=0;
+
+  const GRID = 48;                                    /* must match the CSS grid size */
+  function size(){
+    W = cv.clientWidth; H = cv.clientHeight;
+    if(!W || !H) return false;                        /* hidden (mobile) */
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    cv.width = W*dpr; cv.height = H*dpr;
+    cx.setTransform(dpr,0,0,dpr,0,0);
+    /* lanes land exactly on the painted grid lines (multiples of GRID) */
+    const rows = [], cols = [];
+    for(let y=GRID; y<H; y+=GRID) rows.push(y);
+    for(let x=GRID; x<W; x+=GRID) cols.push(x);
+    /* scatter: take every 3rd row and every 4th column, so packets spread across
+       the whole page — and give each lane AT MOST ONE packet, so none overlap */
+    pk = [];
+    rows.forEach((y,i)=>{ if(i%3===1) pk.push(mk('h', y)); });
+    cols.forEach((x,i)=>{ if(i%4===2) pk.push(mk('v', x)); });
+    return true;
+  }
+  function mk(dir, pos){
+    return { dir, pos,
+      t: Math.random(),                               /* random phase — no marching wave */
+      v: 0.00022 + Math.random()*0.00042,             /* progress per ms */
+      len: 55 + Math.random()*85,
+      back: Math.random() < 0.35 };                   /* some travel the other way */
+  }
+  function draw(dt){
+    if(!W || !H) return;
+    cx.clearRect(0,0,W,H);
+    pk.forEach(p=>{
+      p.t += p.v*dt;
+      if(p.t > 1) p.t -= 1;
+      const span = (p.dir==='h' ? W : H) + p.len*2;
+      let head = -p.len + p.t*span;
+      if(p.back) head = (p.dir==='h' ? W : H) + p.len - p.t*span;
+      const tail = head - (p.back ? -p.len : p.len);
+      const x1 = p.dir==='h' ? tail : p.pos, y1 = p.dir==='h' ? p.pos : tail;
+      const x2 = p.dir==='h' ? head : p.pos, y2 = p.dir==='h' ? p.pos : head;
+      const g = cx.createLinearGradient(x1, y1, x2, y2);
+      g.addColorStop(0,'rgba(9,110,242,0)');
+      g.addColorStop(1,'rgba(9,110,242,0.45)');
+      cx.strokeStyle = g; cx.lineWidth = 1.5;
+      cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke();
+      cx.fillStyle = 'rgba(9,110,242,0.8)';
+      cx.fillRect(x2-1.5, y2-1.5, 3, 3);
+    });
+  }
+  function stop(){ if(raf){ cancelAnimationFrame(raf); raf = null; } }
+  function start(){
+    stop();
+    if(!state.design.rails){ cx && W && cx.clearRect(0,0,W,H); return; }
+    if(!size()) return;                              /* nothing to draw on mobile */
+    if(reduce){ draw(0); return; }                   /* static single frame */
+    last = performance.now();
+    raf = requestAnimationFrame(function loop(t){
+      draw(Math.min(50, t-last));            /* dt in ms; clamped after tab-switches */
+      last = t;
+      raf = requestAnimationFrame(loop);
+    });
+  }
+  window.__flowStart = start; window.__flowStop = stop;
+  let rz; window.addEventListener('resize', ()=>{ clearTimeout(rz); rz = setTimeout(start, 150); });
+  start();
+}
+
 /* ═══════════════════════ SESSION TIMER ═══════════════════════ */
 const mmss = s => Math.floor(Math.max(s,0)/60).toString().padStart(2,'0') + ':' + (Math.max(s,0)%60).toString().padStart(2,'0');
 function timerHTML(secs){
@@ -2269,6 +2369,11 @@ function initDock(){
   window.addEventListener('resize', place);
 }
 
+$('#railsSw').addEventListener('click', ()=>{
+  snapshot(); state.design.rails = !state.design.rails; syncDesignUI();
+  if(window.__flowStart) state.design.rails ? window.__flowStart() : window.__flowStop();
+  if(!state.design.rails){ const c=document.getElementById('flowBg'); c && c.getContext('2d').clearRect(0,0,c.width,c.height); }
+});
 $('#timerSw').addEventListener('click', ()=>{
   snapshot(); state.design.timer = !state.design.timer; syncDesignUI(); renderTimer();
 });
@@ -2692,6 +2797,52 @@ function buildExportHTML(){
     "  },1000);",
     "})();"
     ].join('\n') : '',
+    d.rails ? [
+    "/* packets travelling along the 48px grid lines — desktop only */",
+    "(function(){",
+    "  var cv=document.getElementById('flowBg'); if(!cv) return;",
+    "  var cx=cv.getContext('2d'), reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;",
+    "  var W=0,H=0,dpr=1,pk=[],raf=null,last=0,GRID=48;",
+    "  function mk(dir,pos){return {dir:dir,pos:pos,t:Math.random(),v:0.00022+Math.random()*0.00042,len:55+Math.random()*85,back:Math.random()<0.35};}",
+    "  function size(){",
+    "    W=cv.clientWidth;H=cv.clientHeight; if(!W||!H) return false;",
+    "    dpr=Math.min(window.devicePixelRatio||1,2); cv.width=W*dpr; cv.height=H*dpr; cx.setTransform(dpr,0,0,dpr,0,0);",
+    "    var rows=[],cols=[],x,y;",
+    "    for(y=GRID;y<H;y+=GRID) rows.push(y);",
+    "    for(x=GRID;x<W;x+=GRID) cols.push(x);",
+    "    pk=[];",
+    "    rows.forEach(function(yy,i){ if(i%3===1) pk.push(mk('h',yy)); });",
+    "    cols.forEach(function(xx,i){ if(i%4===2) pk.push(mk('v',xx)); });",
+    "    return true;",
+    "  }",
+    "  function draw(dt){",
+    "    if(!W||!H) return;",
+    "    cx.clearRect(0,0,W,H);",
+    "    pk.forEach(function(p){",
+    "      p.t+=p.v*dt; if(p.t>1) p.t-=1;",
+    "      var span=(p.dir==='h'?W:H)+p.len*2;",
+    "      var head=-p.len+p.t*span;",
+    "      if(p.back) head=(p.dir==='h'?W:H)+p.len-p.t*span;",
+    "      var tail=head-(p.back?-p.len:p.len);",
+    "      var x1=p.dir==='h'?tail:p.pos, y1=p.dir==='h'?p.pos:tail;",
+    "      var x2=p.dir==='h'?head:p.pos, y2=p.dir==='h'?p.pos:head;",
+    "      var g=cx.createLinearGradient(x1,y1,x2,y2);",
+    "      g.addColorStop(0,'rgba(9,110,242,0)'); g.addColorStop(1,'rgba(9,110,242,0.45)');",
+    "      cx.strokeStyle=g; cx.lineWidth=1.5; cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke();",
+    "      cx.fillStyle='rgba(9,110,242,0.8)'; cx.fillRect(x2-1.5,y2-1.5,3,3);",
+    "    });",
+    "  }",
+    "  function start(){",
+    "    if(raf){cancelAnimationFrame(raf);raf=null;}",
+    "    if(!size()) return;",
+    "    if(reduce){draw(0);return;}",
+    "    last=performance.now();",
+    "    raf=requestAnimationFrame(function loop(t){draw(Math.min(50,t-last));last=t;raf=requestAnimationFrame(loop);});",
+    "  }",
+    "  var rz; window.addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(start,150);});",
+    "  start();",
+    "})();"
+    ].join('\n') : '',
     "function goStep(n){",
     "  document.querySelectorAll('.co-stage').forEach(function(s){s.classList.toggle('on', s.dataset.stage===String(n));});",
     "  var t=document.querySelector('.checkout'); if(t&&t.scrollIntoView)t.scrollIntoView({behavior:'smooth',block:'start'});",
@@ -2758,10 +2909,22 @@ function buildExportHTML(){
 *{margin:0;padding:0;box-sizing:border-box;}
 /* align-items:flex-start + margin:auto centres when it fits and never clips the
    top once the page overflows — required for the sticky timer to behave */
-body{font-family:'Montserrat',sans-serif;background:#f8fafc;background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:22px 22px;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px;}
+body{font-family:'Montserrat',sans-serif;background:#f0f2f6;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px;position:relative;isolation:isolate;}
+/* 48px grid (masked) + soft brand glow blobs */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(148,158,182,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(148,158,182,.16) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse 85% 90% at 30% 30%,#000 35%,transparent 100%);
+  mask-image:radial-gradient(ellipse 85% 90% at 30% 30%,#000 35%,transparent 100%);}
+body::after{content:"";position:fixed;z-index:0;pointer-events:none;width:760px;height:760px;right:-260px;top:-300px;
+  background:radial-gradient(closest-side,rgba(0,212,255,.16),transparent);}
+.bg-blob{position:fixed;z-index:0;pointer-events:none;border-radius:50%;}
+.bg-blob.b1{width:620px;height:620px;left:-240px;bottom:-260px;background:radial-gradient(closest-side,rgba(9,110,242,.14),transparent);}
+.bg-blob.b2{width:420px;height:420px;left:38%;top:-200px;background:radial-gradient(closest-side,rgba(61,156,245,.10),transparent);}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
 input{font-family:inherit;}
-.page{width:100%;max-width:940px;margin:auto;}
+.page{width:100%;max-width:940px;margin:auto;position:relative;z-index:1;}
+#flowBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 .blk + .blk{margin-top:18px;}
 .powered{width:100%;text-align:center;font-size:11px;color:#94a3b8;margin-top:16px;}
 .powered span{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;}
@@ -2776,6 +2939,7 @@ ${collectCheckoutCSS()}
   .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
   .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
   .powered{padding:16px 16px 22px;}
+  body::before,body::after,.bg-blob,#flowBg{display:none;}   /* flat white on phones */
   .checkout{grid-template-columns:1fr;}
   .co-col{padding:26px 22px 32px;}
   .upi-grid{grid-template-columns:1fr;}
@@ -2791,6 +2955,9 @@ ${collectCheckoutCSS()}
 </style>
 </head>
 <body>
+<span class="bg-blob b1" aria-hidden="true"></span>
+<span class="bg-blob b2" aria-hidden="true"></span>
+${d.rails ? '<canvas id="flowBg" aria-hidden="true"></canvas>' : ''}
 <div class="page">
 ${d.timer ? timerHTML(d.timerMins*60) : ''}
 <div class="checkout ${d.theme}" style="--co-accent:${d.accent};--co-accent-ink:${d.accentInk};--co-font-head:${d.font};--co-r:${d.radius}px">
@@ -2873,6 +3040,7 @@ function seed(){
 document.getElementById('tbLogo').innerHTML = logoSvg(24);
 document.getElementById('poweredLine').innerHTML = '<span style="display:inline-flex;align-items:center;gap:7px;vertical-align:middle;">Powered by ' + logoSvg(12) + '</span>';
 buildPalette();
+initFlowBg();
 seed();
 syncDesignUI();
 syncMerchantUI();
