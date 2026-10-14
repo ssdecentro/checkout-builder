@@ -126,8 +126,8 @@ input,select,textarea{font-family:inherit;}
 .bg-blob.b2{width:420px;height:420px;left:38%;top:-200px;background:radial-gradient(closest-side,rgba(var(--brand-rgb,9,110,242),.06),transparent);}
 /* Manifesto-style payment rails animating behind the checkout (desktop/tablet only) */
 #flowBg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-.canvas{position:relative;z-index:1;min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:36px 28px 80px;}
-.checkout-shell{transition:max-width .25s ease;width:100%;max-width:940px;display:flex;flex-direction:column;}
+.canvas{position:relative;z-index:1;min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:30px 28px 72px;}
+.checkout-shell{transition:max-width .25s ease;width:100%;max-width:900px;display:flex;flex-direction:column;}
 .checkout-shell.mobile{max-width:420px;}
 .canvas-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .ct-label{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;}
@@ -137,47 +137,33 @@ input,select,textarea{font-family:inherit;}
 /* ───────────────────── CHECKOUT (the built page) ───────────────────── */
 /* grid-template-rows:minmax(0,1fr) bounds the row, so .co-col inherits the card's
    height instead of stretching it — that is what lets .zone-body scroll. */
-.checkout{border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(2,11,30,.10),0 1px 3px rgba(2,11,30,.06);display:grid;grid-template-columns:1fr 1.1fr;grid-template-rows:minmax(0,1fr);min-height:min(560px,calc(100vh - 260px));position:relative;background:var(--co-pay-bg);flex:0 1 auto;}
-.checkout-shell.mobile{max-height:none;}
+.checkout{border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(2,11,30,.10),0 1px 3px rgba(2,11,30,.06);display:grid;grid-template-columns:1fr 1.1fr;grid-template-rows:minmax(0,1fr);min-height:min(660px,calc(100vh - 190px));position:relative;background:var(--co-pay-bg);flex:0 1 auto;margin:auto auto 0;}
+.checkout-shell.mobile{max-height:none;max-width:420px;}
 .checkout-shell.mobile .checkout{grid-template-columns:1fr;grid-template-rows:auto;}
 /* ── mobile = flat full-bleed page, not a floating card ── */
 .checkout-shell.mobile .checkout{border-radius:0;box-shadow:none;}
 .checkout-shell.mobile .zone-body{overflow:visible;flex:none;}
 .checkout-shell.mobile .zone-foot{margin-top:0;}
 .checkout-shell.mobile .co-col,.checkout-shell.mobile .co-stage.on{display:block;}
-/* ── VIEWPORT GUIDE (editor only) ───────────────────────────────
-   A 1px frame around one desktop viewport's worth of page, so you can see at a
-   glance what sits above the fold. Selectors start with .vp-, which the export's
-   CSS collector does not copy, so none of this ships. */
-.vp-frame{position:relative;border:1px solid #c3cbd9;border-radius:8px;padding:26px 22px 20px;min-height:760px;display:flex;flex-direction:column;}
-.vp-frame::before{content:"Desktop viewport";position:absolute;top:-8px;left:14px;padding:0 7px;background:#f0f2f6;
-  font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:#93a0b4;}
-.vp-frame > #poweredLine{margin-top:auto;padding-top:16px;}
-.checkout-shell.mobile .vp-frame{border:none;border-radius:0;padding:0;min-height:0;display:block;}
-.checkout-shell.mobile .vp-frame::before{display:none;}
-@media (max-width:860px){
-  .vp-frame{border:none;padding:0;min-height:0;display:block;}
-  .vp-frame::before{display:none;}
-}
 
 /* ── EDITOR CANVAS ONLY ──────────────────────────────────────────
-   Inside the builder the card grows with its content and the canvas scrolls —
-   you can see every block while authoring. The viewport cap and the inner
-   zone scrolling are runtime behaviour: they live in the exported page and in
-   Open Live. These selectors start with .canvas-wrap, which the export's CSS
-   collector deliberately does not copy. */
-.canvas-wrap .checkout{grid-template-rows:auto;min-height:560px;}
+   While authoring, the card grows with its content and the canvas scrolls, so
+   every block is reachable. The viewport cap and the inner zone scrolling are
+   runtime behaviour — they live in the exported page and in Open Live. These
+   selectors start with .canvas-wrap, which the export's CSS collector does not
+   copy, so none of it ships. */
+.canvas-wrap .checkout{grid-template-rows:auto;min-height:660px;margin:0;}
 .canvas-wrap .co-timer{position:sticky;top:0;left:auto;right:auto;transform:none;z-index:30;margin-bottom:26px;}
-.canvas-wrap .zone-body{overflow:visible;flex:none;}
-/* margin-top:auto is kept: Total Payable and the Pay CTA still settle on the
-   card's bottom edge while authoring, even though nothing scrolls here. */
+.canvas-wrap .zone-body{overflow:visible;flex:none;margin-right:0;padding-right:0;}
+/* margin-top:auto stays, so Total Payable and the Pay CTA still settle on the
+   card's bottom edge while authoring. */
 
 /* ── COLUMN ZONES ───────────────────────────────────────────────
    Each column is head (fixed) · body (scrolls when tall) · foot (pinned).
    On phones every zone flows normally so the page has ONE scroll. */
-.co-col{padding:34px 34px 30px;min-width:0;display:flex;flex-direction:column;min-height:0;}
+.co-col{padding:34px 34px 32px;min-width:0;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
 .zone-head{flex:none;}
-.zone-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;}
+.zone-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;margin-right:-12px;padding-right:9px;}
 /* A soft fade at the bottom edge tells the payer there is more below — the
    scrollbar alone is too easy to miss on a trackpad. */
 @media (min-width:641px){
@@ -185,9 +171,19 @@ input,select,textarea{font-family:inherit;}
   .tt-i{display:inline-flex;}
   .tt-wrap:hover .tt-pop,.tt-i:focus-visible + .tt-pop{display:block;}
 }
-.co-col.has-scroll .zone-body{-webkit-mask-image:linear-gradient(#000 calc(100% - 26px),transparent);mask-image:linear-gradient(#000 calc(100% - 26px),transparent);}
-.zone-body::-webkit-scrollbar{width:6px;}
-.zone-body::-webkit-scrollbar-thumb{background:rgba(var(--brand-rgb,9,110,242),.22);border-radius:6px;}
+/* Thin brand scrollbar. A global `* { scrollbar-width: thin }` makes Blink
+   ignore ::-webkit-scrollbar and fall back to the OS overlay bar, so reset the
+   standard properties where the WebKit pseudo-elements exist and keep them only
+   as the Firefox path. */
+@supports selector(::-webkit-scrollbar){
+  .zone-body{scrollbar-width:auto;scrollbar-color:auto;}
+}
+@supports not selector(::-webkit-scrollbar){
+  .zone-body{scrollbar-width:thin;scrollbar-color:rgba(var(--brand-rgb,9,110,242),.35) rgba(var(--brand-rgb,9,110,242),.08);}
+}
+.zone-body::-webkit-scrollbar{width:3px;}
+.zone-body::-webkit-scrollbar-track{background:rgba(var(--brand-rgb,9,110,242),.08);border-radius:3px;}
+.zone-body::-webkit-scrollbar-thumb{background:rgba(var(--brand-rgb,9,110,242),.35);border-radius:3px;}
 .zone-foot{flex:none;margin-top:auto;padding-top:var(--co-sep);}
 .zone-body{--stack:10px;}
 .zone-body .blk + .blk{margin-top:var(--stack);}
@@ -338,7 +334,23 @@ input,select,textarea{font-family:inherit;}
    --title-size is THE title size: payment title, stage headings,
    section headings and the payable amount all share it. */
 .checkout{--title-size:18.5px;--co-sep:14px;}   /* --co-sep: the gap above and below every separator */
-.b-payhead .phd-t{font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);line-height:1.3;}
+.b-payhead .phd-t{position:relative;display:flex;align-items:center;gap:7px;font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);line-height:1.3;}
+/* ── adaptive description: inline, or behind the info tip when space is tight ── */
+.b-payhead.is-collapsed .phd-d{display:none;}
+.b-payhead:not(.is-collapsed) .info-tip,
+.b-payhead:not(.is-collapsed) .phd-t-fallback{display:none;}
+.info-tip{display:inline-flex;flex:none;}
+.info-tip-btn{width:18px;height:18px;min-width:18px;display:flex;align-items:center;justify-content:center;border:none;background:none;padding:0;border-radius:50%;color:var(--co-accent);cursor:help;transition:background .13s;}
+.info-tip-btn svg{width:15px;height:15px;display:block;}
+.info-tip:hover .info-tip-btn,.info-tip:focus-within .info-tip-btn{background:rgba(var(--brand-rgb,9,110,242),.12);}
+/* anchored to the title's left edge and opening downward — the column clips, so
+   there is nowhere to open upward */
+.info-pop{position:absolute;left:0;top:calc(100% + 10px);z-index:25;width:280px;max-width:100%;
+  padding:11px 13px;border-radius:11px;background:var(--co-pay-bg);border:1px solid var(--co-sum-border);
+  box-shadow:0 12px 30px rgba(2,11,30,.17);font-size:12px;font-weight:500;line-height:1.6;letter-spacing:0;
+  font-family:var(--co-font-head);color:var(--co-sum-sub);text-align:left;
+  opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;}
+.info-tip:hover .info-pop,.info-tip:focus-within .info-pop{opacity:1;visibility:visible;}
 .b-payhead .phd-d{font-size:13px;line-height:1.6;margin-top:6px;}
 .b-payhead .phd-t + .phd-d{margin-top:5px;}
 .phd-empty{font-size:11px;font-style:italic;opacity:.55;}
@@ -357,15 +369,18 @@ input,select,textarea{font-family:inherit;}
 /* ── TOTALS: Total Payable always visible; the itemised charges hide behind an
    info icon on desktop and sit inline on phones ──────────────────────────── */
 .b-totals .tr{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
-.tt-wrap{position:relative;display:inline-flex;vertical-align:middle;margin-left:7px;}
+.tt-wrap{position:static;display:inline-flex;vertical-align:middle;margin-left:7px;}
 .tt-i{display:none;width:17px;height:17px;align-items:center;justify-content:center;border:none;background:none;padding:0;color:var(--co-accent);cursor:help;transition:opacity .13s;}
 .tt-i:hover{opacity:.75;}
 .tt-i svg{width:15px;height:15px;display:block;}   /* filled glyph — colour comes from .tt-i */
-.tt-pop{display:none;position:absolute;bottom:calc(100% + 9px);left:-10px;z-index:35;width:214px;padding:11px 13px 9px;background:var(--co-pay-bg);border:1px solid var(--co-sum-border);border-radius:11px;box-shadow:0 12px 30px rgba(2,11,30,.17);font-size:13px;font-weight:500;font-family:var(--co-font-head);text-align:left;}
-.tt-pop-h{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--co-sum-sub);margin-bottom:7px;}
-.tt-pop .tr{font-size:13px;padding:4px 0;}
+.tt-pop{display:none;position:absolute;bottom:calc(100% + 10px);left:0;z-index:35;width:260px;max-width:100%;padding:12px 14px 10px;background:var(--co-pay-bg);border:1px solid var(--co-sum-border);border-radius:11px;box-shadow:0 12px 30px rgba(2,11,30,.17);font-size:12px;font-weight:500;line-height:1.5;font-family:var(--co-font-head);text-align:left;letter-spacing:0;}
+.tt-pop-h{display:block;font-size:9.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--co-sum-sub);margin-bottom:6px;}
+.tt-pop .tr{font-size:12px;padding:3px 0;font-weight:500;}
+.tt-pop .tr .tv{font-weight:600;}
 .b-totals .tr .tv{font-weight:600;}
-.b-totals .tr-total{border-top:1px solid var(--co-sum-border);margin-top:var(--co-sep);padding-top:var(--co-sep);align-items:baseline;}
+/* position:relative makes the row the anchor, so the popover lines up with the
+   T of Total Payable instead of hanging off the icon and clipping the column */
+.b-totals .tr-total{position:relative;border-top:1px solid var(--co-sum-border);margin-top:var(--co-sep);padding-top:var(--co-sep);align-items:baseline;}
 .co-payment .b-totals .tr-total{border-color:var(--co-pay-border);}
 .b-totals .tr-total .tl{font-size:var(--title-size);font-weight:700;}
 .b-totals .tr-total .tv{font-size:20px;font-weight:800;font-family:var(--co-font-head);}
@@ -809,6 +824,10 @@ body.dev-mode .topbar{z-index:95;}
   /* gap so the amount never sits flush against the next panel */
   .co-summary{padding-bottom:30px;}
   .co-summary .zone-foot{padding-bottom:6px;}
+  /* phones scroll the whole page, so the description is always inline */
+  .b-payhead.is-collapsed .phd-d{display:block;}
+  .b-payhead .info-tip,.b-payhead .phd-t-fallback{display:none;}
+  .zone-body{margin-right:0;padding-right:0;}
   /* phones have the room — the recurring sub-line comes back */
   .zone-foot{--stack:16px;}
   .zone-foot .b-recur .rc-sub{display:block;}
@@ -1005,18 +1024,14 @@ body.dev-mode .topbar{z-index:95;}
             <div class="ct-zoom" id="blockCount"></div>
           </div>
         </div>
-        <!-- vp-frame is an editor-only guide: it outlines one desktop viewport so
-             you can see where the fold falls. It is never exported. -->
-        <div class="vp-frame" id="vpFrame">
-          <div id="timerHost"></div>
-          <div class="checkout theme-navy edit-mode" id="checkout">
-            <div class="co-col co-summary" id="regionSummary" data-region="summary"></div>
-            <div class="co-col co-payment" id="regionPayment" data-region="payment"></div>
-            <div class="pay-overlay" id="payOverlay"></div>
-          </div>
-          <div id="trustHost"></div>
-          <div id="poweredLine" style="width:100%;text-align:center;font-size:13px;font-weight:600;color:#94a3b8;margin-top:16px;"></div>
+        <div id="timerHost"></div>
+        <div class="checkout theme-navy edit-mode" id="checkout">
+          <div class="co-col co-summary" id="regionSummary" data-region="summary"></div>
+          <div class="co-col co-payment" id="regionPayment" data-region="payment"></div>
+          <div class="pay-overlay" id="payOverlay"></div>
         </div>
+        <div id="trustHost"></div>
+        <div id="poweredLine" style="width:100%;text-align:center;font-size:13px;font-weight:600;color:#94a3b8;margin-top:16px;"></div>
       </div>
     </div>
   </main>
@@ -1282,13 +1297,17 @@ const REG = {
     defaults:()=>({title:'Checkout Page', desc:'Complete your details to continue.'}),
     fields:[{k:'title',label:'Payment title',t:'text'},{k:'desc',label:'Short description',t:'text'}],
     /* renders nothing when both are blank — merchants without a title get a clean page */
+    /* The description renders inline AND inside the info tip; CSS decides which
+       one shows, driven by the .is-collapsed class that syncDescription() sets
+       after measuring. Keeping both in the DOM means re-renders never fight it. */
     render:(b,live)=>{
       const t = (b.props.title||'').trim(), ds = (b.props.desc||'').trim();
       if(!t && !ds) return live ? '' : `<div class="phd-empty">Payment title — add a title or description in the inspector</div>`;
+      const tip = ds ? `<span class="info-tip"><button class="info-tip-btn" type="button" aria-label="Payment details">${INFO_ICON}</button><span class="info-pop" role="tooltip">${esc(ds)}</span></span>` : '';
       return `<div class="b-payhead">
         <div class="phd-rule"></div>
         <div class="phd-body">
-          ${t ? `<div class="phd-t" ${ce(live)} data-ei="title">${esc(t)}</div>` : ''}
+          <div class="phd-t ${t?'':'phd-t-fallback'}"><span ${t?ce(live):''} ${t?'data-ei="title"':''}>${esc(t || 'Payment Details')}</span>${tip}</div>
           ${ds ? `<div class="phd-d cv-sub" ${ce(live)} data-ei="desc">${esc(ds)}</div>` : ''}
         </div>
       </div>`;
@@ -1721,7 +1740,42 @@ function syncScrollRules(){
       const over  = !!body && (body.scrollHeight - body.clientHeight) > 1;
       col.classList.toggle('has-scroll', over);
     });
+    syncDescription();
   });
+}
+
+/* ── Adaptive description ────────────────────────────────────────────────────
+   The description sits inline under the title until the product list would
+   overflow; then it collapses into the brand info tip beside the title.
+
+   The measurement ALWAYS runs with the description expanded. Collapsing frees
+   vertical space, which can make the list fit, which would expand it again —
+   measuring the collapsed state would oscillate. Reading scrollHeight forces a
+   synchronous layout, so the reading reflects the expanded state even though
+   the class goes back on in the same tick. Same input, same answer, no loop. */
+let descRO = null;
+function syncDescription(){
+  if(descRO){ descRO.disconnect(); descRO = null; }
+  const payhead = document.querySelector('#checkout .co-summary .b-payhead');
+  const body    = document.querySelector('#checkout .co-summary > .zone-body');
+  if(!payhead) return;
+  const hasDesc = !!payhead.querySelector('.phd-d');
+  /* phones scroll the page, and the editor canvas is not height-bound, so
+     neither can overflow — the description stays inline there */
+  const bound = device !== 'mobile' && window.innerWidth > 760;
+  if(!hasDesc || !body || !bound){ payhead.classList.remove('is-collapsed'); return; }
+  const evaluate = () => {
+    payhead.classList.remove('is-collapsed');
+    const overflows = body.scrollHeight > body.clientHeight + 1;
+    payhead.classList.toggle('is-collapsed', overflows);
+  };
+  evaluate();
+  descRO = new ResizeObserver(evaluate);
+  descRO.observe(body);
+  descRO.observe(payhead);
+  Array.from(body.children).forEach(c => descRO.observe(c));
+  /* web fonts land after first paint and change every text height */
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ if(descRO) evaluate(); });
 }
 let _srz; window.addEventListener('resize', ()=>{ clearTimeout(_srz); _srz = setTimeout(syncScrollRules, 120); });
 
@@ -3117,7 +3171,7 @@ function devCopy(txt){
 function collectCheckoutCSS(){
   /* .zone- must be here: it carries the head/scroll-body/pinned-foot layout AND the
      separator rule above the foot (discount + total). Without it the export loses both. */
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|\.zone-|\.foot-|\.tt-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|\.zone-|\.foot-|\.tt-|\.info-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
   const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell|step-switch)/;
   let css = '';
   for(const sheet of document.styleSheets){
@@ -3386,6 +3440,33 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  if(first)first.focus();",
     "  return ok;",
     "}",
+    "/* ── Adaptive description ───────────────────────────────────────────────",
+    "   Inline under the title until the product list would overflow, then it",
+    "   collapses into the info tip. The measurement always runs EXPANDED:",
+    "   collapsing frees space, so measuring the collapsed state would flip it",
+    "   straight back and oscillate. Reading scrollHeight forces layout, so the",
+    "   reading reflects the expanded state even though the class goes back on",
+    "   in the same tick. */",
+    "var descRO=null;",
+    "function syncDescription(){",
+    "  if(descRO){descRO.disconnect(); descRO=null;}",
+    "  var payhead=document.querySelector('.co-summary .b-payhead');",
+    "  var body=document.querySelector('.co-summary > .zone-body');",
+    "  if(!payhead) return;",
+    "  var hasDesc=!!payhead.querySelector('.phd-d');",
+    "  var bound=window.matchMedia('(min-width:761px)').matches;",
+    "  if(!hasDesc||!body||!bound||!window.ResizeObserver){payhead.classList.remove('is-collapsed'); return;}",
+    "  var evaluate=function(){",
+    "    payhead.classList.remove('is-collapsed');",
+    "    var overflows = body.scrollHeight > body.clientHeight + 1;",
+    "    payhead.classList.toggle('is-collapsed', overflows);",
+    "  };",
+    "  evaluate();",
+    "  descRO=new ResizeObserver(evaluate);",
+    "  descRO.observe(body); descRO.observe(payhead);",
+    "  Array.prototype.forEach.call(body.children, function(c){descRO.observe(c);});",
+    "  if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ if(descRO) evaluate(); });",
+    "}",
     "/* a column is .has-scroll only while its body really overflows */",
     "function syncScrollRules(){",
     "  document.querySelectorAll('.checkout .co-col').forEach(function(col){",
@@ -3394,6 +3475,7 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "    var over=!!body && (body.scrollHeight-body.clientHeight)>1;",
     "    col.classList.toggle('has-scroll',over);",
     "  });",
+    "  syncDescription();",
     "}",
     "document.addEventListener('DOMContentLoaded',syncScrollRules);",
     "window.addEventListener('load',syncScrollRules);",
@@ -3478,12 +3560,15 @@ input{font-family:inherit;}
    gap, then the card taking whatever is left, with the trust strip and the
    Powered-by line closing it out at the bottom edge. The card never grows past
    the fold — its own .zone-body scrolls instead. */
-.page{width:100%;max-width:940px;margin:0 auto;position:relative;z-index:1;
-  display:flex;flex-direction:column;
+.page{width:100%;max-width:900px;margin:0 auto;position:relative;z-index:1;
+  display:flex;flex-direction:column;overflow:hidden;
   height:100vh;height:100dvh;
-  padding:calc(var(--co-bar) + 30px) 24px 20px;}
-.page > .checkout{flex:1 1 auto;min-height:0;}
-.page > .trust-strip,.page > .powered{flex:none;}
+  padding:calc(var(--co-bar) + 26px) 24px 18px;}
+/* the card grows with its content and stops at the available height; the auto
+   margins centre the card + trust + powered group in whatever room is left */
+.page > .checkout{flex:0 1 auto;min-height:0;margin:auto auto 0;}
+.page > .trust-strip{flex:none;}
+.page > .powered{flex:none;margin-bottom:auto;}
 #flowBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 .blk + .blk{margin-top:18px;}
 .trust-strip{margin-top:16px;}
@@ -3510,6 +3595,9 @@ ${collectCheckoutCSS()}
   .zone-foot{margin-top:0;}
   .co-col,.co-stage.on{display:block;}
   .co-summary{padding-bottom:30px;}   /* gap under Total Payable */
+  .b-payhead.is-collapsed .phd-d{display:block;}       /* always inline on phones */
+  .b-payhead .info-tip,.b-payhead .phd-t-fallback{display:none;}
+  .zone-body{margin-right:0;padding-right:0;}
   /* the bar is identical on phones — just a touch tighter */
   .co-timer{padding:12px 16px;}
   .co-timer .ct-t{font-size:13px;}
@@ -3532,6 +3620,19 @@ ${collectCheckoutCSS()}
   .tt-i{display:inline-flex;}
   .tt-wrap:hover .tt-pop,.tt-i:focus-visible + .tt-pop{display:block;}
 }
+/* Thin brand scrollbar on the scrolling zones. A global scrollbar-width:thin
+   makes Blink ignore ::-webkit-scrollbar and use the OS overlay bar, so reset
+   the standard properties where the pseudo-elements exist and keep them only
+   as the Firefox path. */
+@supports selector(::-webkit-scrollbar){
+  .zone-body{scrollbar-width:auto;scrollbar-color:auto;}
+}
+@supports not selector(::-webkit-scrollbar){
+  .zone-body{scrollbar-width:thin;scrollbar-color:rgba(var(--brand-rgb),.35) rgba(var(--brand-rgb),.08);}
+}
+.zone-body::-webkit-scrollbar{width:3px;}
+.zone-body::-webkit-scrollbar-track{background:rgba(var(--brand-rgb),.08);border-radius:3px;}
+.zone-body::-webkit-scrollbar-thumb{background:rgba(var(--brand-rgb),.35);border-radius:3px;}
 @media (prefers-reduced-motion:reduce){
   .dl-cube,.dl-trail,.dl-d-fg,.dl-dots i{animation:none;}
   .dl-cube{opacity:1;} .dl-trail{opacity:0;} .dl-d-fg{stroke-dasharray:none;}
