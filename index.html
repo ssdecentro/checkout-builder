@@ -306,9 +306,10 @@ input,select,textarea{font-family:inherit;}
 .b-discount input{flex:1;height:40px;border-radius:var(--co-r);border:1px solid var(--co-sum-border);background:var(--co-sum-field);color:inherit;padding:0 12px;font-size:13px;min-width:0;}
 .co-payment .b-discount input{border-color:var(--co-pay-border);background:var(--co-pay-field);}
 .b-discount input::placeholder{color:var(--co-sum-sub);opacity:.8;}
-.b-discount button{height:40px;padding:0 16px;border-radius:var(--co-r);border:1px solid var(--co-sum-border);color:inherit;font-size:12px;font-weight:700;}
-.co-payment .b-discount button{border-color:var(--co-pay-border);}
-.b-discount button:hover{border-color:var(--co-accent);color:var(--co-accent);}
+/* Apply is a filled brand action — its label flips with the brand's contrast */
+.b-discount button{height:40px;padding:0 18px;border-radius:var(--co-r);border:1px solid var(--co-accent);background:var(--co-accent);color:var(--co-accent-ink);font-size:12px;font-weight:700;transition:filter .13s;}
+.b-discount button:hover{filter:brightness(.93);}
+.b-discount button:active{filter:brightness(.88);}
 /* .dc-ok is a sibling of .b-discount, not a child — must not be nested in the selector */
 .dc-ok{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;line-height:1.4;color:#10b981;margin-top:9px;padding:5px 10px;border-radius:100px;background:color-mix(in srgb,#10b981 12%,transparent);}
 .dc-ok svg{width:11px;height:11px;min-width:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
@@ -2306,12 +2307,11 @@ function buildDesignUI(){
   const p = brandPalette();
   const hexEl = $('#brandHex'); if(hexEl && document.activeElement!==hexEl) hexEl.value = state.design.brand.toUpperCase();
   const prev = $('#brandPrev');
+  /* same row pattern as the toggle settings: title · subtitle · value on the right */
   if(prev) prev.innerHTML = `
-    <div class="bp-cta" style="background:${p.brand};color:${p.ink};">Pay Securely</div>
-    <div class="bp-row">
-      <span class="bp-chip"><i style="background:${p.panelBg};border-color:${p.panelBorder}"></i>Panel</span>
-      <span class="bp-chip"><i style="background:${p.brand};border-color:${p.brand}"></i>Accent</span>
-      <span class="bp-auto">Button text <b>${p.ink==='#ffffff'?'White':'Black'}</b></span>
+    <div class="dz-toggle-row">
+      <div><div class="tr-name">CTA</div><div class="tr-sub">Accent Button text</div></div>
+      <span class="bp-ink" style="background:${p.brand};color:${p.ink};">${p.ink==='#ffffff'?'White':'Black'}</span>
     </div>`;
 }
 function syncDesignUI(){
