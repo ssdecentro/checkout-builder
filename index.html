@@ -126,10 +126,8 @@ input,select,textarea{font-family:inherit;}
 .bg-blob.b2{width:420px;height:420px;left:38%;top:-200px;background:radial-gradient(closest-side,rgba(var(--brand-rgb,9,110,242),.06),transparent);}
 /* Manifesto-style payment rails animating behind the checkout (desktop/tablet only) */
 #flowBg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-/* height (not min-height) so the shell below can cap itself against it */
-.canvas{position:relative;z-index:1;height:100%;display:flex;align-items:flex-start;justify-content:center;padding:36px 28px 80px;}
-/* the shell holds toolbar · timer · card · Powered by — the whole stack fits */
-.checkout-shell{transition:max-width .25s ease;width:100%;max-width:940px;display:flex;flex-direction:column;max-height:100%;}
+.canvas{position:relative;z-index:1;min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:36px 28px 80px;}
+.checkout-shell{transition:max-width .25s ease;width:100%;max-width:940px;display:flex;flex-direction:column;}
 .checkout-shell.mobile{max-width:420px;}
 .canvas-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .ct-label{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;}
@@ -149,6 +147,16 @@ input,select,textarea{font-family:inherit;}
 .checkout-shell.mobile .co-col,.checkout-shell.mobile .co-stage.on{display:block;}
 .checkout-shell.mobile .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
 .checkout-shell.mobile .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
+/* ── EDITOR CANVAS ONLY ──────────────────────────────────────────
+   Inside the builder the card grows with its content and the canvas scrolls —
+   you can see every block while authoring. The viewport cap and the inner
+   zone scrolling are runtime behaviour: they live in the exported page and in
+   Open Live. These selectors start with .canvas-wrap, which the export's CSS
+   collector deliberately does not copy. */
+.canvas-wrap .checkout{grid-template-rows:auto;min-height:560px;}
+.canvas-wrap .zone-body{overflow:visible;flex:none;}
+.canvas-wrap .zone-foot{margin-top:0;}
+
 /* ── COLUMN ZONES ───────────────────────────────────────────────
    Each column is head (fixed) · body (scrolls when tall) · foot (pinned).
    On phones every zone flows normally so the page has ONE scroll. */
@@ -167,7 +175,7 @@ input,select,textarea{font-family:inherit;}
 .co-col.has-scroll .zone-head{padding-bottom:20px;border-bottom:1px solid var(--co-sum-border);margin-bottom:20px;}
 .co-payment.has-scroll .zone-head{border-bottom-color:var(--co-pay-border);}
 /* hairline between Recurring and the discount/amount group inside the pinned foot */
-.zone-rule{height:1px;background:var(--co-sum-border);margin:16px 0;}
+.zone-rule{height:1px;background:var(--co-sum-border);margin:14px 0;}
 .co-payment .zone-rule{background:var(--co-pay-border);}
 .checkout-shell.mobile .co-col{padding:26px 22px 32px;}
 .checkout-shell.mobile .co-summary{padding-bottom:30px;}
@@ -287,7 +295,8 @@ input,select,textarea{font-family:inherit;}
 .b-heading{font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);letter-spacing:-.2px;}
 .b-para{font-size:13px;line-height:1.6;}
 .b-divider{height:1px;background:var(--co-sum-border);}
-/* payment title + description, fenced by light rules */
+/* payment title + description — one rule above it; the lower edge of the band
+   is drawn by .co-col.has-scroll .zone-head, so no second rule here */
 .b-payhead .phd-rule{height:1px;background:var(--co-sum-border);}
 .co-payment .b-payhead .phd-rule{background:var(--co-pay-border);}
 .b-payhead .phd-body{padding:14px 0;}
@@ -439,8 +448,9 @@ input,select,textarea{font-family:inherit;}
 .b-custom-row .cf-v{font-weight:600;text-align:right;word-break:break-word;}
 
 /* discount code chips */
-.dc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
-.dc-chip{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:100px;border:1px dashed var(--co-sum-border);cursor:pointer;transition:all .13s;letter-spacing:.3px;}
+/* one line, never wrapping — two codes is the most that fits the column */
+.dc-chips{display:flex;flex-wrap:nowrap;gap:6px;margin-top:9px;min-width:0;}
+.dc-chip{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:100px;border:1px dashed var(--co-sum-border);cursor:pointer;transition:all .13s;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 .co-payment .dc-chip{border-color:var(--co-pay-border);}
 .dc-chip:hover{border-color:var(--co-accent);color:var(--co-accent);}
 .dc-chip.on{border-style:solid;border-color:var(--co-accent);color:var(--co-accent);background:color-mix(in srgb,var(--co-accent) 8%,transparent);}
@@ -1220,7 +1230,6 @@ const REG = {
           ${t ? `<div class="phd-t" ${ce(live)} data-ei="title">${esc(t)}</div>` : ''}
           ${ds ? `<div class="phd-d cv-sub" ${ce(live)} data-ei="desc">${esc(ds)}</div>` : ''}
         </div>
-        <div class="phd-rule"></div>
       </div>`;
     }
   },
@@ -1276,8 +1285,11 @@ const REG = {
     defaults:()=>({codes:[{code:'DECENTRO200',amt:200},{code:'FIRSTPAY500',amt:500},{code:'FESTIVE100',amt:100}], showList:true}),
     fields:[{k:'codes',label:'Codes — one per line, "CODE  ₹amount"',t:'codes'},{k:'showList',label:'Show Available Codes',t:'toggle'}],
     render:(b)=>{
-      const chips = (b.props.showList && b.props.codes.length)
-        ? `<div class="dc-chips">${b.props.codes.map(c=>`<span class="dc-chip ${rt.appliedCode===c.code?'on':''}" data-act="chip" data-code="${esc(c.code)}" data-amt="${c.amt}">${esc(c.code)} <span class="pct">· ${fmt(c.amt)} off</span></span>`).join('')}</div>` : '';
+      /* only the first two codes are offered as chips so the row never wraps —
+         the rest still apply when typed into the field */
+      const shown = b.props.codes.slice(0, 2);
+      const chips = (b.props.showList && shown.length)
+        ? `<div class="dc-chips">${shown.map(c=>`<span class="dc-chip ${rt.appliedCode===c.code?'on':''}" data-act="chip" data-code="${esc(c.code)}" data-amt="${c.amt}">${esc(c.code)} <span class="pct">· ${fmt(c.amt)} off</span></span>`).join('')}</div>` : '';
       return `<div class="b-discount-wrap"><div class="b-discount"><input placeholder="Discount code" data-role="dcode" value="${esc(rt.appliedCode)}"><button data-act="applyDc">Apply</button></div>${chips}${rt.appliedCode?`<div class="dc-ok"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>${esc(rt.appliedCode)} applied · ${fmt(rt.appliedAmt)} off</span></div>`:''}</div>`;
     }
   },
@@ -1665,7 +1677,7 @@ function renderInspector(){
       </select></div>` + html;
   }
   if(b.type==='brand') html += `<button class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:8px;" data-tool="uplogo-ins">${state.design.custLogo?'Replace logo…':'Upload logo…'}</button><div class="ins-note">Mix and match: <b>logo + name</b>, <b>logo only</b>, or <b>name only</b>. With "Show logo" on and nothing uploaded, a monogram stands in. Also under <b>Design → Your brand</b>.</div>`;
-  if(b.type==='discount') html += `<div class="ins-note">In Preview, typing this code and hitting Apply gives the discount — great for live demos.</div>`;
+  if(b.type==='discount') html += `<div class="ins-note">The first two codes show as chips, on one line. Every code listed here still works when a payer types it in and hits Apply — handy for live demos.</div>`;
   if(b.type==='upi') html += `<div class="ins-note">Tip: keep 4–6 apps max. Fewer choices = faster checkouts.</div>`;
   html += `<button class="ins-del" data-tool="del-ins">Delete block</button>`;
   body.innerHTML = html;
