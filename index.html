@@ -163,9 +163,14 @@ input,select,textarea{font-family:inherit;}
 .co-col{padding:34px 34px 40px;min-width:0;display:flex;flex-direction:column;min-height:0;}
 .zone-head{flex:none;}
 .zone-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;}
+/* A soft fade at the bottom edge tells the payer there is more below — the
+   scrollbar alone is too easy to miss on a trackpad. */
+.co-col.has-scroll .zone-body{-webkit-mask-image:linear-gradient(#000 calc(100% - 26px),transparent);mask-image:linear-gradient(#000 calc(100% - 26px),transparent);}
 .zone-body::-webkit-scrollbar{width:6px;}
 .zone-body::-webkit-scrollbar-thumb{background:rgba(var(--brand-rgb,9,110,242),.22);border-radius:6px;}
 .zone-foot{flex:none;margin-top:auto;padding-top:20px;}
+.zone-body{--stack:14px;}
+.zone-body .blk + .blk{margin-top:var(--stack);}
 .zone-head > .blk:first-child,.zone-body > .blk:first-child,.zone-foot > .blk:first-child{margin-top:0;}
 .zone-foot::before{content:"";display:block;height:1px;background:var(--co-sum-border);margin:0 0 20px;}
 .co-payment .zone-foot::before{background:var(--co-pay-border);}
@@ -177,6 +182,16 @@ input,select,textarea{font-family:inherit;}
 /* hairline between Recurring and the discount/amount group inside the pinned foot */
 .zone-rule{height:1px;background:var(--co-sum-border);margin:14px 0;}
 .co-payment .zone-rule{background:var(--co-pay-border);}
+/* Discount (flexible) + Recurring (capped) on a single line */
+.foot-row{display:flex;align-items:flex-start;gap:14px;}
+.foot-row > .blk{margin-top:0 !important;}
+.foot-row > .blk:first-child{flex:1 1 auto;min-width:0;}
+.foot-row > .blk:last-child{flex:0 0 150px;max-width:150px;}
+.foot-row .b-recur{gap:8px;align-items:flex-start;padding-top:9px;}
+.foot-row .b-recur .rc-name{font-size:12px;line-height:1.35;}
+.foot-row .b-recur .rc-sub{display:none;}   /* no room for the sub-line here */
+/* two chips have to live inside the narrower discount cell */
+.foot-row .dc-chip{font-size:10px;padding:3px 8px;letter-spacing:.2px;}
 .checkout-shell.mobile .co-col{padding:26px 22px 32px;}
 .checkout-shell.mobile .co-summary{padding-bottom:30px;}
 .co-summary{background:var(--co-sum-bg);color:var(--co-sum-text);}
@@ -299,7 +314,8 @@ input,select,textarea{font-family:inherit;}
    is drawn by .co-col.has-scroll .zone-head, so no second rule here */
 .b-payhead .phd-rule{height:1px;background:var(--co-sum-border);}
 .co-payment .b-payhead .phd-rule{background:var(--co-pay-border);}
-.b-payhead .phd-body{padding:14px 0;}
+/* the rule sits above only, so the block needs no bottom padding of its own */
+.b-payhead .phd-body{padding:14px 0 0;}
 /* ── TYPE SCALE ──────────────────────────────────────────────
    --title-size is THE title size: payment title, stage headings,
    section headings and the payable amount all share it. */
@@ -764,6 +780,10 @@ body.dev-mode .topbar{z-index:95;}
   /* gap so the amount never sits flush against the next panel */
   .co-summary{padding-bottom:30px;}
   .co-summary .zone-foot{padding-bottom:6px;}
+  .foot-row{display:block;}
+  .foot-row > .blk{max-width:none;}
+  .foot-row > .blk + .blk{margin-top:16px !important;}
+  .foot-row .b-recur .rc-sub{display:block;}
   .co-col,.co-stage.on{display:block;}
   .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
   .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
@@ -1289,7 +1309,7 @@ const REG = {
          the rest still apply when typed into the field */
       const shown = b.props.codes.slice(0, 2);
       const chips = (b.props.showList && shown.length)
-        ? `<div class="dc-chips">${shown.map(c=>`<span class="dc-chip ${rt.appliedCode===c.code?'on':''}" data-act="chip" data-code="${esc(c.code)}" data-amt="${c.amt}">${esc(c.code)} <span class="pct">· ${fmt(c.amt)} off</span></span>`).join('')}</div>` : '';
+        ? `<div class="dc-chips">${shown.map(c=>`<span class="dc-chip ${rt.appliedCode===c.code?'on':''}" data-act="chip" data-code="${esc(c.code)}" data-amt="${c.amt}">${esc(c.code)} <span class="pct">· ${fmt(c.amt)}</span></span>`).join('')}</div>` : '';
       return `<div class="b-discount-wrap"><div class="b-discount"><input placeholder="Discount code" data-role="dcode" value="${esc(rt.appliedCode)}"><button data-act="applyDc">Apply</button></div>${chips}${rt.appliedCode?`<div class="dc-ok"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>${esc(rt.appliedCode)} applied · ${fmt(rt.appliedAmt)} off</span></div>`:''}</div>`;
     }
   },
@@ -1450,9 +1470,15 @@ function summaryFoot(vis, toHTML){
   const foot = vis.filter(b=>zoneOf(b,'summary')==='foot');
   if(!foot.length) return '';
   const rec  = foot.filter(b=>b.type==='recur');
-  const rest = foot.filter(b=>b.type!=='recur');
-  const rule = (rec.length && rest.length) ? '<div class="zone-rule"></div>' : '';
-  return `<div class="zone-foot">${rec.map(toHTML).join('')}${rule}${rest.map(toHTML).join('')}</div>`;
+  const dc   = foot.filter(b=>b.type==='discount');
+  const rest = foot.filter(b=>b.type!=='recur' && b.type!=='discount');
+  /* Discount and Recurring are one row of two divs — it buys the product list
+     a whole block of height. Alone, each still renders full width. */
+  const pair = (rec.length && dc.length)
+    ? `<div class="foot-row">${dc.map(toHTML).join('')}${rec.map(toHTML).join('')}</div>`
+    : `${rec.map(toHTML).join('')}${dc.map(toHTML).join('')}`;
+  const rule = (rec.length || dc.length) && rest.length ? '<div class="zone-rule"></div>' : '';
+  return `<div class="zone-foot">${pair}${rule}${rest.map(toHTML).join('')}</div>`;
 }
 
 function methodShell(b, icon, badge, body){
@@ -3026,7 +3052,7 @@ function devCopy(txt){
 function collectCheckoutCSS(){
   /* .zone- must be here: it carries the head/scroll-body/pinned-foot layout AND the
      separator rule above the foot (discount + total). Without it the export loses both. */
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|\.zone-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|\.zone-|\.foot-row|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
   const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell|step-switch)/;
   let css = '';
   for(const sheet of document.styleSheets){
