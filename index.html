@@ -126,8 +126,10 @@ input,select,textarea{font-family:inherit;}
 .bg-blob.b2{width:420px;height:420px;left:38%;top:-200px;background:radial-gradient(closest-side,rgba(var(--brand-rgb,9,110,242),.06),transparent);}
 /* Manifesto-style payment rails animating behind the checkout (desktop/tablet only) */
 #flowBg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-.canvas{position:relative;z-index:1;min-height:100%;display:flex;justify-content:center;padding:36px 28px 80px;}
-.checkout-shell{transition:max-width .25s ease;width:100%;max-width:940px;}
+/* height (not min-height) so the shell below can cap itself against it */
+.canvas{position:relative;z-index:1;height:100%;display:flex;align-items:flex-start;justify-content:center;padding:36px 28px 80px;}
+/* the shell holds toolbar · timer · card · Powered by — the whole stack fits */
+.checkout-shell{transition:max-width .25s ease;width:100%;max-width:940px;display:flex;flex-direction:column;max-height:100%;}
 .checkout-shell.mobile{max-width:420px;}
 .canvas-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .ct-label{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;}
@@ -135,8 +137,11 @@ input,select,textarea{font-family:inherit;}
 .ct-zoom{font-size:11px;color:var(--muted);font-weight:500;}
 
 /* ───────────────────── CHECKOUT (the built page) ───────────────────── */
-.checkout{border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(2,11,30,.10),0 1px 3px rgba(2,11,30,.06);display:grid;grid-template-columns:1fr 1.1fr;min-height:560px;position:relative;background:var(--co-pay-bg);}
-.checkout-shell.mobile .checkout{grid-template-columns:1fr;}
+/* grid-template-rows:minmax(0,1fr) bounds the row, so .co-col inherits the card's
+   height instead of stretching it — that is what lets .zone-body scroll. */
+.checkout{border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(2,11,30,.10),0 1px 3px rgba(2,11,30,.06);display:grid;grid-template-columns:1fr 1.1fr;grid-template-rows:minmax(0,1fr);min-height:min(560px,calc(100vh - 260px));position:relative;background:var(--co-pay-bg);flex:0 1 auto;}
+.checkout-shell.mobile{max-height:none;}
+.checkout-shell.mobile .checkout{grid-template-columns:1fr;grid-template-rows:auto;}
 /* ── mobile = flat full-bleed page, not a floating card ── */
 .checkout-shell.mobile .checkout{border-radius:0;box-shadow:none;}
 .checkout-shell.mobile .zone-body{overflow:visible;flex:none;}
@@ -157,6 +162,13 @@ input,select,textarea{font-family:inherit;}
 .zone-foot::before{content:"";display:block;height:1px;background:var(--co-sum-border);margin:0 0 20px;}
 .co-payment .zone-foot::before{background:var(--co-pay-border);}
 .zone-foot.no-rule::before{display:none;}
+/* The top edge of the scroll band only draws when the band actually scrolls.
+   .has-scroll is set in JS by comparing scrollHeight with clientHeight. */
+.co-col.has-scroll .zone-head{padding-bottom:20px;border-bottom:1px solid var(--co-sum-border);margin-bottom:20px;}
+.co-payment.has-scroll .zone-head{border-bottom-color:var(--co-pay-border);}
+/* hairline between Recurring and the discount/amount group inside the pinned foot */
+.zone-rule{height:1px;background:var(--co-sum-border);margin:16px 0;}
+.co-payment .zone-rule{background:var(--co-pay-border);}
 .checkout-shell.mobile .co-col{padding:26px 22px 32px;}
 .checkout-shell.mobile .co-summary{padding-bottom:30px;}
 .co-summary{background:var(--co-sum-bg);color:var(--co-sum-text);}
@@ -1420,6 +1432,17 @@ const REG = {
 
 const ce = live => live ? '' : 'contenteditable="true" spellcheck="false"';
 
+/* Pinned summary foot: Recurring, a hairline, then discount + Total Payable.
+   The hairline only appears when Recurring shares the foot with something else. */
+function summaryFoot(vis, toHTML){
+  const foot = vis.filter(b=>zoneOf(b,'summary')==='foot');
+  if(!foot.length) return '';
+  const rec  = foot.filter(b=>b.type==='recur');
+  const rest = foot.filter(b=>b.type!=='recur');
+  const rule = (rec.length && rest.length) ? '<div class="zone-rule"></div>' : '';
+  return `<div class="zone-foot">${rec.map(toHTML).join('')}${rule}${rest.map(toHTML).join('')}</div>`;
+}
+
 function methodShell(b, icon, badge, body){
   const flat = state.design.methodLayout === 'flat';
   const open = flat || b.props.open;
@@ -1481,7 +1504,8 @@ const itemNoun = () => state.design.pageType==='service' ? 'Service' : 'Product'
    body  : the product / service list and payer fields (scrolls if long)
    foot  : discount + amount (left) and Pay CTA + trust (right) — pinned bottom */
 const SUM_HEAD  = ['brand','payhead'];
-const SUM_FOOT  = ['discount','totals'];      /* discount sits ABOVE the amount */
+/* Recurring sits BELOW the scroll band — the band holds products only */
+const SUM_FOOT  = ['recur','discount','totals'];      /* discount sits ABOVE the amount */
 const PAY_FOOT  = ['pay','secure','mfooter'];
 const zoneOf = (b, region) => region==='summary'
   ? (SUM_HEAD.includes(b.type) ? 'head' : SUM_FOOT.includes(b.type) ? 'foot' : 'body')
@@ -1521,10 +1545,9 @@ function renderRegion(region){
   if(region==='summary'){
     const vis = list.filter(visibleBlock);
     const z = t => vis.filter(b=>zoneOf(b,'summary')===t).map(blkHTML).join('');
-    const foot = z('foot');
     el.innerHTML = `<div class="zone-head">${z('head')}</div>
       <div class="zone-body">${z('body')}</div>
-      ${foot ? `<div class="zone-foot">${foot}</div>` : ''}`;
+      ${summaryFoot(vis, blkHTML)}`;
     return;
   }
   /* single-page payment column: body scrolls, Pay CTA pinned */
@@ -1545,16 +1568,18 @@ function renderRegion(region){
     ? `<div class="zone-foot">${sf.map(blkHTML).join('')}${sp.map(blkHTML).join('')}</div>` : '';
   el.innerHTML = `
     <div class="co-stage ${show1?'on':''}" data-stage="1">
+      <div class="zone-head"><div class="co-stage-head"><div class="sh-k">Step 1 Of 2</div><div class="sh-t">Customer Information</div></div></div>
       <div class="zone-body">
-        <div class="co-stage-head"><div class="sh-k">Step 1 Of 2</div><div class="sh-t">Customer Information</div></div>
         ${s1.length ? s1.map(blkHTML).join('') : `<div class="region-empty">Add Payer Name, Payer Email or Payer Phone — they appear here on step 1</div>`}
       </div>
       <div class="zone-foot no-rule"><div class="co-nav"><button class="nav-next" data-act="toStep2">Continue To Payment ${svg('<path d="M5 12h14M13 6l6 6-6 6"/>')}</button></div></div>
     </div>
     <div class="co-stage ${show2?'on':''}" data-stage="2">
-      <div class="zone-body">
+      <div class="zone-head">
         <div class="co-stage-head"><div class="sh-k">Step 2 Of 2</div><div class="sh-t">Choose How To Pay</div></div>
         ${s1.length?recapHTML():''}
+      </div>
+      <div class="zone-body">
         ${s2.length ? s2.map(blkHTML).join('') : `<div class="region-empty">Drag payment blocks here — UPI, QR, Banking Connect</div>`}
       </div>
       ${footHTML}
@@ -1575,7 +1600,23 @@ function renderAll(){
   if(!tInt) renderTimer();
   document.querySelectorAll('#stepSwitch button').forEach(x=>x.classList.toggle('on', +x.dataset.st===rt.step));
   renderInspector();
+  syncScrollRules();
 }
+
+/* A column is marked .has-scroll only when its body genuinely overflows.
+   The separator under the head hangs off that class, so the top edge of the
+   scroll band shows up exactly when there is something to scroll. */
+function syncScrollRules(){
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('#checkout .co-col').forEach(col=>{
+      const stage = col.querySelector('.co-stage.on');
+      const body  = (stage || col).querySelector(':scope > .zone-body');
+      const over  = !!body && (body.scrollHeight - body.clientHeight) > 1;
+      col.classList.toggle('has-scroll', over);
+    });
+  });
+}
+let _srz; window.addEventListener('resize', ()=>{ clearTimeout(_srz); _srz = setTimeout(syncScrollRules, 120); });
 
 /* ═══════════════════════ INSPECTOR ═══════════════════════ */
 function renderInspector(){
@@ -1900,6 +1941,7 @@ function validateStep1(){
 function goStep(n){
   rt.step = n;
   renderRegion('payment');
+  syncScrollRules();
   const co = $('#checkout');
   if(co.scrollIntoView) co.scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -2970,7 +3012,9 @@ function devCopy(txt){
 
 /* ═══════════════════════ EXPORT ═══════════════════════ */
 function collectCheckoutCSS(){
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
+  /* .zone- must be here: it carries the head/scroll-body/pinned-foot layout AND the
+     separator rule above the foot (discount + total). Without it the export loses both. */
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|\.zone-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
   const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell|step-switch)/;
   let css = '';
   for(const sheet of document.styleSheets){
@@ -3000,19 +3044,19 @@ function buildExportHTML(){
     const inner = REG[b.type].render(b, true);
     return inner.trim() ? `<div class="blk">${inner}</div>` : '';   /* drop empty blocks entirely */
   }).filter(Boolean).join('\n');
+  const staticBlk1 = b => staticBlks([b]);
   const renderStatic = region => {
     const list = state.blocks[region].filter(visibleBlock);
     const z = (t, reg) => staticBlks(list.filter(b=>zoneOf(b,reg)===t));
     /* ── ORDER SUMMARY column: head · scrollable body · pinned foot ── */
     if(region==='summary'){
-      const foot = z('foot','summary');
       return `
       <!-- head: brand + payment title (fixed) -->
       <div class="zone-head">${z('head','summary')}</div>
-      <!-- body: product / service list (scrolls when it gets long) -->
+      <!-- body: product / service list — the ONLY part that scrolls -->
       <div class="zone-body">${z('body','summary')}</div>
-      ${foot ? `<!-- foot: discount + payable amount (pinned to the bottom) -->
-      <div class="zone-foot">${foot}</div>` : ''}`;
+      <!-- foot: recurring + discount + payable amount (pinned to the bottom) -->
+      ${summaryFoot(list, staticBlk1)}`;
     }
     /* ── PAYMENT column, single page ── */
     if(d.flow!=='twostep'){
@@ -3030,17 +3074,20 @@ function buildExportHTML(){
     return `
     <!-- STEP 1 — customer information -->
     <div class="co-stage on" data-stage="1">
+      <div class="zone-head"><div class="co-stage-head"><div class="sh-k">Step 1 Of 2</div><div class="sh-t">Customer Information</div></div></div>
       <div class="zone-body">
-        <div class="co-stage-head"><div class="sh-k">Step 1 Of 2</div><div class="sh-t">Customer Information</div></div>
         ${staticBlks(s1)}
       </div>
       <div class="zone-foot no-rule"><div class="co-nav"><button class="nav-next" data-act="toStep2">Continue To Payment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div></div>
     </div>
     <!-- STEP 2 — payment methods (only one accordion open at a time) -->
     <div class="co-stage" data-stage="2">
-      <div class="zone-body">
+      <div class="zone-head">
         <div class="co-stage-head"><div class="sh-k">Step 2 Of 2</div><div class="sh-t">Choose How To Pay</div></div>
         ${s1.length?`<div class="co-recap"><div class="rc-i"><div class="rc-n" id="rcName">Customer Information</div><div class="rc-c cv-sub" id="rcContact"></div></div><button class="rc-e" data-act="editDetails">Edit</button></div>`:''}
+      </div>
+      <!-- body: payment methods — the ONLY part that scrolls -->
+      <div class="zone-body">
         ${staticBlks(s2)}
       </div>
       ${foot}
@@ -3174,6 +3221,7 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "function goStep(n){",
     "  document.querySelectorAll('.co-stage').forEach(function(s){s.classList.toggle('on', s.dataset.stage===String(n));});",
     "  var t=document.querySelector('.checkout'); if(t&&t.scrollIntoView)t.scrollIntoView({behavior:'smooth',block:'start'});",
+    "  syncScrollRules();",
     "}",
     "function validateStep1(){",
     "  var ok=true, first=null;",
@@ -3187,6 +3235,18 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  if(first)first.focus();",
     "  return ok;",
     "}",
+    "/* a column is .has-scroll only while its body really overflows */",
+    "function syncScrollRules(){",
+    "  document.querySelectorAll('.checkout .co-col').forEach(function(col){",
+    "    var stage=col.querySelector('.co-stage.on');",
+    "    var body=(stage||col).querySelector(':scope > .zone-body');",
+    "    var over=!!body && (body.scrollHeight-body.clientHeight)>1;",
+    "    col.classList.toggle('has-scroll',over);",
+    "  });",
+    "}",
+    "document.addEventListener('DOMContentLoaded',syncScrollRules);",
+    "window.addEventListener('load',syncScrollRules);",
+    "var _srz; window.addEventListener('resize',function(){clearTimeout(_srz);_srz=setTimeout(syncScrollRules,120);});",
     "function syncRecap(){",
     "  var g=function(k){var el=document.querySelector('[data-role='+k+']');return el?el.value.trim():'';};",
     "  var n=document.getElementById('rcName'), c=document.getElementById('rcContact');",
@@ -3251,11 +3311,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
 body::after{content:"";position:fixed;z-index:0;pointer-events:none;width:760px;height:760px;right:-260px;top:-300px;
   background:radial-gradient(closest-side,rgba(0,212,255,.09),transparent);}
 .bg-blob{position:fixed;z-index:0;pointer-events:none;border-radius:50%;}
-.bg-blob.b1{width:620px;height:620px;left:-240px;bottom:-260px;background:radial-gradient(closest-side,rgba(9,110,242,.08),transparent);}
-.bg-blob.b2{width:420px;height:420px;left:38%;top:-200px;background:radial-gradient(closest-side,rgba(61,156,245,.06),transparent);}
+.bg-blob.b1{width:620px;height:620px;left:-240px;bottom:-260px;background:radial-gradient(closest-side,rgba(var(--brand-rgb),.09),transparent);}
+.bg-blob.b2{width:420px;height:420px;left:38%;top:-200px;background:radial-gradient(closest-side,rgba(var(--brand-rgb),.06),transparent);}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
 input{font-family:inherit;}
-.page{width:100%;max-width:940px;margin:auto;position:relative;z-index:1;}
+/* The page column — timer · card · Powered by — never exceeds the viewport, so
+   the whole card AND the Powered-by line stay visible; the card's own
+   .zone-body scrolls instead. 48px = the body padding above and below. */
+.page{width:100%;max-width:940px;margin:auto;position:relative;z-index:1;
+  display:flex;flex-direction:column;max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);}
 #flowBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 .blk + .blk{margin-top:18px;}
 .powered{width:100%;text-align:center;font-size:13px;font-weight:600;color:#94a3b8;margin-top:18px;}
@@ -3270,8 +3334,8 @@ ${collectCheckoutCSS()}
 @media (max-width:760px){
   /* flat, full-device-width page — the card treatment is desktop/tablet only */
   body{padding:0;background:#fff;background-image:none;align-items:stretch;}
-  .page{max-width:100%;margin:0;}
-  .checkout{border-radius:0;box-shadow:none;min-height:100vh;min-height:100dvh;}
+  .page{max-width:100%;margin:0;max-height:none;display:block;}
+  .checkout{border-radius:0;box-shadow:none;min-height:100vh;min-height:100dvh;grid-template-rows:auto;}
   .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
   .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
   .powered{padding:16px 16px 22px;}
