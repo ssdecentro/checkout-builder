@@ -145,8 +145,21 @@ input,select,textarea{font-family:inherit;}
 .checkout-shell.mobile .zone-body{overflow:visible;flex:none;}
 .checkout-shell.mobile .zone-foot{margin-top:0;}
 .checkout-shell.mobile .co-col,.checkout-shell.mobile .co-stage.on{display:block;}
-.checkout-shell.mobile .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
-.checkout-shell.mobile .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
+/* ── VIEWPORT GUIDE (editor only) ───────────────────────────────
+   A 1px frame around one desktop viewport's worth of page, so you can see at a
+   glance what sits above the fold. Selectors start with .vp-, which the export's
+   CSS collector does not copy, so none of this ships. */
+.vp-frame{position:relative;border:1px solid #c3cbd9;border-radius:8px;padding:26px 22px 20px;min-height:760px;display:flex;flex-direction:column;}
+.vp-frame::before{content:"Desktop viewport";position:absolute;top:-8px;left:14px;padding:0 7px;background:#f0f2f6;
+  font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:#93a0b4;}
+.vp-frame > #poweredLine{margin-top:auto;padding-top:16px;}
+.checkout-shell.mobile .vp-frame{border:none;border-radius:0;padding:0;min-height:0;display:block;}
+.checkout-shell.mobile .vp-frame::before{display:none;}
+@media (max-width:860px){
+  .vp-frame{border:none;padding:0;min-height:0;display:block;}
+  .vp-frame::before{display:none;}
+}
+
 /* ── EDITOR CANVAS ONLY ──────────────────────────────────────────
    Inside the builder the card grows with its content and the canvas scrolls —
    you can see every block while authoring. The viewport cap and the inner
@@ -154,44 +167,50 @@ input,select,textarea{font-family:inherit;}
    Open Live. These selectors start with .canvas-wrap, which the export's CSS
    collector deliberately does not copy. */
 .canvas-wrap .checkout{grid-template-rows:auto;min-height:560px;}
+.canvas-wrap .co-timer{position:sticky;top:0;left:auto;right:auto;transform:none;z-index:30;margin-bottom:26px;}
 .canvas-wrap .zone-body{overflow:visible;flex:none;}
-.canvas-wrap .zone-foot{margin-top:0;}
+/* margin-top:auto is kept: Total Payable and the Pay CTA still settle on the
+   card's bottom edge while authoring, even though nothing scrolls here. */
 
 /* ── COLUMN ZONES ───────────────────────────────────────────────
    Each column is head (fixed) · body (scrolls when tall) · foot (pinned).
    On phones every zone flows normally so the page has ONE scroll. */
-.co-col{padding:34px 34px 40px;min-width:0;display:flex;flex-direction:column;min-height:0;}
+.co-col{padding:34px 34px 30px;min-width:0;display:flex;flex-direction:column;min-height:0;}
 .zone-head{flex:none;}
 .zone-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;}
 /* A soft fade at the bottom edge tells the payer there is more below — the
    scrollbar alone is too easy to miss on a trackpad. */
+@media (min-width:641px){
+  .b-totals .tt-inline{display:none;}          /* folded into the popover */
+  .tt-i{display:inline-flex;}
+  .tt-wrap:hover .tt-pop,.tt-i:focus-visible + .tt-pop{display:block;}
+}
 .co-col.has-scroll .zone-body{-webkit-mask-image:linear-gradient(#000 calc(100% - 26px),transparent);mask-image:linear-gradient(#000 calc(100% - 26px),transparent);}
 .zone-body::-webkit-scrollbar{width:6px;}
 .zone-body::-webkit-scrollbar-thumb{background:rgba(var(--brand-rgb,9,110,242),.22);border-radius:6px;}
-.zone-foot{flex:none;margin-top:auto;padding-top:20px;}
-.zone-body{--stack:14px;}
+.zone-foot{flex:none;margin-top:auto;padding-top:var(--co-sep);}
+.zone-body{--stack:10px;}
 .zone-body .blk + .blk{margin-top:var(--stack);}
 .zone-head > .blk:first-child,.zone-body > .blk:first-child,.zone-foot > .blk:first-child{margin-top:0;}
-.zone-foot::before{content:"";display:block;height:1px;background:var(--co-sum-border);margin:0 0 20px;}
+.zone-foot::before{content:"";display:block;height:1px;background:var(--co-sum-border);margin:0 0 var(--co-sep);}
 .co-payment .zone-foot::before{background:var(--co-pay-border);}
 .zone-foot.no-rule::before{display:none;}
-/* The top edge of the scroll band only draws when the band actually scrolls.
-   .has-scroll is set in JS by comparing scrollHeight with clientHeight. */
-.co-col.has-scroll .zone-head{padding-bottom:20px;border-bottom:1px solid var(--co-sum-border);margin-bottom:20px;}
-.co-payment.has-scroll .zone-head{border-bottom-color:var(--co-pay-border);}
+/* The band's top edge is always drawn — the payer needs to see where the list
+   starts whether or not it scrolls — and it hugs the description. */
+.zone-head{padding-bottom:var(--co-sep);border-bottom:1px solid var(--co-sum-border);margin-bottom:var(--co-sep);}
+.co-payment .zone-head{border-bottom-color:var(--co-pay-border);}
 /* hairline between Recurring and the discount/amount group inside the pinned foot */
-.zone-rule{height:1px;background:var(--co-sum-border);margin:14px 0;}
-.co-payment .zone-rule{background:var(--co-pay-border);}
-/* Discount (flexible) + Recurring (capped) on a single line */
-.foot-row{display:flex;align-items:flex-start;gap:14px;}
-.foot-row > .blk{margin-top:0 !important;}
-.foot-row > .blk:first-child{flex:1 1 auto;min-width:0;}
-.foot-row > .blk:last-child{flex:0 0 150px;max-width:150px;}
-.foot-row .b-recur{gap:8px;align-items:flex-start;padding-top:9px;}
-.foot-row .b-recur .rc-name{font-size:12px;line-height:1.35;}
-.foot-row .b-recur .rc-sub{display:none;}   /* no room for the sub-line here */
-/* two chips have to live inside the narrower discount cell */
-.foot-row .dc-chip{font-size:10px;padding:3px 8px;letter-spacing:.2px;}
+/* The pinned foot runs tight: discount CTA · recurring · totals */
+.zone-foot{--stack:10px;}
+/* the merchant footer needs air under the primary CTA, on both steps */
+.zone-foot .co-nav{margin-bottom:20px;}
+.zone-foot .b-mfoot{margin-top:10px;}
+.zone-foot .b-recur{align-items:center;gap:10px;}
+.zone-foot .b-recur .rc-name{font-size:12px;font-weight:600;}
+.zone-foot .b-recur .rc-sub{display:none;}        /* the foot is for one-liners */
+.zone-foot .sw{width:30px;height:18px;min-width:30px;}
+.zone-foot .sw::after{width:14px;height:14px;}
+.zone-foot .sw.on::after{left:14px;}
 .checkout-shell.mobile .co-col{padding:26px 22px 32px;}
 .checkout-shell.mobile .co-summary{padding-bottom:30px;}
 .co-summary{background:var(--co-sum-bg);color:var(--co-sum-text);}
@@ -214,32 +233,31 @@ input,select,textarea{font-family:inherit;}
 /* ───────── SESSION EXPIRY TIMER ───────── */
 /* the host must not form a containing block */
 #timerHost{display:contents;}
-.ct-sentinel{height:1px;margin-bottom:-1px;}
-.ct-spacer{height:0;transition:height .18s;}
-/* resting state — card-width banner, same elevation as the checkout card */
-.co-timer{display:flex;align-items:center;gap:13px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:13px 18px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(2,11,30,.10),0 1px 3px rgba(2,11,30,.06);transition:border-radius .18s, padding .18s;}
-/* docked — full-width header bar pinned to the top of the scroll area */
-.co-timer.docked{position:fixed;z-index:45;margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;padding:12px 22px;box-shadow:0 6px 22px rgba(2,11,30,.16);}
-.co-timer.docked .ct-in{max-width:940px;margin:0 auto;}
-.co-timer .ct-in{display:flex;align-items:center;gap:13px;width:100%;min-width:0;}
-.co-timer .ct-ic{width:22px;height:22px;min-width:22px;display:flex;align-items:center;justify-content:center;}
-.co-timer .ct-ic svg{width:19px;height:19px;stroke:#dc2626;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
-.co-timer .ct-tx{flex:1;min-width:0;}
-.co-timer .ct-t{font-size:13.5px;font-weight:700;color:#b91c1c;line-height:1.35;}
+/* trust strip — page chrome, so it reads against the page, not the card */
+#trustHost:not(:empty){margin-top:16px;}
+#trustHost .b-secure{justify-content:center;color:#8794a8;}
+#trustHost .blk + .blk{margin-top:8px;}
+/* ── SESSION TIMER — a full-width bar across the top of the viewport ─────────
+   Fixed, so it costs the card no height; everything inside is centred on the
+   screen. The exported page reserves --co-bar at the top for it. */
+.co-timer{position:fixed;top:0;left:0;right:0;width:100%;z-index:60;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:#fef2f2;border:none;border-bottom:1px solid #fbd9d9;border-radius:0;
+  padding:14px 20px;box-shadow:none;transition:background .2s,border-color .2s;}
+.co-timer .ct-in{display:inline-flex;align-items:center;gap:10px;min-width:0;}
+.co-timer .ct-ic{width:17px;height:17px;min-width:17px;display:flex;align-items:center;justify-content:center;}
+.co-timer .ct-ic svg{width:17px;height:17px;stroke:#dc2626;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.co-timer .ct-t{font-size:14px;font-weight:700;color:#b91c1c;line-height:1.3;}
 .co-timer .ct-t b{font-variant-numeric:tabular-nums;}
-.co-timer .ct-s{font-size:11.5px;color:#dc2626;opacity:.82;margin-top:2px;line-height:1.4;}
-.co-timer .ct-r{margin-left:auto;flex:none;font-size:11.5px;font-weight:700;color:#b91c1c;white-space:nowrap;}
-.co-timer.urgent{background:#fee2e2;border-color:#fca5a5;animation:tpulse 1.6s ease-in-out infinite;}
-@keyframes tpulse{50%{border-color:#ef4444;}}
-.co-timer.done{background:#f1f5f9;border-color:#e2e8f0;}
-.co-timer.done .ct-t,.co-timer.done .ct-s,.co-timer.done .ct-r{color:#64748b;}
+.co-timer.urgent{background:#fee2e2;border-bottom-color:#fca5a5;animation:tpulse 1.6s ease-in-out infinite;}
+.co-timer.done{background:#f1f5f9;border-bottom-color:#e2e8f0;}
+.co-timer.done .ct-t{color:#64748b;}
 .co-timer.done .ct-ic svg{stroke:#94a3b8;}
 /* mobile: just "Payment session expires in MM:SS" */
 @media (max-width:640px){
-  .co-timer{padding:11px 13px;gap:9px;top:8px;}
-  .co-timer .ct-r,.co-timer .ct-s{display:none;}
-  .co-timer .ct-t{font-size:12.5px;}
-  .co-timer.done .ct-s{display:block;font-size:11px;}
+  /* the bar is identical on phones — just a touch tighter */
+  .co-timer{padding:12px 16px;}
+  .co-timer .ct-t{font-size:13px;}
 }
 
 /* ───────── TWO-STEP FLOW ───────── */
@@ -264,7 +282,7 @@ input,select,textarea{font-family:inherit;}
 .co-nav{display:flex;gap:10px;align-items:center;margin-top:20px;}
 .co-nav .nav-back{flex:none;height:46px;padding:0 16px;border-radius:var(--co-r);border:1px solid var(--co-pay-border);color:inherit;font-size:13px;font-weight:700;background:transparent;}
 .co-nav .nav-back:hover{background:var(--co-pay-hover);}
-.co-nav .nav-next{flex:1;height:46px;border-radius:var(--co-r);background:var(--co-accent);color:var(--co-accent-ink);font-size:14.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter .15s,transform .1s;}
+.co-nav .nav-next{flex:1;height:48px;border-radius:var(--co-r);background:var(--co-accent);color:var(--co-accent-ink);font-size:14.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter .15s,transform .1s;}
 .co-nav .nav-next:hover{filter:brightness(1.1);}
 .co-nav .nav-next:active{transform:scale(.99);}
 .co-nav .nav-next svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
@@ -305,8 +323,8 @@ input,select,textarea{font-family:inherit;}
 /* ── checkout block content styles (use per-column vars via .co-summary/.co-payment scoping) ── */
 .co-summary .cv-sub{color:var(--co-sum-sub);} .co-payment .cv-sub{color:var(--co-pay-sub);}
 .b-brand{display:flex;align-items:center;gap:10px;}
-.b-brand .bb-logo{width:30px;height:30px;border-radius:8px;background:var(--co-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--co-accent-ink);}
-.b-brand .bb-name{font-size:17px;font-weight:700;letter-spacing:.2px;font-family:var(--co-font-head);}
+.b-brand .bb-logo{width:32px;height:32px;border-radius:8px;background:var(--co-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--co-accent-ink);}
+.b-brand .bb-name{font-size:19px;font-weight:700;letter-spacing:.1px;font-family:var(--co-font-head);}
 .b-heading{font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);letter-spacing:-.2px;}
 .b-para{font-size:13px;line-height:1.6;}
 .b-divider{height:1px;background:var(--co-sum-border);}
@@ -315,13 +333,13 @@ input,select,textarea{font-family:inherit;}
 .b-payhead .phd-rule{height:1px;background:var(--co-sum-border);}
 .co-payment .b-payhead .phd-rule{background:var(--co-pay-border);}
 /* the rule sits above only, so the block needs no bottom padding of its own */
-.b-payhead .phd-body{padding:14px 0 0;}
+.b-payhead .phd-body{padding:0;padding-top:var(--co-sep);}
 /* ── TYPE SCALE ──────────────────────────────────────────────
    --title-size is THE title size: payment title, stage headings,
    section headings and the payable amount all share it. */
-.checkout{--title-size:17px;}
+.checkout{--title-size:18.5px;--co-sep:14px;}   /* --co-sep: the gap above and below every separator */
 .b-payhead .phd-t{font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);line-height:1.3;}
-.b-payhead .phd-d{font-size:12.5px;line-height:1.55;margin-top:5px;}
+.b-payhead .phd-d{font-size:13px;line-height:1.6;margin-top:6px;}
 .b-payhead .phd-t + .phd-d{margin-top:5px;}
 .phd-empty{font-size:11px;font-style:italic;opacity:.55;}
 .co-payment .b-divider{background:var(--co-pay-border);}
@@ -334,34 +352,51 @@ input,select,textarea{font-family:inherit;}
 /* both sub-lines under the item name share the subtitle treatment */
 .b-item .it-qty,
 .b-item .it-unit{font-size:11.5px;font-weight:500;margin-top:3px;}
-.b-item .it-amt{margin-left:auto;flex:none;font-size:14px;font-weight:700;text-align:right;white-space:nowrap;}
+.b-item .it-amt{margin-left:auto;flex:none;font-size:14.5px;font-weight:700;text-align:right;white-space:nowrap;}
 
+/* ── TOTALS: Total Payable always visible; the itemised charges hide behind an
+   info icon on desktop and sit inline on phones ──────────────────────────── */
 .b-totals .tr{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
+.tt-wrap{position:relative;display:inline-flex;vertical-align:middle;margin-left:7px;}
+.tt-i{display:none;width:17px;height:17px;align-items:center;justify-content:center;border:none;background:none;padding:0;color:var(--co-accent);cursor:help;transition:opacity .13s;}
+.tt-i:hover{opacity:.75;}
+.tt-i svg{width:15px;height:15px;display:block;}   /* filled glyph — colour comes from .tt-i */
+.tt-pop{display:none;position:absolute;bottom:calc(100% + 9px);left:-10px;z-index:35;width:214px;padding:11px 13px 9px;background:var(--co-pay-bg);border:1px solid var(--co-sum-border);border-radius:11px;box-shadow:0 12px 30px rgba(2,11,30,.17);font-size:13px;font-weight:500;font-family:var(--co-font-head);text-align:left;}
+.tt-pop-h{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--co-sum-sub);margin-bottom:7px;}
+.tt-pop .tr{font-size:13px;padding:4px 0;}
 .b-totals .tr .tv{font-weight:600;}
-.b-totals .tr-total{border-top:1px solid var(--co-sum-border);margin-top:8px;padding-top:12px;align-items:baseline;}
+.b-totals .tr-total{border-top:1px solid var(--co-sum-border);margin-top:var(--co-sep);padding-top:var(--co-sep);align-items:baseline;}
 .co-payment .b-totals .tr-total{border-color:var(--co-pay-border);}
 .b-totals .tr-total .tl{font-size:var(--title-size);font-weight:700;}
-.b-totals .tr-total .tv{font-size:var(--title-size);font-weight:800;font-family:var(--co-font-head);}
+.b-totals .tr-total .tv{font-size:20px;font-weight:800;font-family:var(--co-font-head);}
 
-.b-discount{display:flex;gap:8px;}
-.b-discount input{flex:1;height:40px;border-radius:var(--co-r);border:1px solid var(--co-sum-border);background:var(--co-sum-field);color:inherit;padding:0 12px;font-size:13px;min-width:0;}
-.co-payment .b-discount input{border-color:var(--co-pay-border);background:var(--co-pay-field);}
-.b-discount input::placeholder{color:var(--co-sum-sub);opacity:.8;}
-/* Apply is a filled brand action — its label flips with the brand's contrast */
-.b-discount button{height:40px;padding:0 18px;border-radius:var(--co-r);border:1px solid var(--co-accent);background:var(--co-accent);color:var(--co-accent-ink);font-size:12px;font-weight:700;transition:filter .13s;}
-.b-discount button:hover{filter:brightness(.93);}
-.b-discount button:active{filter:brightness(.88);}
-/* .dc-ok is a sibling of .b-discount, not a child — must not be nested in the selector */
-.dc-ok{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;line-height:1.4;color:#10b981;margin-top:9px;padding:5px 10px;border-radius:100px;background:color-mix(in srgb,#10b981 12%,transparent);}
-.dc-ok svg{width:11px;height:11px;min-width:11px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+/* ── DISCOUNT: a text CTA, a popup field with the arrow inside it, and a
+   dismissible pill once applied. Costs one line when collapsed. ──────────── */
+.b-dc{position:relative;min-width:0;}
+.dc-cta{font-size:12px;font-weight:700;color:var(--co-accent);padding:4px 0;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;background:none;border:none;cursor:pointer;white-space:nowrap;}
+.dc-cta:hover{opacity:.78;}
+/* no card chrome around it — the field itself is the popup */
+.dc-pop{display:none;position:absolute;bottom:calc(100% + 8px);left:0;z-index:30;width:232px;max-width:70vw;}
+.b-dc.open .dc-pop{display:block;animation:popin .16s ease-out;}
+.dc-field{position:relative;}
+.dc-field input{width:100%;height:40px;border-radius:10px;border:1px solid var(--co-accent);background:#fff;color:var(--co-pay-text);padding:0 46px 0 13px;font-size:13px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;box-shadow:0 8px 24px rgba(2,11,30,.14);}
+.dc-field input:focus{outline:none;border-color:var(--co-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--co-accent) 14%,transparent);}
+/* the arrow lives inside the field — no separate Apply button */
+.dc-go{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:7px;background:var(--co-accent);color:var(--co-accent-ink);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:filter .13s;}
+.dc-go:hover{filter:brightness(.92);}
+.dc-go svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.dc-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;line-height:1;color:var(--co-accent);padding:5px 6px 5px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-accent) 12%,transparent);white-space:nowrap;}
+.dc-x{width:16px;height:16px;min-width:16px;border-radius:50%;background:color-mix(in srgb,var(--co-accent) 20%,transparent);color:var(--co-accent);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .13s,color .13s;}
+.dc-x:hover{background:var(--co-accent);color:var(--co-accent-ink);}
+.dc-x svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;}
 
 .b-recur{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .b-recur .rc-name{font-size:13.5px;font-weight:600;}
 .b-recur .rc-sub{font-size:11px;margin-top:2px;}
 
-.b-field label,.f-label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--co-pay-sub);}
+.b-field label,.f-label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:var(--co-pay-sub);}
 .co-summary .b-field label{color:var(--co-sum-sub);}
-.b-field input{width:100%;height:42px;border-radius:var(--co-r);border:1px solid var(--co-pay-border);background:var(--co-pay-field);color:inherit;padding:0 13px;font-size:13.5px;transition:border-color .15s, box-shadow .15s;}
+.b-field input{width:100%;height:44px;border-radius:var(--co-r);border:1px solid var(--co-pay-border);background:var(--co-pay-field);color:inherit;padding:0 13px;font-size:13.5px;transition:border-color .15s, box-shadow .15s;}
 .co-summary .b-field input{border-color:var(--co-sum-border);background:var(--co-sum-field);}
 .b-field input::placeholder{color:var(--co-pay-sub);opacity:.75;}
 .b-field input:focus{outline:none;border-color:var(--co-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--co-accent) 14%,transparent);}
@@ -438,7 +473,7 @@ input,select,textarea{font-family:inherit;}
 
 /* secure footer */
 .b-secure{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
-.b-secure .sc-item{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;}
+.b-secure .sc-item{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;}
 .b-secure .sc-item svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .b-secure .sc-sep{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.3;}
 
@@ -465,12 +500,6 @@ input,select,textarea{font-family:inherit;}
 
 /* discount code chips */
 /* one line, never wrapping — two codes is the most that fits the column */
-.dc-chips{display:flex;flex-wrap:nowrap;gap:6px;margin-top:9px;min-width:0;}
-.dc-chip{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:100px;border:1px dashed var(--co-sum-border);cursor:pointer;transition:all .13s;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
-.co-payment .dc-chip{border-color:var(--co-pay-border);}
-.dc-chip:hover{border-color:var(--co-accent);color:var(--co-accent);}
-.dc-chip.on{border-style:solid;border-color:var(--co-accent);color:var(--co-accent);background:color-mix(in srgb,var(--co-accent) 8%,transparent);}
-.dc-chip .pct{opacity:.65;font-weight:600;}
 
 /* QR block */
 .b-qrd{display:flex;gap:16px;align-items:center;}
@@ -486,11 +515,11 @@ input,select,textarea{font-family:inherit;}
 
 /* merchant footer */
 .b-mfoot{font-size:11px;line-height:1.6;}
-.b-mfoot .mf-links{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-weight:600;}
+.b-mfoot .mf-links{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;font-weight:600;font-size:12px;}
 .b-mfoot .mf-links a{color:inherit;cursor:pointer;text-decoration:none;opacity:.8;}
 .b-mfoot .mf-links a:hover{opacity:1;text-decoration:underline;}
-.b-mfoot .mf-sup{display:flex;flex-wrap:wrap;gap:5px 14px;justify-content:center;margin-top:var(--stack,12px);opacity:.85;}
-.b-mfoot .mf-soc{display:flex;gap:10px;justify-content:center;margin-top:var(--stack,12px);}
+.b-mfoot .mf-sup{display:flex;flex-wrap:wrap;gap:5px 16px;justify-content:center;margin-top:10px;opacity:.9;font-size:11.5px;}
+.b-mfoot .mf-soc{display:flex;gap:10px;justify-content:center;margin-top:14px;}
 .b-mfoot .mf-soc a{width:26px;height:26px;border-radius:50%;border:1px solid var(--co-pay-border);display:flex;align-items:center;justify-content:center;color:inherit;opacity:.75;}
 .b-mfoot .mf-soc a:hover{opacity:1;border-color:var(--co-accent);color:var(--co-accent);}
 .b-mfoot .mf-soc svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
@@ -780,13 +809,12 @@ body.dev-mode .topbar{z-index:95;}
   /* gap so the amount never sits flush against the next panel */
   .co-summary{padding-bottom:30px;}
   .co-summary .zone-foot{padding-bottom:6px;}
-  .foot-row{display:block;}
-  .foot-row > .blk{max-width:none;}
-  .foot-row > .blk + .blk{margin-top:16px !important;}
-  .foot-row .b-recur .rc-sub{display:block;}
+  /* phones have the room — the recurring sub-line comes back */
+  .zone-foot{--stack:16px;}
+  .zone-foot .b-recur .rc-sub{display:block;}
+  .zone-foot .b-recur .rc-name{font-size:13.5px;}
+  .dc-pop{position:static;width:100%;max-width:none;box-shadow:none;padding:10px 0 0;border:none;background:none;}
   .co-col,.co-stage.on{display:block;}
-  .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
-  .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
   #poweredLine{padding:0 16px;}
 }
 @media (max-width:640px){
@@ -977,13 +1005,18 @@ body.dev-mode .topbar{z-index:95;}
             <div class="ct-zoom" id="blockCount"></div>
           </div>
         </div>
-        <div id="timerHost"></div>
-        <div class="checkout theme-navy edit-mode" id="checkout">
-          <div class="co-col co-summary" id="regionSummary" data-region="summary"></div>
-          <div class="co-col co-payment" id="regionPayment" data-region="payment"></div>
-          <div class="pay-overlay" id="payOverlay"></div>
+        <!-- vp-frame is an editor-only guide: it outlines one desktop viewport so
+             you can see where the fold falls. It is never exported. -->
+        <div class="vp-frame" id="vpFrame">
+          <div id="timerHost"></div>
+          <div class="checkout theme-navy edit-mode" id="checkout">
+            <div class="co-col co-summary" id="regionSummary" data-region="summary"></div>
+            <div class="co-col co-payment" id="regionPayment" data-region="payment"></div>
+            <div class="pay-overlay" id="payOverlay"></div>
+          </div>
+          <div id="trustHost"></div>
+          <div id="poweredLine" style="width:100%;text-align:center;font-size:13px;font-weight:600;color:#94a3b8;margin-top:16px;"></div>
         </div>
-        <div id="poweredLine" style="width:100%;text-align:center;font-size:13px;font-weight:600;color:#94a3b8;margin-top:16px;"></div>
       </div>
     </div>
   </main>
@@ -1051,6 +1084,14 @@ body.dev-mode .topbar{z-index:95;}
 
 <script>
 /* ═══════════════ DECENTRO LOGO (original asset — Black Transparent) ═══════════════ */
+/* Decentro info glyph (uploaded info.svg, fill swapped to currentColor so it
+   inherits the brand colour from CSS) */
+const INFO_ICON = '<svg viewBox="0 0 500 500" aria-hidden="true" focusable="false">'
+  + '<path fill="currentColor" d="M484.1,209C464.2,112.7,407,49.9,313.1,21c-14.3-4.4-29.7-5.4-44.6-7.9c-1.2-0.2-2.4-0.5-3.6-0.8c-9.9,0-19.8,0-29.7,0c-8.9,1.2-17.7,2.2-26.6,3.7C115.7,31.1,37,106.3,17.9,198.6c-2.2,10.7-3.3,21.7-4.9,32.5c-0.2,1.4-0.5,2.7-0.8,4c0,9.9,0,19.8,0,29.7c1.2,8.9,2.1,17.8,3.7,26.6C28.4,358.2,63,410.6,119.3,448.5c34,22.9,71.8,35.5,112.8,38.5c1,0.1,2.1,0.5,3.1,0.7c9.9,0,19.8,0,29.7,0c8.7-1.2,17.5-2.1,26.1-3.6c55.3-9.8,101.6-36,138.5-78.3c34.3-39.3,53.4-85.3,57.6-137.4c0.1-1.2,0.5-2.4,0.8-3.6c0-9.9,0-19.8,0-29.7C486.6,226.4,485.9,217.6,484.1,209z M249.7,454.5c-113.1-0.3-204.6-92.2-204.2-204.9C46,136.5,137.9,45,250.5,45.5c113.2,0.6,204.7,92.5,204,205.1C453.8,363.7,362.3,454.8,249.7,454.5z"/>'
+  + '<path fill="currentColor" d="M265.3,213.6c-9.8-4.2-19.9-4.3-29.8-0.4c-6.5,2.5-9.7,7.3-9.7,14.7c0.2,37.9,0.2,75.8,0,113.7c0,6.6,2.7,11.1,8.2,13.9c11.1,5.7,22.3,5.6,33.2-0.7c4.9-2.8,7.4-6.9,7.3-13c-0.2-19-0.1-38-0.1-57.1c0-19-0.2-38,0.1-57.1C274.5,220.6,271.4,216.2,265.3,213.6z"/>'
+  + '<path fill="currentColor" d="M230,145.2c-7.4,8-7.6,19.1-0.4,27.3c5.4,6.2,12.4,9,21,9c1-0.1,2.4,0,3.7-0.3c9.4-1.8,16.6-6.7,19.9-16c2.7-7.8,0.5-14.6-5-20.4C258.9,134.1,240.1,134.4,230,145.2z"/>'
+  + '</svg>';
+
 const DECENTRO_LOGO = '<svg width="__W__" height="__H__" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2749.67 538.23"><defs><style>.cls-1{fill:#0092ff;}.cls-1,.cls-2{stroke-width:0px;}.cls-2{fill:#000;}</style></defs><polygon class="cls-2" points="1589.49 315.17 1435.68 121.4 1435.23 120.87 1375.32 120.87 1375.32 417.62 1435.64 417.62 1435.64 223.31 1589.45 417.08 1589.9 417.62 1649.81 417.62 1649.81 120.87 1589.49 120.87 1589.49 315.17"/><rect class="cls-1" x="120.6" y="357.11" width="60.28" height="60.28"/><path class="cls-2" d="M250.46,120.82H120.69v176.27h60.11v-116h68c62.42,0,102.83,34.9,102.83,88.17s-40.41,88.16-102.83,88.16h-7.73v60.25h9.39c96.25,0,162-59.37,162-148.41s-65.77-148.44-162-148.44h0Z"/><path class="cls-2" d="M2587.03,163.29c-27.04-27.03-64.55-41.85-105.7-41.85s-78.72,14.92-105.78,42c-27.07,27.08-42.04,64.69-42.04,105.81s14.93,78.69,42.04,105.8,64.64,42.01,105.78,42.01,78.72-14.87,105.74-41.85c27.02-26.99,42.04-64.69,42.04-105.95s-14.97-78.9-42.09-105.95l.01-.02ZM2418.6,203.4c16.03-16.67,38.28-25.86,62.69-25.86s46.6,9.19,62.69,25.86c16.09,16.67,24.97,40.13,24.97,65.84s-8.86,49.08-24.97,65.83c-16.1,16.75-38.28,25.86-62.69,25.86s-46.66-9.18-62.69-25.86-24.97-40.13-24.97-65.83,8.87-49.09,24.97-65.84Z"/><path class="cls-2" d="M1021.78,368.71l1.07,1.17c-1.7,1.91-3.46,3.77-5.28,5.59-24.05,24.05-56.46,38.49-92.31,41.38-4.43.35-8.91.53-13.43.53s-8.91-.18-13.29-.53c-4.49-.36-8.92-.9-13.29-1.61-2.18-.36-4.35-.77-6.49-1.21h-.02c-2.15-.45-4.28-.94-6.38-1.47h-.02c-.79-.2-1.58-.41-2.37-.62-3.15-.85-6.26-1.8-9.33-2.84-.77-.26-1.53-.53-2.3-.8-1.85-.66-3.69-1.36-5.51-2.1-1.21-.5-2.41-1-3.6-1.52,0,0-.01.01-.01,0-1.19-.52-2.37-1.06-3.55-1.61-.787-.367-.79-.367-.01,0-14.71-6.92-28.07-16.23-39.55-27.72-27.11-27.15-42.04-64.75-42.04-105.92s14.97-78.82,42.04-105.93c15.66-15.67,34.81-27.28,56.15-34.3.68-.22,1.38-.44,2.07-.66h.01c2.46-.76,4.95-1.47,7.47-2.12,1.68-.43,3.37-.84,5.07-1.21h.01c5.44-1.2,11-2.12,16.65-2.75,2.26-.25,4.53-.45,6.82-.61,3.79-.26,7.61-.39,11.47-.39.97,0,1.93,0,2.89.02.54.01,1.09.03,1.63.04.86.02,1.72.05,2.57.09.64.02,1.28.05,1.91.09.72.04,1.43.08,2.14.12.14.02.27.02.4.03,2.12.15,4.23.33,6.33.56,1.06.11,2.13.24,3.18.37.9.12,1.79.24,2.68.37,2.27.33,4.52.7,6.75,1.12,1.56.3,3.1.61,4.64.95s3.06.7,4.58,1.08c.76.19,1.52.39,2.27.59,2.27.62,4.51,1.28,6.72,1.98,21.69,6.94,41.15,18.61,57.01,34.48,2.01,2,3.95,4.06,5.81,6.19l-36.33,35.62-.56.48-5.5,5.4c-1.98-2.63-4.12-5.15-6.41-7.52-16.09-16.69-38.28-25.89-62.69-25.89-22.62,0-43.38,7.9-59.06,22.34-.19.17-.37.34-.55.51-1.05.98-2.08,2-3.08,3.04-16.09,16.77-24.96,40.19-24.96,65.91s8.94,49.21,24.96,65.9c.9.94,1.83,1.86,2.77,2.75,15.78,14.96,36.89,23.14,59.92,23.14,24.41,0,46.59-9.12,62.69-25.89,2.23-2.32,4.32-4.77,6.26-7.34l31.49,31.26.54.59,8.95,8.89v-.02Z"/><polygon class="cls-2" points="1710.09 180.9 1810.42 180.9 1810.42 416.9 1870.7 416.9 1870.7 180.9 1971.03 180.9 1971.03 120.62 1710.09 120.62 1710.09 180.9"/><path class="cls-2" d="M2273.07,226.87c0-61.16-49.34-106.01-114.55-106.01h-127.21v296.76h60.26v-85.62h45.95c3.62,0,7.36,0,11.06-.34l57.67,85.96h66.82l-64.21-97.33c41.46-16.21,64.21-50.5,64.21-93.42h0ZM2091.59,181.14h64.33c56.97,0,56.97,38.25,56.97,45.73,0,7.93,0,44.81-56.97,44.81h-64.33v-90.54h0Z"/><polygon class="cls-2" points="532.99 299.14 643.44 299.14 643.44 238.86 532.99 238.86 532.99 181.2 703.17 181.2 703.17 120.62 472.75 120.62 472.75 417.38 703.72 417.38 703.72 357.29 532.99 357.29 532.99 299.14"/><polygon class="cls-2" points="1144.31 299.14 1254.76 299.14 1254.76 238.86 1144.31 238.86 1144.31 181.2 1314.48 181.2 1314.48 120.62 1084.06 120.62 1084.06 417.38 1315.04 417.38 1315.04 357.29 1144.31 357.29 1144.31 299.14"/></svg>';
 function logoSvg(h){
   const w = Math.round(h * 2749.67 / 538.23);
@@ -1080,7 +1121,7 @@ let mode = 'edit', device = 'desktop', selId = null;
 const undoStack = [];
 
 /* runtime (preview-only) */
-const rt = { appliedAmt:0, appliedCode:'', selUpi:null, selBank:null, nbMode:null, vpa:'',
+const rt = { appliedAmt:0, appliedCode:'', dcOpen:false, selUpi:null, selBank:null, nbMode:null, vpa:'',
              step:1, payer:{name:'',email:'',phone:''} };
 
 /* ═══════════════════════ HELPERS ═══════════════════════ */
@@ -1272,7 +1313,7 @@ const REG = {
       return `<div class="b-item">${thumb}
         <div class="it-main">
           <div class="it-name" ${ce(live)} data-ei="name">${esc(p.name)}</div>
-          ${p.showQty?`<div class="it-qty cv-sub">QTY: ${qty}</div>`
+          ${p.showQty?`<div class="it-qty cv-sub">Qty ${qty}</div>`
                      :(qty>1?`<div class="it-unit cv-sub">${fmt(p.price)} each</div>`:'')}
         </div>
         <div class="it-amt">${fmt(p.price * qty)}</div>
@@ -1288,29 +1329,42 @@ const REG = {
   totals: {
     group:'order', name:'Order totals', sub:'Subtotal, tax & total', region:'summary', icon:IC.totals,
     defaults:()=>({taxPct:18, shipping:0}),
-    fields:[{k:'taxPct',label:'GST %',t:'number'},{k:'shipping',label:'Shipping (₹)',t:'number'}],
+    fields:[{k:'taxPct',label:'GST %',t:'number'},{k:'shipping',label:'Shipping / Fees (₹)',t:'number'}],
     render:()=>{
       const t = computeTotals();
+      /* data-tt hooks let the exported runtime re-price every copy of a figure */
+      const rows = `
+        <div class="tr"><span class="cv-sub">Subtotal</span><span class="tv" data-tt="sub">${fmt(t.subtotal)}</span></div>
+        <div class="tr"><span class="cv-sub" data-tt="disclbl">Discount${rt.appliedCode?' · '+esc(rt.appliedCode):''}</span><span class="tv" data-tt="disc" ${t.discount>0?'style="color:#10b981"':''}>−${fmt(t.discount)}</span></div>
+        <div class="tr"><span class="cv-sub">${state.design.pageType==='service'?'Fees':'Shipping'}</span><span class="tv">${t.shipping>0?fmt(t.shipping):'Free'}</span></div>
+        <div class="tr"><span class="cv-sub">GST (${t.taxPct}%)</span><span class="tv" data-tt="tax">${fmt(t.tax)}</span></div>`;
+      /* On desktop the breakdown folds into a hover popover on the info icon —
+         that reclaims four rows for the product list. Phones show it inline. */
       return `<div class="b-totals">
-        <div class="tr"><span class="cv-sub">Subtotal</span><span class="tv">${fmt(t.subtotal)}</span></div>
-        <div class="tr"><span class="cv-sub">Discount${rt.appliedCode?' · '+esc(rt.appliedCode):''}</span><span class="tv" ${t.discount>0?'style="color:#10b981"':''}>−${fmt(t.discount)}</span></div>
-        <div class="tr"><span class="cv-sub">Shipping</span><span class="tv">${t.shipping>0?fmt(t.shipping):'Free'}</span></div>
-        <div class="tr"><span class="cv-sub">GST (${t.taxPct}%)</span><span class="tv">${fmt(t.tax)}</span></div>
-        <div class="tr tr-total"><span class="tl">Total Payable</span><span class="tv">${fmt(t.total)}</span></div>
+        <div class="tt-inline">${rows}</div>
+        <div class="tr tr-total">
+          <span class="tl">Total Payable<span class="tt-wrap"><button class="tt-i" type="button" aria-label="Amount details">${INFO_ICON}</button><span class="tt-pop" role="tooltip"><span class="tt-pop-h">Amount Details</span>${rows}</span></span></span>
+          <span class="tv" data-tt="total">${fmt(t.total)}</span>
+        </div>
       </div>`;
     }
   },
   discount: {
-    group:'order', name:'Discount codes', sub:'Multiple codes, shown as list', region:'summary', icon:IC.discount,
-    defaults:()=>({codes:[{code:'DECENTRO200',amt:200},{code:'FIRSTPAY500',amt:500},{code:'FESTIVE100',amt:100}], showList:true}),
-    fields:[{k:'codes',label:'Codes — one per line, "CODE  ₹amount"',t:'codes'},{k:'showList',label:'Show Available Codes',t:'toggle'}],
+    group:'order', name:'Discount code', sub:'Text CTA, popup, pill', region:'summary', icon:IC.discount,
+    defaults:()=>({codes:[{code:'DECENTRO200',amt:200},{code:'FIRSTPAY500',amt:500},{code:'FESTIVE100',amt:100}], label:'Add discount code'}),
+    fields:[{k:'label',label:'CTA Label',t:'text',max:30},{k:'codes',label:'Valid codes — one per line, "CODE  ₹amount"',t:'codes'}],
+    /* Collapsed it costs one text line. Applied it is a pill you can dismiss. */
     render:(b)=>{
-      /* only the first two codes are offered as chips so the row never wraps —
-         the rest still apply when typed into the field */
-      const shown = b.props.codes.slice(0, 2);
-      const chips = (b.props.showList && shown.length)
-        ? `<div class="dc-chips">${shown.map(c=>`<span class="dc-chip ${rt.appliedCode===c.code?'on':''}" data-act="chip" data-code="${esc(c.code)}" data-amt="${c.amt}">${esc(c.code)} <span class="pct">· ${fmt(c.amt)}</span></span>`).join('')}</div>` : '';
-      return `<div class="b-discount-wrap"><div class="b-discount"><input placeholder="Discount code" data-role="dcode" value="${esc(rt.appliedCode)}"><button data-act="applyDc">Apply</button></div>${chips}${rt.appliedCode?`<div class="dc-ok"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></svg><span>${esc(rt.appliedCode)} applied · ${fmt(rt.appliedAmt)} off</span></div>`:''}</div>`;
+      if(rt.appliedCode) return `<div class="b-dc"><span class="dc-pill">${esc(rt.appliedCode)} · ${fmt(rt.appliedAmt)} off<button class="dc-x" data-act="dcClear" title="Remove code" aria-label="Remove discount code"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>`;
+      return `<div class="b-dc ${rt.dcOpen?'open':''}">
+        <button class="dc-cta" data-act="dcOpen">${esc(b.props.label)}</button>
+        <div class="dc-pop">
+          <div class="dc-field">
+            <input placeholder="Enter code" data-role="dcode" autocomplete="off" spellcheck="false">
+            <button class="dc-go" data-act="applyDc" title="Apply" aria-label="Apply discount code"><svg viewBox="0 0 24 24"><path d="M5 12h13M12 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+      </div>`;
     }
   },
   recur: {
@@ -1423,7 +1477,7 @@ const REG = {
   },
   pay: {
     group:'fields', name:'Pay button', sub:'Primary action', region:'payment', icon:IC.pay,
-    defaults:()=>({label:'Pay', showAmount:true, note:'You will be redirected to your UPI app to authorise this payment'}),
+    defaults:()=>({label:'Pay', showAmount:true, note:''}),
     fields:[{k:'label',label:'Button label',t:'text'},{k:'showAmount',label:'Show amount on button',t:'toggle'},{k:'note',label:'Note below button',t:'text'}],
     render:(b)=>{
       const t = computeTotals();
@@ -1451,6 +1505,7 @@ const REG = {
         <div class="mf-links">
           <a data-act="legal" data-doc="tnc">Terms &amp; Conditions</a>
           <a data-act="legal" data-doc="privacy">Privacy Policy</a>
+          <a href="https://decentro.tech/help/consumer" target="_blank" rel="noopener">Grievances</a>
         </div>
         ${b.props.showSupport?`<div class="mf-sup">
           ${m.supportEmail?`<span>${esc(m.supportEmail)}</span>`:''}
@@ -1474,11 +1529,12 @@ function summaryFoot(vis, toHTML){
   const rest = foot.filter(b=>b.type!=='recur' && b.type!=='discount');
   /* Discount and Recurring are one row of two divs — it buys the product list
      a whole block of height. Alone, each still renders full width. */
-  const pair = (rec.length && dc.length)
-    ? `<div class="foot-row">${dc.map(toHTML).join('')}${rec.map(toHTML).join('')}</div>`
-    : `${rec.map(toHTML).join('')}${dc.map(toHTML).join('')}`;
-  const rule = (rec.length || dc.length) && rest.length ? '<div class="zone-rule"></div>' : '';
-  return `<div class="zone-foot">${pair}${rule}${rest.map(toHTML).join('')}</div>`;
+  /* Two short, full-width lines — discount CTA, then the recurring toggle
+     immediately above the Total Payable separator. Side by side they could
+     collide on a narrow column; stacked they never can, and the pair still
+     costs less height than the old bordered sections did. No extra rule here:
+     .tr-total already draws the line under them. */
+  return `<div class="zone-foot">${dc.map(toHTML).join('')}${rec.map(toHTML).join('')}${rest.map(toHTML).join('')}</div>`;
 }
 
 function methodShell(b, icon, badge, body){
@@ -1553,7 +1609,10 @@ const zoneOf = (b, region) => region==='summary'
    Sensible defaults, but every block can be moved between steps in the inspector,
    and a block added while viewing a step stays on that step. */
 const STEP1_TYPES = ['payerName','email','phone'];        // contact details
-const PERSIST_TYPES = ['secure','mfooter','divider'];      // page chrome → both steps
+const PERSIST_TYPES = ['mfooter','divider'];
+/* Rendered outside the card entirely — page chrome above "Powered by Decentro" */
+const PAGE_TYPES = ['secure'];
+const isPageBlock = b => PAGE_TYPES.includes(b.type);      // page chrome → both steps
 function defaultStep(type){
   if(STEP1_TYPES.includes(type)) return 1;
   if(PERSIST_TYPES.includes(type)) return 'both';
@@ -1590,27 +1649,30 @@ function renderRegion(region){
   }
   /* single-page payment column: body scrolls, Pay CTA pinned */
   if(state.design.flow!=='twostep'){
-    const z = t => list.filter(b=>zoneOf(b,'payment')===t).map(blkHTML).join('');
+    const z = t => list.filter(b=>!isPageBlock(b) && zoneOf(b,'payment')===t).map(blkHTML).join('');
     const foot = z('foot');
     el.innerHTML = `<div class="zone-body">${z('body')}</div>
       ${foot ? `<div class="zone-foot">${foot}</div>` : ''}`;
     return;
   }
   /* ── two-step: split the payment column into stages + persistent chrome ── */
-  const s1 = list.filter(isStep1);
-  const s2 = list.filter(b=>!isStep1(b) && !isPersist(b) && zoneOf(b,'payment')==='body');
-  const sf = list.filter(b=>!isStep1(b) && !isPersist(b) && zoneOf(b,'payment')==='foot');
-  const sp = list.filter(isPersist);
+  const inCard = list.filter(b=>!isPageBlock(b));          /* .secure renders as page chrome */
+  const s1 = inCard.filter(isStep1);
+  const s2 = inCard.filter(b=>!isStep1(b) && !isPersist(b) && zoneOf(b,'payment')==='body');
+  const sf = inCard.filter(b=>!isStep1(b) && !isPersist(b) && zoneOf(b,'payment')==='foot');
+  const sp = inCard.filter(isPersist);
   const show1 = rt.step===1, show2 = rt.step===2;
   const footHTML = (sf.length||sp.length)
     ? `<div class="zone-foot">${sf.map(blkHTML).join('')}${sp.map(blkHTML).join('')}</div>` : '';
+  /* the persistent chrome (merchant footer) also closes out step 1, under Continue */
+  const step1Foot = `<div class="zone-foot no-rule"><div class="co-nav"><button class="nav-next" data-act="toStep2">Continue To Payment ${svg('<path d="M5 12h14M13 6l6 6-6 6"/>')}</button></div>${sp.map(blkHTML).join('')}</div>`;
   el.innerHTML = `
     <div class="co-stage ${show1?'on':''}" data-stage="1">
       <div class="zone-head"><div class="co-stage-head"><div class="sh-k">Step 1 Of 2</div><div class="sh-t">Customer Information</div></div></div>
       <div class="zone-body">
         ${s1.length ? s1.map(blkHTML).join('') : `<div class="region-empty">Add Payer Name, Payer Email or Payer Phone — they appear here on step 1</div>`}
       </div>
-      <div class="zone-foot no-rule"><div class="co-nav"><button class="nav-next" data-act="toStep2">Continue To Payment ${svg('<path d="M5 12h14M13 6l6 6-6 6"/>')}</button></div></div>
+      ${step1Foot}
     </div>
     <div class="co-stage ${show2?'on':''}" data-stage="2">
       <div class="zone-head">
@@ -1634,6 +1696,9 @@ function renderAll(){
   renderRegion('payment');
   $('#blockCount').textContent = allBlocks().length + ' blocks · ' + (device==='desktop'?'940px':'420px');
   $('#poweredLine').style.display = state.design.powered ? '' : 'none';
+  /* trust strip: outside the card, directly above "Powered by Decentro" */
+  const pageBlks = allBlocks().filter(isPageBlock);
+  $('#trustHost').innerHTML = pageBlks.map(blkHTML).join('');
   $('#stepSwitch').style.display = (state.design.flow==='twostep' && mode==='edit') ? 'flex' : 'none';
   if(!tInt) renderTimer();
   document.querySelectorAll('#stepSwitch button').forEach(x=>x.classList.toggle('on', +x.dataset.st===rt.step));
@@ -1644,6 +1709,10 @@ function renderAll(){
 /* A column is marked .has-scroll only when its body genuinely overflows.
    The separator under the head hangs off that class, so the top edge of the
    scroll band shows up exactly when there is something to scroll. */
+document.addEventListener('click', e=>{
+  if(rt.dcOpen && !e.target.closest('.b-dc')){ rt.dcOpen = false; renderAll(); }
+}, true);
+
 function syncScrollRules(){
   requestAnimationFrame(()=>{
     document.querySelectorAll('#checkout .co-col').forEach(col=>{
@@ -1929,20 +1998,22 @@ $('#checkout').addEventListener('click', e=>{
   if(a==='bank'){ rt.selBank = act.dataset.k; rt.selUpi=null; renderAll(); return; }
   if(a==='recur'){ b.props.on = !b.props.on; renderAll(); return; }
   if(a==='sameShip'){ b.props.same = !b.props.same; renderAll(); return; }
-  if(a==='chip'){
-    const on = rt.appliedCode === act.dataset.code;
-    rt.appliedCode = on ? '' : act.dataset.code;
-    rt.appliedAmt  = on ? 0  : +act.dataset.amt;
-    if(!on) toast(act.dataset.code + ' applied — ' + fmt(act.dataset.amt) + ' off');
-    renderAll(); return;
-  }
+  if(a==='dcOpen'){ rt.dcOpen = true; renderAll();
+    const f = $('#checkout [data-role=dcode]'); if(f) f.focus(); return; }
+  if(a==='dcClear'){ rt.appliedCode=''; rt.appliedAmt=0; rt.dcOpen=false; renderAll(); toast('Discount code removed'); return; }
   if(a==='applyDc'){
     const input = blkEl.querySelector('[data-role=dcode]');
     const code = (input.value||'').trim().toUpperCase();
-    const hit = (b.props.codes||[]).find(c=>c.code.toUpperCase()===code);
-    if(hit){ rt.appliedCode = hit.code; rt.appliedAmt = hit.amt; toast('Code applied — '+fmt(hit.amt)+' off'); }
-    else { rt.appliedCode=''; rt.appliedAmt=0; toast(code?'Invalid code':'Enter a code'); }
-    renderAll(); return;
+    const list = b.props.codes || [];
+    const hit  = list.find(c=>c.code.toUpperCase()===code);
+    if(!code){ toast('Enter a code'); if(input) input.focus(); return; }
+    /* Demos shouldn't dead-end: an unlisted code still applies, using the
+       first configured discount as its value. */
+    rt.appliedCode = hit ? hit.code : code;
+    rt.appliedAmt  = hit ? hit.amt  : (list[0] ? list[0].amt : 200);
+    rt.dcOpen = false; renderAll();
+    toast('Code applied — ' + fmt(rt.appliedAmt) + ' off');
+    return;
   }
   if(a==='legal'){ openLegal(act.dataset.doc); return; }
   if(a==='toStep2'){ if(validateStep1()) goStep(2); else toast('Please complete the highlighted fields'); return; }
@@ -1983,6 +2054,15 @@ function goStep(n){
   const co = $('#checkout');
   if(co.scrollIntoView) co.scrollIntoView({behavior:'smooth', block:'start'});
 }
+
+/* Enter applies the discount code */
+$('#checkout').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.matches?.('[data-role=dcode]')){
+    e.preventDefault();
+    const go = e.target.closest('.b-dc')?.querySelector('[data-act=applyDc]');
+    if(go) go.click();
+  }
+});
 
 /* inline text editing */
 $('#checkout').addEventListener('focusin', e=>{
@@ -2350,10 +2430,30 @@ function luminance(rgb){
 }
 const contrast = (a,b) => { const l1=luminance(a), l2=luminance(b);
   return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05); };
-/* pick whichever of white / near-black is more readable on this colour */
+
+/* ── Readable ink, chosen with APCA rather than a WCAG 2.x ratio ──────────────
+   WCAG ratios misjudge saturated hues badly. On pure red #FF0A0A the ratio
+   says near-black (4.70) beats white (3.96) — but white is plainly the
+   readable choice, and every brand in the world sets white on red.
+   APCA (the perceptual model behind WCAG 3) scores the same pair
+   white Lc 70 vs black Lc 40, which matches what the eye reports.
+   Y here is APCA's luminance, with its soft black-level clamp applied. */
+function apcaY(rgb){
+  const f = c => Math.pow(c/255, 2.4);
+  const y = 0.2126729*f(rgb[0]) + 0.7151522*f(rgb[1]) + 0.0721750*f(rgb[2]);
+  return y < 0.022 ? y + Math.pow(0.022 - y, 1.414) : y;   /* flare compensation */
+}
+/* Lightness contrast of text on bg, as a positive magnitude (0 = invisible,
+   60+ = comfortable for UI text, 75+ = strong). */
+function apcaLc(txtRGB, bgRGB){
+  const Yt = apcaY(txtRGB), Yb = apcaY(bgRGB);
+  return Yb > Yt
+    ? (Math.pow(Yb,0.56) - Math.pow(Yt,0.57)) * 114 - 2.7     /* dark ink, light fill */
+    : (Math.pow(Yt,0.62) - Math.pow(Yb,0.65)) * 114 - 2.7;    /* light ink, dark fill */
+}
 function readableInk(hex){
-  const rgb = hexRGB(hex);
-  return contrast(rgb,[255,255,255]) >= contrast(rgb,[10,18,38]) ? '#ffffff' : '#0a1226';
+  const bg = hexRGB(hex);
+  return apcaLc([255,255,255], bg) >= apcaLc([10,18,38], bg) ? '#ffffff' : '#0a1226';
 }
 const mixWhite = (hex, amt) => {           /* amt 0..1 → how much white */
   const rgb = hexRGB(hex);
@@ -2639,31 +2739,24 @@ function initFlowBg(){
 const mmss = s => Math.floor(Math.max(s,0)/60).toString().padStart(2,'0') + ':' + (Math.max(s,0)%60).toString().padStart(2,'0');
 function timerHTML(secs){
   const urgent = secs <= 120 && secs > 0, done = secs <= 0;
-  return `<div class="ct-sentinel" id="ctSentinel"></div>
-  <div class="co-timer ${urgent?'urgent':''} ${done?'done':''}" id="coTimer">
+  return `<div class="co-timer ${urgent?'urgent':''} ${done?'done':''}" id="coTimer">
     <span class="ct-in">
       <span class="ct-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.25"/><path d="M12 7.6V12l3.1 1.9"/></svg></span>
-      <span class="ct-tx">
-        <span class="ct-t">${done ? 'Payment session expired' : `Payment session expires in <b id="ctClock">${mmss(secs)}</b>`}</span>
-        ${done ? `<span class="ct-s">Please ask the merchant for a fresh payment link.</span>` : ''}
-      </span>
-      <span class="ct-r">Secure checkout</span>
+      <span class="ct-t">${done ? 'Payment session expired' : `Payment session expires in <b id="ctClock">${mmss(secs)}</b>`}</span>
     </span>
-  </div>
-  <div class="ct-spacer" id="ctSpacer"></div>`;
+  </div>`;
 }
 let tSecs = 0, tTotal = 0, tInt = null;
 function stopTimer(){ if(tInt){ clearInterval(tInt); tInt = null; } }
 function renderTimer(){
   const host = $('#timerHost');
-  if(!state.design.timer){ host.innerHTML = ''; stopTimer(); if(dockIO){ dockIO.disconnect(); dockIO=null; } return; }
+  if(!state.design.timer){ host.innerHTML = ''; stopTimer(); return; }
   tTotal = state.design.timerMins * 60;
-  if(mode!=='preview'){ stopTimer(); tSecs = tTotal; host.innerHTML = timerHTML(tSecs); initDock(); return; }
+  if(mode!=='preview'){ stopTimer(); tSecs = tTotal; host.innerHTML = timerHTML(tSecs); return; }
   /* preview: run it */
   stopTimer();
   tSecs = tTotal;
   host.innerHTML = timerHTML(tSecs);
-  initDock();
   tInt = setInterval(()=>{
     tSecs--;
     const clock = document.getElementById('ctClock');
@@ -2673,7 +2766,6 @@ function renderTimer(){
     if(tSecs<=0){
       stopTimer();
       host.innerHTML = timerHTML(0);
-      initDock();
       simOutcome = 'expired';
       const sel = $('#simSel'); if(sel) sel.value = 'expired';
       const ov = $('#payOverlay'); ov.classList.add('show'); showOutcome(ov);
@@ -2681,33 +2773,6 @@ function renderTimer(){
     }
   }, 1000);
 }
-/* dock the banner into a full-width header bar once it scrolls out of view */
-let dockIO = null;
-function initDock(){
-  if(dockIO){ dockIO.disconnect(); dockIO = null; }
-  const sentinel = document.getElementById('ctSentinel');
-  const banner   = document.getElementById('coTimer');
-  const spacer   = document.getElementById('ctSpacer');
-  const scroller = document.querySelector('.canvas-wrap');
-  if(!sentinel || !banner || !scroller) return;
-  const place = () => {
-    if(!banner.classList.contains('docked')) return;
-    const r = scroller.getBoundingClientRect();
-    banner.style.left  = r.left + 'px';
-    banner.style.top   = r.top + 'px';
-    banner.style.width = r.width + 'px';
-  };
-  dockIO = new IntersectionObserver(([e])=>{
-    const docked = !e.isIntersecting;
-    banner.classList.toggle('docked', docked);
-    if(docked){ spacer.style.height = banner.offsetHeight + 14 + 'px'; place(); }
-    else { spacer.style.height = '0px'; banner.style.left = banner.style.top = banner.style.width = ''; }
-  }, {root:scroller, threshold:0});
-  dockIO.observe(sentinel);
-  scroller.addEventListener('scroll', place, {passive:true});
-  window.addEventListener('resize', place);
-}
-
 $('#railsSw').addEventListener('click', ()=>{
   snapshot(); state.design.rails = !state.design.rails; syncDesignUI();
   if(window.__flowStart) state.design.rails ? window.__flowStart() : window.__flowStop();
@@ -3052,7 +3117,7 @@ function devCopy(txt){
 function collectCheckoutCSS(){
   /* .zone- must be here: it carries the head/scroll-body/pinned-foot layout AND the
      separator rule above the foot (discount + total). Without it the export loses both. */
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|\.zone-|\.foot-row|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.sw|\.f-label|\.dc-|\.zone-|\.foot-|\.tt-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
   const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell|step-switch)/;
   let css = '';
   for(const sheet of document.styleSheets){
@@ -3071,8 +3136,8 @@ function collectCheckoutCSS(){
 }
 function exportHTML(){
   /* never ship values typed while previewing — export must start blank */
-  const rtSnapshot = { payer:{...rt.payer}, vpa:rt.vpa, appliedCode:rt.appliedCode, appliedAmt:rt.appliedAmt, step:rt.step };
-  rt.payer = {name:'',email:'',phone:''}; rt.vpa = ''; rt.appliedCode = ''; rt.appliedAmt = 0; rt.step = 1;
+  const rtSnapshot = { payer:{...rt.payer}, vpa:rt.vpa, appliedCode:rt.appliedCode, appliedAmt:rt.appliedAmt, step:rt.step, dcOpen:rt.dcOpen };
+  rt.payer = {name:'',email:'',phone:''}; rt.vpa = ''; rt.appliedCode = ''; rt.appliedAmt = 0; rt.step = 1; rt.dcOpen = false;
   try{ return buildExportHTML(); }
   finally{ Object.assign(rt, rtSnapshot); rt.payer = rtSnapshot.payer; }
 }
@@ -3098,16 +3163,18 @@ function buildExportHTML(){
     }
     /* ── PAYMENT column, single page ── */
     if(d.flow!=='twostep'){
-      const foot = z('foot','payment');
+      const z2 = (t, reg) => staticBlks(list.filter(b=>!isPageBlock(b) && zoneOf(b,reg)===t));
+      const foot = z2('foot','payment');
       return `
-      <div class="zone-body">${z('body','payment')}</div>
+      <div class="zone-body">${z2('body','payment')}</div>
       ${foot ? `<div class="zone-foot">${foot}</div>` : ''}`;
     }
     /* ── PAYMENT column, two step ── */
-    const s1 = list.filter(isStep1);
-    const s2 = list.filter(b=>!isStep1(b) && !isPersist(b) && zoneOf(b,'payment')==='body');
-    const sf = list.filter(b=>!isStep1(b) && !isPersist(b) && zoneOf(b,'payment')==='foot');
-    const sp = list.filter(isPersist);
+    const inCard = list.filter(b=>!isPageBlock(b));        /* .secure is page chrome */
+    const s1 = inCard.filter(isStep1);
+    const s2 = inCard.filter(b=>!isStep1(b) && !isPersist(b) && zoneOf(b,'payment')==='body');
+    const sf = inCard.filter(b=>!isStep1(b) && !isPersist(b) && zoneOf(b,'payment')==='foot');
+    const sp = inCard.filter(isPersist);
     const foot = (sf.length||sp.length) ? `<div class="zone-foot">${staticBlks(sf)}${staticBlks(sp)}</div>` : '';
     return `
     <!-- STEP 1 — customer information -->
@@ -3116,7 +3183,8 @@ function buildExportHTML(){
       <div class="zone-body">
         ${staticBlks(s1)}
       </div>
-      <div class="zone-foot no-rule"><div class="co-nav"><button class="nav-next" data-act="toStep2">Continue To Payment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div></div>
+      <!-- Continue, with the merchant footer closing out step 1 -->
+      <div class="zone-foot no-rule"><div class="co-nav"><button class="nav-next" data-act="toStep2">Continue To Payment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>${staticBlks(sp)}</div>
     </div>
     <!-- STEP 2 — payment methods (only one accordion open at a time) -->
     <div class="co-stage" data-stage="2">
@@ -3132,6 +3200,13 @@ function buildExportHTML(){
     </div>`;
   };
   const powered = d.powered ? `<div class="powered"><span>Powered by ${logoSvg(18)}</span></div>` : '';
+  /* page chrome — outside the card, above "Powered by Decentro" */
+  const pageChrome = allBlocks().filter(isPageBlock).map(b=>REG[b.type].render(b, true)).join('');
+  const trustStrip = pageChrome ? `
+<!-- ══════════════════════════════════════════════════════════════════════════
+     TRUST STRIP — page chrome, deliberately outside the checkout card
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div class="trust-strip">${pageChrome}</div>` : '';
   /* derived brand palette, emitted as its own clearly-titled CSS block */
   const BP = brandPalette();
   const brandBlock = `
@@ -3173,21 +3248,60 @@ function buildExportHTML(){
 body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),transparent);}
 `;
   const legalJson = JSON.stringify({tnc:state.merchant.tnc||'', privacy:state.merchant.privacy||''});
+  /* the figures the discount has to recompute against, and the valid codes */
+  const dcBlk  = allBlocks().find(b=>b.type==='discount');
+  const sumJson = JSON.stringify({
+    codes: (dcBlk ? dcBlk.props.codes : []).reduce((m,c)=>(m[c.code.toUpperCase()]=c.amt, m), {}),
+    subtotal: computeTotals().subtotal,
+    taxPct: computeTotals().taxPct,
+    shipping: computeTotals().shipping
+  });
   const runtime = [
     "var LEGAL=" + legalJson + ";",
+    "var ORDER=" + sumJson + ";",
+    "var DC={code:'',amt:0};",
+    "var DC_COLLAPSED=" + JSON.stringify(dcBlk ? REG.discount.render(dcBlk).replace(/^<div class="b-dc[^"]*">/,'').replace(/<\/div>$/,'') : '') + ";",
+    "var inr=function(n){return '\u20b9'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});};",
+    "/* Re-price the order: the discount is a flat rupee amount, GST applies after it. */",
+    "function priceOrder(){",
+    "  var sub=ORDER.subtotal, disc=Math.min(sub, DC.amt||0);",
+    "  var tax=(sub-disc)*(ORDER.taxPct||0)/100, ship=ORDER.shipping||0;",
+    "  return {sub:sub, disc:disc, tax:tax, ship:ship, total:sub-disc+tax+ship};",
+    "}",
+    "function paintTotals(){",
+    "  var t=priceOrder(), rows=document.querySelectorAll('.b-totals .tr');",
+    "  if(rows.length>=5){",
+    "    rows[0].querySelector('.tv').textContent=inr(t.sub);",
+    "    rows[1].querySelector('.cv-sub').textContent='Discount'+(DC.code?' \u00b7 '+DC.code:'');",
+    "    var dv=rows[1].querySelector('.tv'); dv.textContent='\u2212'+inr(t.disc); dv.style.color=t.disc>0?'#10b981':'';",
+    "    rows[3].querySelector('.tv').textContent=inr(t.tax);",
+    "    rows[4].querySelector('.tv').textContent=inr(t.total);",
+    "  }",
+    "  var pb=document.querySelector('.paybtn span'); if(pb) pb.textContent='Pay '+inr(t.total);",
+    "}",
+    "function applyDiscount(){",
+    "  var wrap=document.querySelector('.b-dc'); if(!wrap) return;",
+    "  var f=wrap.querySelector('[data-role=dcode]'), code=((f&&f.value)||'').trim().toUpperCase();",
+    "  if(!code){ if(f){f.focus();} return; }",
+    "  /* demo build: an unlisted code still applies, at the first code's value */",
+    "  var keys=Object.keys(ORDER.codes);",
+    "  DC={code:code, amt:(code in ORDER.codes) ? ORDER.codes[code] : (keys.length?ORDER.codes[keys[0]]:200)};",
+    "  wrap.classList.remove('open');",
+    "  wrap.innerHTML='<span class=\"dc-pill\">'+code+' \u00b7 '+inr(DC.amt)+' off<button class=\"dc-x\" data-act=\"dcClear\" title=\"Remove code\" aria-label=\"Remove discount code\"><svg viewBox=\"0 0 24 24\"><path d=\"M6 6l12 12M18 6L6 18\"/></svg></button></span>';",
+    "  paintTotals();",
+    "}",
+    "function clearDiscount(){",
+    "  var wrap=document.querySelector('.b-dc'); if(!wrap) return;",
+    "  DC={code:'',amt:0};",
+    "  wrap.className='b-dc';",
+    "  wrap.innerHTML=DC_COLLAPSED;",
+    "  paintTotals();",
+    "}",
+    "document.addEventListener('keydown',function(e){",
+    "  if(e.key==='Enter' && e.target.dataset && e.target.dataset.role==='dcode'){ e.preventDefault(); applyDiscount(); }",
+    "});",
     "/* Payment status (success / failed / expired) is driven by web-socket events from the backend in production. */",
     d.timer ? [
-    "/* dock the timer into a full-width header bar on scroll */",
-    "(function(){",
-    "  var sent=document.getElementById('ctSentinel'), bar=document.getElementById('coTimer'), sp=document.getElementById('ctSpacer');",
-    "  if(!sent||!bar||!sp||!window.IntersectionObserver) return;",
-    "  new IntersectionObserver(function(en){",
-    "    var docked=!en[0].isIntersecting;",
-    "    bar.classList.toggle('docked', docked);",
-    "    if(docked){ sp.style.height=(bar.offsetHeight+14)+'px'; bar.style.left='0px'; bar.style.top='0px'; bar.style.width='100%'; }",
-    "    else { sp.style.height='0px'; bar.style.left=bar.style.top=bar.style.width=''; }",
-    "  },{threshold:0}).observe(sent);",
-    "})();",
     "/* session expiry countdown */",
     "(function(){",
     "  var total=" + (d.timerMins*60) + ", s=total, el=document.getElementById('coTimer');",
@@ -3201,7 +3315,6 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "    if(s<=0){",
     "      clearInterval(t); el.classList.add('done'); el.classList.remove('urgent');",
     "      el.querySelector('.ct-t').textContent='Payment session expired';",
-    "      el.querySelector('.ct-s').textContent='Please ask the merchant for a fresh payment link.';",
     "      var ov=document.getElementById('payOverlay');",
     "      if(ov){ ov.innerHTML='<div class=\"pr-wrap\"><div class=\"po-title\">Payment Link Expired</div><div class=\"po-sub cv-sub\">This payment link is expired.</div><div class=\"pr-note cv-sub\">Please connect with the merchant/ sender of this link to share a new one with you.</div></div>'; ov.classList.add('show'); }",
     "    }",
@@ -3306,8 +3419,14 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  if(acc){var m=acc.closest('.b-method');if(!m.classList.contains('flat')){var was=m.classList.contains('open');document.querySelectorAll('.b-method').forEach(function(x){x.classList.remove('open')});if(!was)m.classList.add('open');}return;}",
     "  var sel=e.target.closest('.upi-app,.upi-any,.nb-bank,.nb-crow');",
     "  if(sel){sel.parentElement.querySelectorAll('.sel').forEach(function(x){x.classList.remove('sel')});sel.classList.add('sel');return;}",
-    "  var ch=e.target.closest('.dc-chip');",
-    "  if(ch){var was2=ch.classList.contains('on');document.querySelectorAll('.dc-chip').forEach(function(x){x.classList.remove('on')});if(!was2)ch.classList.add('on');return;}",
+    "  /* discount: CTA opens the popup, the arrow applies, the pill's cross clears */",
+    "  if(e.target.closest('[data-act=dcOpen]')){",
+    "    var wrap=e.target.closest('.b-dc'); wrap.classList.add('open');",
+    "    var f=wrap.querySelector('[data-role=dcode]'); if(f){f.value='';f.focus();} return;",
+    "  }",
+    "  if(e.target.closest('[data-act=applyDc]')){ applyDiscount(); return; }",
+    "  if(e.target.closest('[data-act=dcClear]')){ clearDiscount(); return; }",
+    "  if(!e.target.closest('.b-dc')) document.querySelectorAll('.b-dc.open').forEach(function(x){x.classList.remove('open')});",
     "  var sw=e.target.closest('.sw, .ad-check');if(sw){sw.classList.toggle('on');return;}",
     "  var pay=e.target.closest('[data-act=pay]');",
     "  if(pay){var ov=document.getElementById('payOverlay');ov.innerHTML='<div class=\"po-inner\">'+DL_LOADER+'<div class=\"po-ws cv-sub\"><span class=\"ws-dot\"></span>Listening for payment status · web socket</div></div>';ov.classList.add('show');",
@@ -3339,7 +3458,9 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
 html,body{overflow-x:hidden;max-width:100%;}
 img,svg,canvas,table{max-width:100%;}
 .co-col,.zone-body,.zone-foot,.zone-head{min-width:0;}
-body{font-family:'Montserrat',sans-serif;background:#f0f2f6;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px;position:relative;isolation:isolate;}
+/* --co-bar is the height the fixed session-timer bar occupies at the top */
+:root{--co-bar:50px;}
+body{font-family:'Montserrat',sans-serif;background:#f0f2f6;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:0;position:relative;isolation:isolate;}
 /* 48px grid (masked) + soft brand glow blobs */
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(rgba(148,158,182,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(148,158,182,.16) 1px,transparent 1px);
@@ -3353,14 +3474,21 @@ body::after{content:"";position:fixed;z-index:0;pointer-events:none;width:760px;
 .bg-blob.b2{width:420px;height:420px;left:38%;top:-200px;background:radial-gradient(closest-side,rgba(var(--brand-rgb),.06),transparent);}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
 input{font-family:inherit;}
-/* The page column — timer · card · Powered by — never exceeds the viewport, so
-   the whole card AND the Powered-by line stay visible; the card's own
-   .zone-body scrolls instead. 48px = the body padding above and below. */
-.page{width:100%;max-width:940px;margin:auto;position:relative;z-index:1;
-  display:flex;flex-direction:column;max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);}
+/* The page column is exactly one viewport tall: the fixed bar's height, then a
+   gap, then the card taking whatever is left, with the trust strip and the
+   Powered-by line closing it out at the bottom edge. The card never grows past
+   the fold — its own .zone-body scrolls instead. */
+.page{width:100%;max-width:940px;margin:0 auto;position:relative;z-index:1;
+  display:flex;flex-direction:column;
+  height:100vh;height:100dvh;
+  padding:calc(var(--co-bar) + 30px) 24px 20px;}
+.page > .checkout{flex:1 1 auto;min-height:0;}
+.page > .trust-strip,.page > .powered{flex:none;}
 #flowBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 .blk + .blk{margin-top:18px;}
-.powered{width:100%;text-align:center;font-size:13px;font-weight:600;color:#94a3b8;margin-top:18px;}
+.trust-strip{margin-top:16px;}
+.trust-strip .b-secure{justify-content:center;color:#8794a8;}
+.powered{width:100%;text-align:center;font-size:13px;font-weight:600;color:#94a3b8;margin-top:14px;}
 .powered span{display:inline-flex;align-items:center;gap:9px;vertical-align:middle;}
 .powered svg{opacity:.85;}
 ${brandBlock}
@@ -3372,10 +3500,9 @@ ${collectCheckoutCSS()}
 @media (max-width:760px){
   /* flat, full-device-width page — the card treatment is desktop/tablet only */
   body{padding:0;background:#fff;background-image:none;align-items:stretch;}
-  .page{max-width:100%;margin:0;max-height:none;display:block;}
+  :root{--co-bar:46px;}   /* the bar is fixed on phones too */
+  .page{max-width:100%;margin:0;height:auto;padding:var(--co-bar) 0 0;display:block;}
   .checkout{border-radius:0;box-shadow:none;min-height:100vh;min-height:100dvh;grid-template-rows:auto;}
-  .co-timer{border-radius:0;margin-left:0;margin-right:0;border-left:none;border-right:none;box-shadow:none;}
-  .co-timer.docked{box-shadow:0 4px 14px rgba(2,11,30,.12);}
   .powered{padding:16px 16px 22px;}
   body::before,body::after,.bg-blob,#flowBg{display:none;}   /* flat white on phones */
   /* ONE page scroll — nothing pinned, no inner scrollers */
@@ -3383,10 +3510,10 @@ ${collectCheckoutCSS()}
   .zone-foot{margin-top:0;}
   .co-col,.co-stage.on{display:block;}
   .co-summary{padding-bottom:30px;}   /* gap under Total Payable */
-}
-@media (prefers-reduced-motion:reduce){
-  .dl-cube,.dl-trail,.dl-d-fg,.dl-dots i{animation:none;}
-  .dl-cube{opacity:1;} .dl-trail{opacity:0;} .dl-d-fg{stroke-dasharray:none;}
+  /* the bar is identical on phones — just a touch tighter */
+  .co-timer{padding:12px 16px;}
+  .co-timer .ct-t{font-size:13px;}
+  /* ── ONE COLUMN ── summary stacks above payment and the page owns the scroll */
   .checkout{grid-template-columns:1fr;}
   .co-col{padding:26px 22px 32px;}
   .upi-grid{grid-template-columns:1fr;}
@@ -3398,6 +3525,16 @@ ${collectCheckoutCSS()}
   .b-item .it-thumb{width:44px;height:44px;min-width:44px;}
   .co-stage-head .sh-t{font-size:18px;}
   .co-nav{position:sticky;bottom:0;background:var(--co-pay-bg);padding:10px 0 2px;margin-top:16px;z-index:5;}
+}
+/* desktop & tablet: the charge breakdown folds into the info-icon popover */
+@media (min-width:641px){
+  .b-totals .tt-inline{display:none;}
+  .tt-i{display:inline-flex;}
+  .tt-wrap:hover .tt-pop,.tt-i:focus-visible + .tt-pop{display:block;}
+}
+@media (prefers-reduced-motion:reduce){
+  .dl-cube,.dl-trail,.dl-d-fg,.dl-dots i{animation:none;}
+  .dl-cube{opacity:1;} .dl-trail{opacity:0;} .dl-d-fg{stroke-dasharray:none;}
 }
 </style>
 </head>
@@ -3429,6 +3566,7 @@ ${renderStatic('payment')}
   </div>
   <div class="pay-overlay" id="payOverlay"></div>
 </div>
+${trustStrip}
 ${powered}
 </div>
 ${legalModal}
