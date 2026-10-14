@@ -104,6 +104,10 @@ input,select,textarea{font-family:inherit;}
 .sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s;}
 .sw.on{background:var(--ed-brand,#000);}
 .sw.on::after{background:var(--ed-brand-ink,#fff);}
+/* toggles inside the checkout (Recurring/UPI Autopay) read the brand token itself,
+   so they stay brand-coloured in the exported page too, where --ed-brand doesn't exist */
+.checkout .sw.on{background:var(--co-accent);}
+.checkout .sw.on::after{background:var(--co-accent-ink);}
 .sw.on::after{left:16px;}
 
 /* canvas */
@@ -288,13 +292,12 @@ input,select,textarea{font-family:inherit;}
 /* min-height keeps the row identical whether or not a product image is set */
 .b-item{display:flex;align-items:center;gap:14px;min-height:52px;}
 .b-item .it-thumb{width:52px;height:52px;min-width:52px;border-radius:12px;background:linear-gradient(135deg,var(--co-accent),#0000 220%);opacity:.92;display:flex;align-items:center;justify-content:center;color:var(--co-accent-ink);font-weight:700;font-size:16px;}
+.b-item .it-main{flex:1;min-width:0;}
 .b-item .it-name{font-size:14px;font-weight:600;}
-.b-item .it-price{font-size:12.5px;margin-top:2px;}
-.b-item .it-qty{display:flex;align-items:center;gap:2px;margin-left:auto;background:var(--co-sum-field);border:1px solid var(--co-sum-border);border-radius:100px;padding:3px;}
-.co-payment .b-item .it-qty{background:var(--co-pay-field);border-color:var(--co-pay-border);}
-.b-item .it-qty button{width:22px;height:22px;border-radius:50%;color:inherit;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;opacity:.7;}
-.b-item .it-qty button:hover{opacity:1;background:rgba(148,163,184,.15);}
-.b-item .it-qty .q{font-size:12.5px;font-weight:700;min-width:20px;text-align:center;}
+/* both sub-lines under the item name share the subtitle treatment */
+.b-item .it-qty,
+.b-item .it-unit{font-size:11.5px;font-weight:500;margin-top:3px;}
+.b-item .it-amt{margin-left:auto;flex:none;font-size:14px;font-weight:700;text-align:right;white-space:nowrap;}
 
 .b-totals .tr{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
 .b-totals .tr .tv{font-weight:600;}
@@ -1215,18 +1218,23 @@ const REG = {
     render:()=>`<div class="b-divider"></div>`
   },
   item: {
-    group:'order', name:'Product / Service Item', sub:'Name, price, image & qty', region:'summary', icon:IC.item,
+    group:'order', name:'Product / Service Item', sub:'Name, price, image & QTY', region:'summary', icon:IC.item,
     defaults:()=>({name:'Aurora Desk Lamp — Brass', price:3499, qty:1, showQty:true, img:null}),
-    fields:[{k:'name',label:'Product Name',t:'text',max:50},{k:'price',label:'Unit Price (₹)',t:'number'},{k:'img',label:'Product image',t:'img'},{k:'showQty',label:'Show quantity stepper',t:'toggle'}],
+    fields:[{k:'name',label:'Product Name',t:'text',max:50},{k:'price',label:'Unit Price (₹)',t:'number'},{k:'qty',label:'Quantity',t:'number'},{k:'img',label:'Product image',t:'img'},{k:'showQty',label:'Show QTY Line',t:'toggle'}],
     render:(b,live)=>{
       const p = b.props;
       /* no image uploaded → text only, no placeholder tile (row height is held by CSS) */
       const thumb = p.img
         ? `<div class="it-thumb" style="background:#fff;padding:0;overflow:hidden;"><img src="${p.img}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>`
         : '';
+      const qty = Math.max(1, parseInt(p.qty,10) || 1);
       return `<div class="b-item">${thumb}
-        <div><div class="it-name" ${ce(live)} data-ei="name">${esc(p.name)}</div><div class="it-price cv-sub">${fmt(p.price)}${p.qty>1?' × '+p.qty:''}</div></div>
-        ${p.showQty?`<div class="it-qty"><button data-act="qty-" title="Decrease">−</button><span class="q">${p.qty}</span><button data-act="qty+" title="Increase">+</button></div>`:''}
+        <div class="it-main">
+          <div class="it-name" ${ce(live)} data-ei="name">${esc(p.name)}</div>
+          ${p.showQty?`<div class="it-qty cv-sub">QTY: ${qty}</div>`
+                     :(qty>1?`<div class="it-unit cv-sub">${fmt(p.price)} each</div>`:'')}
+        </div>
+        <div class="it-amt">${fmt(p.price * qty)}</div>
       </div>`;
     }
   },
