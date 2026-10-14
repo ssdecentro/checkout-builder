@@ -102,7 +102,8 @@ input,select,textarea{font-family:inherit;}
 /* switch */
 .sw{position:relative;width:34px;height:20px;min-width:34px;background:#e2e8f0;border-radius:100px;cursor:pointer;transition:background .15s;}
 .sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s;}
-.sw.on{background:#000;}
+.sw.on{background:var(--ed-brand,#000);}
+.sw.on::after{background:var(--ed-brand-ink,#fff);}
 .sw.on::after{left:16px;}
 
 /* canvas */
@@ -329,7 +330,8 @@ input,select,textarea{font-family:inherit;}
 .b-method{border:1px solid var(--co-pay-border);border-radius:var(--co-r);overflow:hidden;background:var(--co-pay-field);}
 .bm-head{display:flex;align-items:center;gap:11px;padding:14px 16px;cursor:pointer;user-select:none;}
 .bm-head:hover{background:var(--co-pay-hover);}
-.bm-ic{width:30px;height:30px;min-width:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--co-accent) 12%,transparent);color:var(--co-accent);}
+.bm-ic{width:30px;height:30px;min-width:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--co-soft);color:var(--co-accent);}
+.theme-dark .bm-ic{background:color-mix(in srgb,var(--co-accent) 20%,transparent);}
 .bm-ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
 .bm-title{font-size:13.5px;font-weight:700;flex:1;}
 .bm-sub{font-size:10.5px;font-weight:500;margin-top:1px;}
@@ -2295,8 +2297,12 @@ function applyBrand(){
   co.style.setProperty('--co-sum-field', p.panelField);
   co.style.setProperty('--co-sum-border', p.panelBorder);
   co.style.setProperty('--co-sum-sub', p.panelSub);
+  co.style.setProperty('--co-soft', p.softBg);        /* solid muted tint — icon tiles */
   /* background blobs + animated particles follow the brand too */
   document.documentElement.style.setProperty('--brand-rgb', p.rgb);
+  /* the editor's own controls (toggles) echo the brand so the panel feels live */
+  document.documentElement.style.setProperty('--ed-brand', p.brand);
+  document.documentElement.style.setProperty('--ed-brand-ink', p.ink);
   return p;
 }
 
@@ -3051,6 +3057,7 @@ function buildExportHTML(){
   --brand-field:  ${BP.panelField};   /* inputs/chips inside the panel           */
   --brand-border: ${BP.panelBorder};  /* hairlines inside the panel              */
   --brand-sub:    ${BP.panelSub};     /* secondary text on the panel             */
+  --brand-soft:   ${BP.softBg};       /* solid muted tint — icon tiles, chips    */
 }
 .checkout{
   --co-accent:     var(--brand);      /* every CTA, radio, link, active state     */
@@ -3059,9 +3066,12 @@ function buildExportHTML(){
   --co-sum-field:  var(--brand-field);
   --co-sum-border: var(--brand-border);
   --co-sum-sub:    var(--brand-sub);
+  --co-soft:       var(--brand-soft);
   --co-font-head:  ${d.font};
   --co-r:          ${d.radius}px;
 }
+/* payment-method accordion icons: brand glyph on a muted brand tile */
+.bm-ic{ background:var(--brand-soft); color:var(--brand); }
 /* default logo tile (shown when no logo image is uploaded) */
 .b-brand .bb-logo{ background:var(--brand); color:var(--brand-ink); }
 /* background blobs + animated particles inherit the brand colour */
