@@ -1003,7 +1003,7 @@ body.dev-mode .topbar{z-index:95;}
       </div>
       <div class="dz-section">
         <div class="dz-toggle-row">
-          <div><div class="tr-name">Powered by Decentro</div><div class="tr-sub">Trust footer on the payment page</div></div>
+          <div><div class="tr-name">Secured by Decentro</div><div class="tr-sub">Trust footer on the payment page</div></div>
           <div class="sw on" id="poweredSw"></div>
         </div>
       </div>
@@ -1151,7 +1151,7 @@ let uid = 1;
 const nid = () => 'b' + (uid++);
 
 const state = {
-  design: { brand:'#096ef2', theme:'theme-light', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'twostep', timer:true, timerMins:10, rails:true, pageType:'products', multiService:false },
+  design: { brand:'#096ef2', theme:'theme-light', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'twostep', timer:true, timerMins:10, rails:false, pageType:'products', multiService:false },
   merchant: {
     supportEmail:'support@aurora.co', supportPhone:'+91 80 4000 1234', country:'India', vpa:'aurora@upi',
     socials:{ web:'https://aurora.co', li:'', x:'', ig:'' },
@@ -1535,7 +1535,6 @@ const REG = {
     defaults:()=>({}), fields:[],
     render:()=>`<div class="b-secure cv-sub">
       <span class="sc-item">${svg(IC.secure)}256-bit encrypted</span><span class="sc-sep"></span>
-      <span class="sc-item">PCI DSS compliant</span><span class="sc-sep"></span>
       <span class="sc-item">RBI-regulated rails</span></div>`
   },
   mfooter: {
@@ -1656,7 +1655,7 @@ const zoneOf = (b, region) => region==='summary'
    and a block added while viewing a step stays on that step. */
 const STEP1_TYPES = ['payerName','email','phone'];        // contact details
 const PERSIST_TYPES = ['mfooter','divider'];
-/* Rendered outside the card entirely — page chrome above "Powered by Decentro" */
+/* Rendered outside the card entirely — page chrome above "Secured by Decentro" */
 const PAGE_TYPES = ['secure'];
 const isPageBlock = b => PAGE_TYPES.includes(b.type);      // page chrome → both steps
 function defaultStep(type){
@@ -1742,7 +1741,7 @@ function renderAll(){
   renderRegion('payment');
   $('#blockCount').textContent = allBlocks().length + ' blocks · ' + (device==='desktop'?'940px':'420px');
   $('#poweredLine').style.display = state.design.powered ? '' : 'none';
-  /* trust strip: outside the card, directly above "Powered by Decentro" */
+  /* trust strip: outside the card, directly above "Secured by Decentro" */
   const pageBlks = allBlocks().filter(isPageBlock);
   $('#trustHost').innerHTML = pageBlks.map(blkHTML).join('');
   $('#stepSwitch').style.display = (state.design.flow==='twostep' && mode==='edit') ? 'flex' : 'none';
@@ -3312,8 +3311,8 @@ function buildExportHTML(){
       ${foot}
     </div>`;
   };
-  const powered = d.powered ? `<div class="powered"><span>Powered by ${logoSvg(18)}</span></div>` : '';
-  /* page chrome — outside the card, above "Powered by Decentro" */
+  const powered = d.powered ? `<div class="powered"><span>Secured by ${logoSvg(18)}</span></div>` : '';
+  /* page chrome — outside the card, above "Secured by Decentro" */
   const pageChrome = allBlocks().filter(isPageBlock).map(b=>REG[b.type].render(b, true)).join('');
   const trustStrip = pageChrome ? `
 <!-- ══════════════════════════════════════════════════════════════════════════
@@ -3667,7 +3666,7 @@ input{font-family:inherit;}
 .trust-strip{margin-top:16px;}
 .trust-strip .b-secure{justify-content:center;color:#8794a8;}
 .powered{width:100%;text-align:center;font-size:var(--fs-sub);font-weight:600;color:#94a3b8;margin-top:14px;}
-.powered span{display:inline-flex;align-items:center;gap:9px;vertical-align:middle;}
+.powered span{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;}
 .powered svg{opacity:.85;}
 ${brandBlock}
 /* ══════════════════════════════════════════════════════════════════════════
@@ -3848,7 +3847,7 @@ function seed(){
   seeding = false;
 }
 document.getElementById('tbLogo').innerHTML = logoSvg(24);
-document.getElementById('poweredLine').innerHTML = '<span style="display:inline-flex;align-items:center;gap:9px;vertical-align:middle;">Powered by ' + logoSvg(18) + '</span>';
+document.getElementById('poweredLine').innerHTML = '<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle;">Secured by ' + logoSvg(18) + '</span>';
 buildPalette();
 initFlowBg();
 seed();
