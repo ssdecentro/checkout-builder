@@ -276,9 +276,11 @@ input,select,textarea{font-family:inherit;}
 /* mobile: just "Payment session expires in MM:SS" */
 @media (max-width:640px){
   /* phones: island banner with a margin, docking full-bleed once it scrolls off */
-  .co-timer{max-width:none;margin:0 12px 14px;padding:11px 14px;}
+  /* width:auto, not 100% — with 12px side margins, 100% overflows by 24px
+     and the banner gets clipped on the right */
+  .co-timer{width:auto;max-width:none;margin:0 12px 14px;padding:11px 14px;}
   .co-timer .ct-t{font-size:var(--fs-sub);}
-  .is-docked .co-timer{margin:0;}
+  .is-docked .co-timer{width:100vw;margin:0;}
 }
 
 /* ───────── TWO-STEP FLOW ───────── */
@@ -3691,9 +3693,11 @@ ${collectCheckoutCSS()}
   .b-payhead .info-tip,.b-payhead .phd-t-fallback{display:none;}
   .zone-body{margin-right:0;padding-right:0;}
   /* phones: island banner with a margin, docking full-bleed once it scrolls off */
-  .co-timer{max-width:none;margin:0 12px 14px;padding:11px 14px;}
+  /* width:auto, not 100% — with 12px side margins, 100% overflows by 24px
+     and the banner gets clipped on the right */
+  .co-timer{width:auto;max-width:none;margin:0 12px 14px;padding:11px 14px;}
   .co-timer .ct-t{font-size:var(--fs-sub);}
-  .is-docked .co-timer{margin:0;}
+  .is-docked .co-timer{width:100vw;margin:0;}
   /* ── ONE COLUMN ── summary stacks above payment and the page owns the scroll */
   .checkout{grid-template-columns:1fr;}
   .co-col{padding:26px 22px 32px;}
