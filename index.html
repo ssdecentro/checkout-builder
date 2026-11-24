@@ -11,6 +11,16 @@
 :root{
   --border:#e2e8f0; --surface:#f1f5f9; --muted:#94a3b8; --sub:#475569; --ink:#1c2024;
   --r:10px;
+  /* ── TYPE SCALE ──────────────────────────────────────────────────────────
+     Declared here, NOT only on .checkout. The side panels, toast and modals
+     live outside the checkout card; when the scale was scoped to the card,
+     var(--fs-sub) resolved to nothing out here and every field, toast and
+     modal title fell back to the browser default of 16px — which is why the
+     inputs looked huge next to their own 11px labels. */
+  --fs-title:1.0625rem;   /* 17px */
+  --fs-body:0.9375rem;    /* 15px */
+  --fs-sub:0.8125rem;     /* 13px */
+  --fs-note:0.6562rem;    /* 10.5px — panel subtext, and the panel form fields */
 }
 html,body{height:100%;}
 body{font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink);background:#f8fafc;overflow:hidden;}
@@ -102,7 +112,7 @@ input,select,textarea{font-family:inherit;}
 .cx-test{width:26px;height:26px;border-radius:7px;cursor:pointer;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1);transition:transform .12s;}
 .cx-test:hover{transform:scale(1.12);}
 .cx-test.on{border-color:#000;}
-.dz-select{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:12px;font-weight:500;color:var(--ink);background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+.dz-select{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-note);font-weight:500;color:var(--ink);background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
 .dz-range{width:100%;accent-color:#000;}
 .dz-flex{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .dz-val{font-size:11px;font-weight:600;color:var(--sub);min-width:34px;text-align:right;}
@@ -799,12 +809,13 @@ body.dev-mode .topbar{z-index:95;}
 .ins-field{margin-bottom:14px;}
 .ins-count{font-size:0.625rem;color:var(--muted);text-align:right;margin-top:3px;}
 .ins-field>label{display:block;font-size:0.6875rem;font-weight:600;color:var(--sub);margin-bottom:5px;}
-.ins-field input[type=text],.ins-field input[type=number]{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-sub);color:var(--ink);}
+/* panel form fields sit at the note size — they read as controls, not copy */
+.ins-field input[type=text],.ins-field input[type=number]{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-note);color:var(--ink);}
 .ins-field input:focus,.dz-select:focus{outline:none;border-color:#000;box-shadow:0 0 0 3px rgba(0,0,0,.06);}
 .ins-check{display:flex;align-items:center;justify-content:space-between;padding:7px 0;}
-.ins-check .ic-name{font-size:var(--fs-sub);font-weight:500;}
-.ins-note{font-size:0.6562rem;line-height:1.5;color:var(--muted);background:#fffbeb;border:1px solid #fef08a;border-radius:var(--r);padding:9px 11px;color:#854d0e;margin-top:4px;}
-.ins-del{width:100%;height:34px;border:1px solid #fecaca;color:#b91c1c;border-radius:var(--r);font-size:var(--fs-sub);font-weight:600;margin-top:8px;}
+.ins-check .ic-name{font-size:12px;font-weight:500;}
+.ins-note{font-size:var(--fs-note);line-height:1.5;color:var(--muted);background:#fffbeb;border:1px solid #fef08a;border-radius:var(--r);padding:9px 11px;color:#854d0e;margin-top:4px;}
+.ins-del{width:100%;height:34px;border:1px solid #fecaca;color:#b91c1c;border-radius:var(--r);font-size:12px;font-weight:600;margin-top:8px;}
 .ins-del:hover{background:#fef2f2;}
 
 /* ───────────────────────── EXPORT MODAL ───────────────────────── */
@@ -986,7 +997,7 @@ body.dev-mode .topbar{z-index:95;}
       <div class="dz-section">
         <div class="dz-label">Brand Colour</div>
         <div class="swatch-row" id="swatchRow"></div>
-        <div class="field" style="margin-top:9px;"><input type="text" id="brandHex" maxlength="7" placeholder="#096EF2" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-sub);font-family:ui-monospace,Menlo,monospace;text-transform:uppercase;"></div>
+        <div class="field" style="margin-top:9px;"><input type="text" id="brandHex" maxlength="7" placeholder="#096EF2" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-note);font-family:ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.3px;"></div>
         <div class="dz-label" style="margin:14px 0 0;">Contrast check · live</div>
         <div class="cx-panel" id="brandPrev"></div>
         <div class="dz-label" style="margin:14px 0 0;">Try a failure case</div>
@@ -1909,7 +1920,7 @@ function renderInspector(){
         <button class="btn btn-outline" style="flex:1;justify-content:center;" data-imgup="${f.k}">${v?'Replace image…':'Upload image…'}</button>
         ${v?`<button class="btn btn-outline" style="color:#b91c1c;" data-imgrm="${f.k}">Remove</button>`:''}
       </div></div>`;
-    else if(f.t==='codes') html += `<div class="ins-field"><label>${f.label}</label><textarea data-k="${f.k}" data-t="codes" style="width:100%;min-height:76px;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:var(--fs-sub);line-height:1.7;resize:vertical;outline:none;">${(v||[]).map(c=>c.code+'  '+c.amt).join('\n')}</textarea></div>`;
+    else if(f.t==='codes') html += `<div class="ins-field"><label>${f.label}</label><textarea data-k="${f.k}" data-t="codes" style="width:100%;min-height:76px;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:var(--fs-note);line-height:1.8;resize:vertical;outline:none;">${(v||[]).map(c=>c.code+'  '+c.amt).join('\n')}</textarea></div>`;
     else if(f.t==='apps') html += `<div class="ins-field"><label>${f.label}</label>${Object.entries(UPI_APPS).map(([k,a])=>`<div class="ins-check"><span class="ic-name">${a.name}</span><div class="sw ${b.props.apps[k]?'on':''}" data-app="${k}"></div></div>`).join('')}</div>`;
   });
   /* two-step placement control — available on every payment-column block */
