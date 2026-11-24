@@ -84,6 +84,24 @@ input,select,textarea{font-family:inherit;}
 .swatch.on{border-color:#000;box-shadow:0 0 0 2px #fff inset;}
 .swatch-custom{width:26px;height:26px;border-radius:50%;border:1.5px dashed #cbd5e1;padding:0;overflow:hidden;position:relative;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);}
 .swatch-custom input{position:absolute;inset:-6px;opacity:0;cursor:pointer;}
+/* ── live contrast readout (Design tab) ── */
+.cx-panel{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:8px;}
+.cx-row{display:flex;align-items:center;gap:8px;padding:7px 9px;border-bottom:1px solid #f1f5f9;}
+.cx-row:last-child{border-bottom:none;}
+.cx-row.cx-head{background:var(--surface);padding:6px 9px;}
+.cx-k{font-size:0.6875rem;font-weight:600;color:var(--sub);flex:1 1 auto;min-width:0;line-height:1.35;}
+.cx-k small{display:block;font-size:0.5938rem;font-weight:500;color:var(--muted);}
+.cx-chip{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:22px;padding:0 7px;border-radius:6px;font-size:0.625rem;font-weight:800;font-family:ui-monospace,Menlo,monospace;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.09);}
+.cx-lc{font-size:0.625rem;font-weight:800;font-family:ui-monospace,Menlo,monospace;min-width:44px;text-align:right;flex:none;white-space:nowrap;}
+.cx-lc i{font-style:normal;font-weight:600;color:var(--muted);text-decoration:line-through;}
+.cx-pass{color:#0f8b4c;} .cx-fail{color:#b91c1c;}
+.cx-badge{display:inline-block;margin-top:4px;font-size:0.5312rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 5px;border-radius:4px;background:#fef3c7;color:#92400e;}
+.cx-badge-wcag{background:#fee2e2;color:#b91c1c;}
+.cx-verdict{font-size:0.6562rem;font-weight:700;line-height:1.5;padding:8px 9px;background:#f0fdf4;color:#166534;}
+.cx-verdict.warn{background:#fffbeb;color:#92400e;}
+.cx-test{width:26px;height:26px;border-radius:7px;cursor:pointer;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1);transition:transform .12s;}
+.cx-test:hover{transform:scale(1.12);}
+.cx-test.on{border-color:#000;}
 .dz-select{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:12px;font-weight:500;color:var(--ink);background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
 .dz-range{width:100%;accent-color:#000;}
 .dz-flex{display:flex;align-items:center;justify-content:space-between;gap:10px;}
@@ -299,8 +317,8 @@ input,select,textarea{font-family:inherit;}
 .co-recap .rc-i{flex:1;min-width:0;}
 .co-recap .rc-n{font-size:var(--fs-body);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .co-recap .rc-c{font-size:var(--fs-sub);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.co-recap .rc-e{font-size:0.7188rem;font-weight:700;color:var(--co-accent);flex:none;padding:6px 10px;border-radius:8px;}
-.co-recap .rc-e:hover{background:color-mix(in srgb,var(--co-accent) 10%,transparent);}
+.co-recap .rc-e{font-size:0.7188rem;font-weight:700;color:var(--co-accent-pay);flex:none;padding:6px 10px;border-radius:8px;}
+.co-recap .rc-e:hover{background:color-mix(in srgb,var(--co-brand-raw) 10%,transparent);}
 
 .co-nav{display:flex;gap:10px;align-items:center;margin-top:20px;}
 .co-nav .nav-back{flex:none;height:46px;padding:0 16px;border-radius:var(--co-r);border:1px solid var(--co-pay-border);color:inherit;font-size:var(--fs-sub);font-weight:700;background:transparent;}
@@ -361,13 +379,33 @@ input,select,textarea{font-family:inherit;}
    --title-size is THE title size: payment title, stage headings,
    section headings and the payable amount all share it. */
 .checkout{--title-size:var(--fs-title);--co-sep:14px;}   /* --co-sep: the gap above and below every separator */
+/* ── BRAND CONTRAST TOKENS ──────────────────────────────────────────────────
+   Every one of these is written by BrandContrast.resolve() (see the engine in
+   the script below). The values here are only the fallbacks for the instant
+   before the script runs, which is why this rule is scoped to .checkout-shell
+   — the export strips it, and the exported page declares the resolved values
+   in its own :root block instead.
+       --co-accent        filled surfaces (buttons, chips, switches)
+       --co-accent-ink    the label ON those fills
+       --co-accent-pay    brand as TEXT  on the payment column   (Lc>=60)
+       --co-accent-pay-ui brand as ICON/STROKE on the payment column (Lc>=45)
+       --co-accent-sum    brand as TEXT  on the summary panel    (Lc>=60)
+       --co-accent-sum-ui brand as ICON/STROKE on the summary panel (Lc>=45)
+       --co-brand-raw     the untouched brand colour — DECORATION ONLY
+                          (alpha tints, gradients, glows). Never text.      */
+.checkout-shell .checkout{
+  --co-accent:#096ef2; --co-accent-ink:#ffffff;
+  --co-accent-pay:#096ef2;  --co-accent-pay-ui:#096ef2;
+  --co-accent-sum:#096ef2;  --co-accent-sum-ui:#096ef2;
+  --co-brand-raw:#096ef2;
+}
 .b-payhead .phd-t{position:relative;display:flex;align-items:center;gap:7px;font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);line-height:1.3;}
 /* ── adaptive description: inline, or behind the info tip when space is tight ── */
 .b-payhead.is-collapsed .phd-d{display:none;}
 .b-payhead:not(.is-collapsed) .info-tip,
 .b-payhead:not(.is-collapsed) .phd-t-fallback{display:none;}
 .info-tip{display:inline-flex;flex:none;}
-.info-tip-btn{width:18px;height:18px;min-width:18px;display:flex;align-items:center;justify-content:center;border:none;background:none;padding:0;border-radius:50%;color:var(--co-accent);cursor:help;transition:background .13s;}
+.info-tip-btn{width:18px;height:18px;min-width:18px;display:flex;align-items:center;justify-content:center;border:none;background:none;padding:0;border-radius:50%;color:var(--co-accent-sum-ui);cursor:help;transition:background .13s;}
 .info-tip-btn svg{width:15px;height:15px;display:block;}
 .info-tip:hover .info-tip-btn,.info-tip:focus-within .info-tip-btn{background:rgba(var(--brand-rgb,9,110,242),.12);}
 /* anchored to the title's left edge and opening downward — the column clips, so
@@ -397,7 +435,7 @@ input,select,textarea{font-family:inherit;}
    info icon on desktop and sit inline on phones ──────────────────────────── */
 .b-totals .tr{display:flex;justify-content:space-between;font-size:var(--fs-sub);padding:4px 0;}
 .tt-wrap{position:static;display:inline-flex;vertical-align:middle;margin-left:7px;}
-.tt-i{display:none;width:17px;height:17px;align-items:center;justify-content:center;border:none;background:none;padding:0;color:var(--co-accent);cursor:help;transition:opacity .13s;}
+.tt-i{display:none;width:17px;height:17px;align-items:center;justify-content:center;border:none;background:none;padding:0;color:var(--co-accent-sum-ui);cursor:help;transition:opacity .13s;}
 .tt-i:hover{opacity:.75;}
 .tt-i svg{width:15px;height:15px;display:block;}   /* filled glyph — colour comes from .tt-i */
 .tt-pop{display:none;position:absolute;bottom:calc(100% + 10px);left:0;z-index:35;width:260px;max-width:100%;padding:12px 14px 10px;background:var(--co-pay-bg);border:1px solid var(--co-sum-border);border-radius:11px;box-shadow:0 12px 30px rgba(2,11,30,.17);font-size:var(--fs-sub);font-weight:500;line-height:1.5;font-family:var(--co-font-head);text-align:left;letter-spacing:0;}
@@ -415,20 +453,20 @@ input,select,textarea{font-family:inherit;}
 /* ── DISCOUNT: a text CTA, a popup field with the arrow inside it, and a
    dismissible pill once applied. Costs one line when collapsed. ──────────── */
 .b-dc{position:relative;min-width:0;}
-.dc-cta{font-size:var(--fs-sub);font-weight:700;color:var(--co-accent);padding:4px 0;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;background:none;border:none;cursor:pointer;white-space:nowrap;}
+.dc-cta{font-size:var(--fs-sub);font-weight:700;color:var(--co-accent-sum);padding:4px 0;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;background:none;border:none;cursor:pointer;white-space:nowrap;}
 .dc-cta:hover{opacity:.78;}
 /* no card chrome around it — the field itself is the popup */
 .dc-pop{display:none;position:absolute;bottom:calc(100% + 8px);left:0;z-index:30;width:232px;max-width:70vw;}
 .b-dc.open .dc-pop{display:block;animation:popin .16s ease-out;}
 .dc-field{position:relative;}
-.dc-field input{width:100%;height:40px;border-radius:10px;border:1px solid var(--co-accent);background:#fff;color:var(--co-pay-text);padding:0 46px 0 13px;font-size:var(--fs-sub);font-weight:600;letter-spacing:.3px;text-transform:uppercase;box-shadow:0 8px 24px rgba(2,11,30,.14);}
-.dc-field input:focus{outline:none;border-color:var(--co-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--co-accent) 14%,transparent);}
+.dc-field input{width:100%;height:40px;border-radius:10px;border:1px solid var(--co-accent-sum-ui);background:#fff;color:var(--co-pay-text);padding:0 46px 0 13px;font-size:var(--fs-sub);font-weight:600;letter-spacing:.3px;text-transform:uppercase;box-shadow:0 8px 24px rgba(2,11,30,.14);}
+.dc-field input:focus{outline:none;border-color:var(--co-accent-sum-ui);box-shadow:0 0 0 3px color-mix(in srgb,var(--co-brand-raw) 14%,transparent);}
 /* the arrow lives inside the field — no separate Apply button */
 .dc-go{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:7px;background:var(--co-accent);color:var(--co-accent-ink);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:filter .13s;}
 .dc-go:hover{filter:brightness(.92);}
 .dc-go svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
-.dc-pill{display:inline-flex;align-items:center;gap:6px;font-size:0.6875rem;font-weight:700;line-height:1;color:var(--co-accent);padding:5px 6px 5px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-accent) 12%,transparent);white-space:nowrap;}
-.dc-x{width:16px;height:16px;min-width:16px;border-radius:50%;background:color-mix(in srgb,var(--co-accent) 20%,transparent);color:var(--co-accent);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .13s,color .13s;}
+.dc-pill{display:inline-flex;align-items:center;gap:6px;font-size:0.6875rem;font-weight:700;line-height:1;color:var(--co-accent-sum);padding:5px 6px 5px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-brand-raw) 12%,transparent);white-space:nowrap;}
+.dc-x{width:16px;height:16px;min-width:16px;border-radius:50%;background:color-mix(in srgb,var(--co-brand-raw) 20%,transparent);color:var(--co-accent-sum);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .13s,color .13s;}
 .dc-x:hover{background:var(--co-accent);color:var(--co-accent-ink);}
 .dc-x svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;}
 
@@ -441,14 +479,14 @@ input,select,textarea{font-family:inherit;}
 .b-field input{width:100%;height:44px;border-radius:var(--co-r);border:1px solid var(--co-pay-border);background:var(--co-pay-field);color:inherit;padding:0 13px;font-size:var(--fs-body);transition:border-color .15s, box-shadow .15s;}
 .co-summary .b-field input{border-color:var(--co-sum-border);background:var(--co-sum-field);}
 .b-field input::placeholder{color:var(--co-pay-sub);opacity:.75;}
-.b-field input:focus{outline:none;border-color:var(--co-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--co-accent) 14%,transparent);}
+.b-field input:focus{outline:none;border-color:var(--co-accent-pay-ui);box-shadow:0 0 0 3px color-mix(in srgb,var(--co-brand-raw) 14%,transparent);}
 
 /* payment method shells */
 .b-method{border:1px solid var(--co-pay-border);border-radius:var(--co-r);overflow:hidden;background:var(--co-pay-field);}
 .bm-head{display:flex;align-items:center;gap:11px;padding:14px 16px;cursor:pointer;user-select:none;}
 .bm-head:hover{background:var(--co-pay-hover);}
-.bm-ic{width:30px;height:30px;min-width:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--co-soft);color:var(--co-accent);}
-.theme-dark .bm-ic{background:color-mix(in srgb,var(--co-accent) 20%,transparent);}
+.bm-ic{width:30px;height:30px;min-width:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--co-soft);color:var(--co-accent-pay-ui);}
+.theme-dark .bm-ic{background:color-mix(in srgb,var(--co-brand-raw) 20%,transparent);}
 .bm-ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
 .bm-title{font-size:var(--fs-body);font-weight:700;flex:1;}
 .bm-sub{font-size:0.6562rem;font-weight:500;margin-top:1px;}
@@ -467,18 +505,18 @@ input,select,textarea{font-family:inherit;}
 .upi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .checkout-shell.mobile .upi-grid{grid-template-columns:1fr;}
 .upi-app{display:flex;align-items:center;gap:10px;border:1px solid var(--co-pay-border);border-radius:var(--co-r);padding:9px 12px;cursor:pointer;transition:all .13s;}
-.upi-app:hover{border-color:var(--co-accent);}
-.upi-app.sel{border-color:var(--co-accent);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--co-accent) 18%,transparent);}
+.upi-app:hover{border-color:var(--co-accent-pay-ui);}
+.upi-app.sel{border-color:var(--co-accent-pay-ui);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--co-brand-raw) 18%,transparent);}
 .upi-app .ua-logo{width:26px;height:26px;min-width:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:0.5938rem;font-weight:800;color:#fff;}
 .upi-app .ua-name{font-size:var(--fs-sub);font-weight:600;flex:1;}
 .upi-app .ua-radio{width:16px;height:16px;min-width:16px;border-radius:50%;border:1.7px solid var(--co-pay-border);transition:all .13s;}
-.upi-app.sel .ua-radio{border-width:5px;border-color:var(--co-accent);}
+.upi-app.sel .ua-radio{border-width:5px;border-color:var(--co-accent-pay-ui);}
 .upi-any{margin-top:8px;}
 .upi-any .ua-logo{background:var(--co-accent);color:var(--co-accent-ink);}
 .upi-any .ua-logo svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .upi-vpa{margin-top:10px;}
 .upi-vpa .uv-hint{font-size:0.6562rem;margin-top:6px;}
-.uc-badge{width:66px;height:66px;border-radius:50%;background:var(--co-accent);color:var(--co-accent-ink);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 10px 26px color-mix(in srgb,var(--co-accent) 35%,transparent);animation:popin .4s cubic-bezier(.2,1.6,.4,1);}
+.uc-badge{width:66px;height:66px;border-radius:50%;background:var(--co-accent);color:var(--co-accent-ink);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 10px 26px color-mix(in srgb,var(--co-brand-raw) 35%,transparent);animation:popin .4s cubic-bezier(.2,1.6,.4,1);}
 .uc-badge svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .uc-pow{margin-top:16px;font-size:0.5312rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;}
 .uc-pow b{font-size:0.6875rem;letter-spacing:2px;}
@@ -489,17 +527,17 @@ input,select,textarea{font-family:inherit;}
 .nb-crows{display:flex;flex-direction:column;}
 .nb-crow{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 4px;cursor:pointer;border-bottom:1px solid var(--co-pay-border);font-size:var(--fs-body);font-weight:700;transition:color .13s;user-select:none;}
 .nb-crow:last-child{border-bottom:none;}
-.nb-crow:hover{color:var(--co-accent);}
-.nb-crow.sel{color:var(--co-accent);}
+.nb-crow:hover{color:var(--co-accent-pay);}
+.nb-crow.sel{color:var(--co-accent-pay);}
 .nb-crow .nc-ring{width:17px;height:17px;min-width:17px;border-radius:50%;border:1.7px solid var(--co-pay-border);transition:all .13s;}
-.nb-crow:hover .nc-ring{border-color:var(--co-accent);}
-.nb-crow.sel .nc-ring{border-width:5.5px;border-color:var(--co-accent);}
+.nb-crow:hover .nc-ring{border-color:var(--co-accent-pay-ui);}
+.nb-crow.sel .nc-ring{border-width:5.5px;border-color:var(--co-accent-pay-ui);}
 .nb-note{font-size:var(--fs-sub);line-height:1.6;padding:10px 12px;border:1px dashed var(--co-pay-border);border-radius:var(--co-r);margin-top:10px;}
 .nb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;margin-top:12px;}
 .checkout-shell.mobile .nb-grid{grid-template-columns:1fr 1fr;}
 .nb-bank{border:1px solid var(--co-pay-border);border-radius:var(--co-r);padding:10px 6px;text-align:center;cursor:pointer;transition:all .13s;}
-.nb-bank:hover{border-color:var(--co-accent);}
-.nb-bank.sel{border-color:var(--co-accent);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--co-accent) 18%,transparent);}
+.nb-bank:hover{border-color:var(--co-accent-pay-ui);}
+.nb-bank.sel{border-color:var(--co-accent-pay-ui);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--co-brand-raw) 18%,transparent);}
 .nb-bank .nb-ic{width:26px;height:26px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:0.5625rem;font-weight:800;color:#fff;}
 .nb-bank .nb-name{font-size:0.6562rem;font-weight:600;}
 
@@ -550,7 +588,7 @@ input,select,textarea{font-family:inherit;}
 .b-qrd .qr-side{flex:1;min-width:0;}
 .b-qrd .qr-t{font-size:var(--fs-sub);font-weight:600;line-height:1.55;margin-bottom:5px;}
 .b-qrd .qr-s{font-size:var(--fs-sub);line-height:1.55;}
-.b-qrd .qr-timer{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:0.6562rem;font-weight:700;padding:4px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-accent) 10%,transparent);color:var(--co-accent);}
+.b-qrd .qr-timer{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:0.6562rem;font-weight:700;padding:4px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-brand-raw) 10%,transparent);color:var(--co-accent-pay);}
 .b-qrm{display:none;font-size:var(--fs-sub);line-height:1.6;padding:10px 12px;border:1px dashed var(--co-pay-border);border-radius:var(--co-r);}
 .checkout-shell.mobile .b-qrd{display:none;}
 .checkout-shell.mobile .b-qrm{display:block;}
@@ -563,7 +601,7 @@ input,select,textarea{font-family:inherit;}
 .b-mfoot .mf-sup{display:flex;flex-wrap:wrap;gap:5px 16px;justify-content:center;margin-top:10px;opacity:.9;font-size:var(--fs-sub);}
 .b-mfoot .mf-soc{display:flex;gap:10px;justify-content:center;margin-top:14px;}
 .b-mfoot .mf-soc a{width:26px;height:26px;border-radius:50%;border:1px solid var(--co-pay-border);display:flex;align-items:center;justify-content:center;color:inherit;opacity:.75;}
-.b-mfoot .mf-soc a:hover{opacity:1;border-color:var(--co-accent);color:var(--co-accent);}
+.b-mfoot .mf-soc a:hover{opacity:1;border-color:var(--co-accent-pay-ui);color:var(--co-accent-pay);}
 .b-mfoot .mf-soc svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .co-summary .b-mfoot .mf-soc a{border-color:var(--co-sum-border);}
 
@@ -602,7 +640,7 @@ input,select,textarea{font-family:inherit;}
 .pr-meta{font-size:var(--fs-sub);}
 .pr-txn{font-size:0.6562rem;opacity:.85;word-break:break-all;}
 .pr-count{margin-top:16px;border:1.5px solid var(--co-pay-border);border-radius:100px;padding:10px 28px;font-size:var(--fs-sub);font-weight:700;}
-.pr-count b{color:var(--co-accent);}
+.pr-count b{color:var(--co-accent-pay);}
 .pr-note{margin-top:16px;font-size:var(--fs-sub);line-height:1.6;background:var(--co-pay-hover);border:1px solid var(--co-pay-border);border-radius:10px;padding:10px 16px;max-width:400px;}
 .pr-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center;}
 .pr-btn{height:40px;padding:0 26px;border-radius:100px;font-size:var(--fs-sub);font-weight:700;background:var(--co-accent);color:var(--co-accent-ink);}
@@ -613,7 +651,7 @@ input,select,textarea{font-family:inherit;}
 .co-summary .pr-help .ph-head{color:var(--co-sum-text);}
 .pr-help .ph-body{text-align:left;}
 .pr-help .ph-fine{text-align:left;margin-top:10px;padding-top:10px;border-top:1px solid var(--co-pay-border);opacity:.85;}
-.pr-help .ph-mail{font-weight:700;color:var(--co-accent);word-break:break-word;}
+.pr-help .ph-mail{font-weight:700;color:var(--co-accent-pay);word-break:break-word;}
 .pr-trust{display:flex;align-items:center;gap:6px;font-size:0.7188rem;font-weight:600;color:#2f80ed;margin-top:14px;}
 .pr-trust svg{width:14px;height:14px;fill:#2f80ed;}
 @media (max-width:640px){
@@ -650,7 +688,7 @@ input,select,textarea{font-family:inherit;}
 .po-ring svg path{stroke-dasharray:40;stroke-dashoffset:40;animation:draw .5s .25s forwards ease-out;}
 @keyframes draw{to{stroke-dashoffset:0;}}
 @keyframes popin{0%{transform:scale(.4);opacity:0;}100%{transform:scale(1);opacity:1;}}
-.po-spin{width:44px;height:44px;border-radius:50%;border:3.5px solid color-mix(in srgb,var(--co-accent) 20%,transparent);border-top-color:var(--co-accent);margin:0 auto 18px;animation:spin .7s linear infinite;}
+.po-spin{width:44px;height:44px;border-radius:50%;border:3.5px solid color-mix(in srgb,var(--co-brand-raw) 20%,transparent);border-top-color:var(--co-accent-pay-ui);margin:0 auto 18px;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* ───────── DECENTRO PAY LOADER ─────────
@@ -949,8 +987,11 @@ body.dev-mode .topbar{z-index:95;}
         <div class="dz-label">Brand Colour</div>
         <div class="swatch-row" id="swatchRow"></div>
         <div class="field" style="margin-top:9px;"><input type="text" id="brandHex" maxlength="7" placeholder="#096EF2" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-sub);font-family:ui-monospace,Menlo,monospace;text-transform:uppercase;"></div>
-        <div class="brand-prev" id="brandPrev"></div>
-        <div class="ins-note" style="margin-top:9px;">This single colour drives the CTAs, the muted product panel, the background blobs and the moving particles. Text on the CTA flips to white or black automatically for best contrast.</div>
+        <div class="dz-label" style="margin:14px 0 0;">Contrast check · live</div>
+        <div class="cx-panel" id="brandPrev"></div>
+        <div class="dz-label" style="margin:14px 0 0;">Try a failure case</div>
+        <div class="swatch-row" id="contrastTests" style="margin-top:2px;"></div>
+        <div class="ins-note" style="margin-top:9px;">One colour drives the whole page. Filled surfaces use the brand colour and flip their label to white or black; <b>brand-as-text is a separate token</b>, darkened or lightened per surface until it clears APCA <b>Lc&nbsp;60</b>. Pick a failure case above to see both corrections fire.</div>
       </div>
       <div class="dz-section">
         <div class="dz-label">Page Type</div>
@@ -2516,80 +2557,384 @@ $('#clearBtn').addEventListener('click', ()=>{
 });
 
 /* design controls */
-/* ═══════════════════════════════════════════════════════════════════
-   BRAND COLOUR SYSTEM
-   One colour in → the whole palette out.
-     • CTAs            = brand colour, text auto-flipped to white/black
-     • Left panel      = heavily muted brand tint (always black-text safe)
-     • Background blobs + moving particles = brand colour at low alpha
-   ═══════════════════════════════════════════════════════════════════ */
+/* ╔════════════════════════════════════════════════════════════════════════════╗
+   ║                                                                            ║
+   ║   ★★★  BRAND CONTRAST ENGINE  v2  —  FOR ENGINEERING  ★★★                  ║
+   ║                                                                            ║
+   ║   THIS IS THE BLOCK TO IMPLEMENT. Everything between this banner and       ║
+   ║   "END BRAND CONTRAST ENGINE" is self-contained: no dependencies, no DOM,   ║
+   ║   no framework, all pure functions. Copy it as-is into a module            ║
+   ║   (brand-contrast.js) and call BrandContrast.resolve().                     ║
+   ║                                                                            ║
+   ║ ── THE BUG IT FIXES ───────────────────────────────────────────────────────║
+   ║   v1 asked one question: "is white or black more readable on the brand      ║
+   ║   colour?" and used the winner. Two things go wrong with that:             ║
+   ║                                                                            ║
+   ║   (1) MID-TONE FILLS HAVE NO READABLE INK AT ALL. Across the sRGB cube,     ║
+   ║       12.3% of colours cannot carry a button label at Lc 60 with EITHER     ║
+   ║       white or black — the best either can do bottoms out at Lc 54.         ║
+   ║       Picking "the better of two bad options" still ships a bad option.     ║
+   ║       Examples: #7DA5E6, #FF7D50, #55B90A, #E187B9, #C9A961.                ║
+   ║                                                                            ║
+   ║   (2) THE BRAND COLOUR IS ALSO USED AS TEXT, and v1 never checked that.     ║
+   ║       "Add discount code", the amount-details info icon, the Edit link,     ║
+   ║       the support email, the method icons — all painted raw --co-accent     ║
+   ║       on a near-white surface. A gold or cyan brand renders them at         ║
+   ║       Lc 16–30, i.e. invisible, no matter what the button ink says.         ║
+   ║       THIS IS THE FAILURE THE SCREENSHOT SHOWS.                            ║
+   ║                                                                            ║
+   ║ ── THE FIX, IN THREE RULES ────────────────────────────────────────────────║
+   ║   RULE 1  Ink is chosen with APCA, not a WCAG 2.x ratio.                   ║
+   ║           WCAG 2.x is a luminance RATIO. It has no model of how the eye     ║
+   ║           handles saturated or mid-tone fills, and it gets them wrong.      ║
+   ║           Measured on a real merchant red, #FF0D0D:                        ║
+   ║                                                                            ║
+   ║               WCAG 2.x   white 3.95  ·  black 4.71   -> picks BLACK  ✗      ║
+   ║               APCA       white Lc 70 ·  black Lc 39  -> picks WHITE  ✓      ║
+   ║                                                                            ║
+   ║           Black-on-red is what a WCAG picker ships, and it is plainly       ║
+   ║           wrong — no brand anywhere sets black on a red button. The two     ║
+   ║           methods disagree on 26.5% of the sRGB cube, and the worst cases   ║
+   ║           (#737D69, #7D73A5, #8C783C …) land on a WCAG ratio of 4.31 vs     ║
+   ║           4.32 — a coin flip — where APCA puts white ahead by Lc 42.        ║
+   ║                                                                            ║
+   ║           ► MIGRATION: if an existing build picks ink from a luminance      ║
+   ║             ratio, that is this bug. Delete the WCAG helpers (they were     ║
+   ║             named luminance() and contrast() in the v1 builder) and call    ║
+   ║             BrandContrast.resolve(hex).ctaInk instead. Audit a live page    ║
+   ║             with BrandContrast.audit() — see brand-contrast.js.             ║
+   ║                                                                            ║
+   ║   RULE 2  If NEITHER ink clears the threshold, move the FILL, not the ink.  ║
+   ║           The fill's OKLCH lightness is pushed — minimally, by binary       ║
+   ║           search — until the chosen ink passes. Hue and chroma are held,    ║
+   ║           so a nudged gold is still gold. Direction is whichever of         ║
+   ║           darker/lighter needs the smaller move.                            ║
+   ║                                                                            ║
+   ║   RULE 3  Brand-as-text is a DIFFERENT TOKEN from brand-as-fill, derived    ║
+   ║           per surface. Same OKLCH lightness search, run against the actual  ║
+   ║           background that text sits on. Never paint raw brand as text.      ║
+   ║                                                                            ║
+   ║ ── WHY OKLCH AND NOT HSL ──────────────────────────────────────────────────║
+   ║   HSL lightness is not perceptual: dropping HSL-L on yellow turns it olive  ║
+   ║   and on blue turns it navy at wildly different visual rates. OKLCH L is    ║
+   ║   perceptually uniform, so "darken until it reads" moves every hue by the   ║
+   ║   same apparent amount and the result still looks like the brand. Chroma    ║
+   ║   is reduced only when the hue leaves the sRGB gamut, never clipped.        ║
+   ║                                                                            ║
+   ║ ── THRESHOLDS (APCA Lc, absolute value) ───────────────────────────────────║
+   ║   60  body text, button labels, links      — the floor for anything read    ║
+   ║   45  icons, 2px+ strokes, selected rings  — glyphs, not prose              ║
+   ║   12  hairline borders, dividers           — must be seen, not read         ║
+   ║   Raise, don't lower: 60 is the minimum defensible for 13–15px/600–700.     ║
+   ║   For 13px at 400 weight APCA wants ~75; nothing here is set that light.    ║
+   ╚════════════════════════════════════════════════════════════════════════════╝ */
+function brandContrastEngine(){
+  const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+
+  /* ── Lc targets, by what the colour is being used FOR ───────────────────── */
+  const LC = { text:60, ui:45, hairline:12 };
+
+  /* ── 1 · colour parsing ─────────────────────────────────────────────────── */
+  function parse(hex){
+    let h = String(hex||'').replace('#','').trim();
+    if(h.length===3) h = h.split('').map(c=>c+c).join('');
+    if(!/^[0-9a-f]{6}$/i.test(h)) h = '096ef2';            /* fall back to Decentro blue */
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+  const toHex = a => '#' + a.map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join('');
+
+  /* ── 2 · sRGB ⇄ OKLCH ───────────────────────────────────────────────────────
+     Lightness has to be adjusted in a perceptual space or the hue drifts.
+     Matrices are the standard Björn Ottosson OKLab ones.                      */
+  const toLinear = c => { c/=255; return c<=0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); };
+  const toSRGB   = c => 255 * (c<=0.0031308 ? c*12.92 : 1.055*Math.pow(c,1/2.4) - 0.055);
+  function rgbToOklab(rgb){
+    const r=toLinear(rgb[0]), g=toLinear(rgb[1]), b=toLinear(rgb[2]);
+    const l=Math.cbrt(0.4122214708*r + 0.5363325363*g + 0.0514459929*b),
+          m=Math.cbrt(0.2119034982*r + 0.6806995451*g + 0.1073969566*b),
+          s=Math.cbrt(0.0883024619*r + 0.2817188376*g + 0.6299787005*b);
+    return [0.2104542553*l + 0.7936177850*m - 0.0040720468*s,
+            1.9779984951*l - 2.4285922050*m + 0.4505937099*s,
+            0.0259040371*l + 0.7827717662*m - 0.8086757660*s];
+  }
+  function oklabToRgb(L){
+    const l=Math.pow(L[0] + 0.3963377774*L[1] + 0.2158037573*L[2], 3),
+          m=Math.pow(L[0] - 0.1055613458*L[1] - 0.0638541728*L[2], 3),
+          s=Math.pow(L[0] - 0.0894841775*L[1] - 1.2914855480*L[2], 3);
+    return [toSRGB( 4.0767416621*l - 3.3077115913*m + 0.2309699292*s),
+            toSRGB(-1.2684380046*l + 2.6097574011*m - 0.3413193965*s),
+            toSRGB(-0.0041960863*l - 0.7034186147*m + 1.7076147010*s)];
+  }
+  const toOklch = rgb => { const [L,a,b] = rgbToOklab(rgb); return [L, Math.hypot(a,b), Math.atan2(b,a)]; };
+  const fromOklch = ([L,C,h]) => oklabToRgb([L, C*Math.cos(h), C*Math.sin(h)]);
+
+  /* Hold the hue, give up chroma. Clipping RGB channels instead would shift
+     the hue — the one thing the brand team will notice immediately.          */
+  function gamutFit([L,C,h]){
+    const inside = r => r.every(v => v >= -0.5 && v <= 255.5);
+    let out = fromOklch([L,C,h]);
+    if(inside(out)) return out.map(v=>clamp(v,0,255));
+    let lo=0, hi=C;
+    for(let i=0;i<20;i++){
+      const mid=(lo+hi)/2, r=fromOklch([L,mid,h]);
+      if(inside(r)){ lo=mid; out=r; } else hi=mid;
+    }
+    return out.map(v=>clamp(v,0,255));
+  }
+
+  /* ── 3 · APCA contrast ──────────────────────────────────────────────────────
+     Lc is returned as a positive magnitude: 0 invisible, 60 comfortable for
+     UI text, 75+ strong, ~108 max (black on white).                          */
+  function apcaY(rgb){
+    const f = c => Math.pow(clamp(c,0,255)/255, 2.4);
+    const y = 0.2126729*f(rgb[0]) + 0.7151522*f(rgb[1]) + 0.0721750*f(rgb[2]);
+    return y < 0.022 ? y + Math.pow(0.022 - y, 1.414) : y;   /* flare compensation */
+  }
+  function contrast(textRgb, bgRgb){
+    const Yt = apcaY(textRgb), Yb = apcaY(bgRgb);
+    return Yb > Yt
+      ? (Math.pow(Yb,0.56) - Math.pow(Yt,0.57)) * 114 - 2.7   /* dark ink on light fill */
+      : (Math.pow(Yt,0.62) - Math.pow(Yb,0.65)) * 114 - 2.7;  /* light ink on dark fill */
+  }
+
+  const WHITE = [255,255,255];
+  const INK   = [10,18,38];        /* near-black with a trace of brand blue   */
+
+  /* The WCAG 2.x ratio, implemented ONLY so the engine can report where it
+     disagrees. It is never used to choose a colour. */
+  function wcagRatio(a, b){
+    const lum = c => { const f = v => { v/=255;
+      return v<=0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); };
+      return 0.2126*f(c[0]) + 0.7152*f(c[1]) + 0.0722*f(c[2]); };
+    const l1 = lum(a), l2 = lum(b);
+    return (Math.max(l1,l2) + 0.05) / (Math.min(l1,l2) + 0.05);
+  }
+  /* Would a WCAG-ratio picker choose the opposite ink on this fill? True for
+     26.5% of sRGB — reds and mid-tones above all. */
+  function wcagWouldFlip(fillRgb){
+    const wcag = wcagRatio(WHITE, fillRgb) >= wcagRatio(INK, fillRgb);
+    const apca = contrast(WHITE, fillRgb) >= contrast(INK, fillRgb);
+    return wcag !== apca;
+  }
+
+  /* ── RULE 1 · which ink reads on this fill ──────────────────────────────── */
+  function inkOn(fillRgb){
+    const w = contrast(WHITE, fillRgb), b = contrast(INK, fillRgb);
+    return w >= b ? {rgb:WHITE, hex:'#ffffff', lc:w, light:true}
+                  : {rgb:INK,   hex:'#0a1226', lc:b, light:false};
+  }
+
+  /* ── RULE 3 · least move in OKLCH L that makes `col` read on `surf` ─────── */
+  function tune(colRgb, surfRgb, target){
+    const start = contrast(colRgb, surfRgb);
+    if(start >= target) return {rgb:colRgb, lc:start, moved:0};
+    const [L0, C, h] = toOklch(colRgb);
+    /* Move AWAY from the surface: if the surface wants white ink it is dark,
+       so the accent lightens; otherwise it darkens.                          */
+    const edge = inkOn(surfRgb).light ? 1 : 0;
+    let best = gamutFit([edge, C, h]);
+    if(contrast(best, surfRgb) < target)
+      return {rgb:best, lc:contrast(best, surfRgb), moved:1, capped:true};
+    let lo = L0, hi = edge;
+    for(let i=0;i<22;i++){
+      const mid = (lo+hi)/2, r = gamutFit([mid, C, h]);
+      if(contrast(r, surfRgb) >= target){ hi = mid; best = r; } else lo = mid;
+    }
+    return {rgb:best, lc:contrast(best, surfRgb), moved:Math.abs(hi-L0)};
+  }
+
+  /* ── RULE 2 · the CTA pair: nudge the FILL when no ink can carry a label ── */
+  function ctaPair(brandRgb, target){
+    const direct = inkOn(brandRgb);
+    if(direct.lc >= target)
+      return {fill:brandRgb, ink:direct, moved:0, nudged:false};
+    const [L0, C, h] = toOklch(brandRgb);
+    const probe = down => {                     /* down: darken for white ink */
+      const ink = down ? WHITE : INK, edge = down ? 0 : 1;
+      let best = gamutFit([edge, C, h]);
+      if(contrast(ink, best) < target) return null;
+      let lo = L0, hi = edge;
+      for(let i=0;i<22;i++){
+        const mid = (lo+hi)/2, r = gamutFit([mid, C, h]);
+        if(contrast(ink, r) >= target){ hi = mid; best = r; } else lo = mid;
+      }
+      return { fill:best, moved:Math.abs(hi-L0), nudged:true,
+               ink:{ rgb:ink, hex: down?'#ffffff':'#0a1226', lc:contrast(ink,best), light:down } };
+    };
+    /* whichever direction needs the smaller move wins — stay near the brand  */
+    const options = [probe(true), probe(false)].filter(Boolean)
+                     .sort((a,b)=>a.moved-b.moved);
+    return options[0] || {fill:brandRgb, ink:direct, moved:0, nudged:false, capped:true};
+  }
+
+  /* A surface that is itself a translucent brand tint over a base — the
+     discount pill, the icon tile. Text sits on the COMPOSITE, so that is
+     what we have to measure against.                                        */
+  function over(topRgb, baseRgb, alpha){
+    return baseRgb.map((v,i) => v + (topRgb[i]-v)*alpha);
+  }
+  /* Of several surfaces a token may land on, the hardest one governs.        */
+  function hardest(colRgb, surfaces){
+    return surfaces.reduce((worst, s) =>
+      contrast(colRgb, s) < contrast(colRgb, worst) ? s : worst, surfaces[0]);
+  }
+
+  /* ── PUBLIC API ─────────────────────────────────────────────────────────────
+     resolve(brandHex, opts) → every token the checkout needs, already safe.
+     opts.payBg / opts.paySurfaces / opts.sumBase let the caller describe the
+     real surfaces (they differ per theme). Defaults are the light theme.
+     ───────────────────────────────────────────────────────────────────────── */
+  function resolve(brandHex, opts){
+    opts = opts || {};
+    const brand = parse(brandHex);
+    const mixWhite = amt => brand.map(v => v + (255-v)*amt);
+
+    /* the muted panel + tile tints that the rest of the UI is built on */
+    const panelBg    = opts.sumBase ? parse(opts.sumBase) : mixWhite(0.93);
+    const panelField = mixWhite(0.97);
+    const softTile   = mixWhite(0.90);
+    const payBg      = parse(opts.payBg || '#ffffff');
+
+    /* RULE 2 — the fill every CTA is painted with, plus its label colour */
+    const cta = ctaPair(brand, LC.text);
+
+    /* RULE 3 — brand as text / icon, per surface, measured on the composite */
+    const payText = tune(brand, hardest(brand, [payBg, panelField]), LC.text);
+    const payUi   = tune(brand, hardest(brand, [payBg, softTile,
+                          over(brand, payBg, 0.20)]), LC.ui);
+    const sumText = tune(brand, hardest(brand, [panelBg, panelField,
+                          over(brand, panelBg, 0.12)]), LC.text);
+    const sumUi   = tune(brand, hardest(brand, [panelBg, softTile]), LC.ui);
+
+    /* hairlines: must be visible on the tint they divide */
+    const border  = tune(mixWhite(0.68), panelBg, LC.hairline);
+
+    return {
+      /* raw brand — decorative only: blobs, gradients, shadows, alpha tints */
+      brand:      toHex(brand),
+      brandRgb:   brand.join(','),
+      /* filled surfaces */
+      ctaFill:    toHex(cta.fill),
+      ctaInk:     cta.ink.hex,
+      /* brand as text / icon, per surface */
+      payText:    toHex(payText.rgb),
+      payUi:      toHex(payUi.rgb),
+      sumText:    toHex(sumText.rgb),
+      sumUi:      toHex(sumUi.rgb),
+      /* panel system */
+      panelBg:    toHex(panelBg),
+      panelField: toHex(panelField),
+      panelBorder:toHex(border.rgb),
+      panelSub:   '#5b6472',          /* neutral grey — never tinted */
+      softBg:     toHex(softTile),
+      /* ── diagnostics: what the engine decided and why ── */
+      report: {
+        rawInkLc:    inkOn(brand).lc,          /* what v1 would have shipped  */
+        ctaLc:       cta.ink.lc,
+        ctaNudged:   !!cta.nudged,
+        ctaShift:    cta.moved,                /* OKLCH L delta, 0..1         */
+        rawPayTextLc: contrast(brand, payBg),  /* the invisible-link bug      */
+        payTextLc:   payText.lc,
+        rawSumTextLc: contrast(brand, panelBg),
+        sumTextLc:   sumText.lc,
+        payUiLc:     payUi.lc,
+        sumUiLc:     sumUi.lc,
+        targets:     LC,
+        wcagDisagrees: wcagWouldFlip(brand),   /* a WCAG picker ships the wrong ink here */
+        capped:      !!(cta.capped || payText.capped || sumText.capped)
+      }
+    };
+  }
+
+  /* ── audit() · point this at an existing build to prove what it is doing ──
+     BrandContrast.audit('#ff0d0d', '#0a1226')
+       -> { verdict:'WCAG', shippedLc:39, white:70, black:39, shouldBe:'#ffffff' }
+     In a browser, against a live element:
+       const c = getComputedStyle(document.querySelector('.paybtn'));
+       BrandContrast.audit(c.backgroundColor, c.color);                      */
+  function audit(fill, shippedInk){
+    const rgb = v => Array.isArray(v) ? v
+      : /^rgb/i.test(v) ? v.match(/\d+/g).slice(0,3).map(Number) : parse(v);
+    const f = rgb(fill), s = rgb(shippedInk);
+    const w = contrast(WHITE, f), b = contrast(INK, f), got = contrast(s, f);
+    const right = w >= b ? WHITE : INK;
+    const matches = Math.abs(got - Math.max(w,b)) < 3;
+    return {
+      fill: toHex(f),
+      shippedInk: toHex(s),
+      shippedLc: +got.toFixed(1),
+      white: +w.toFixed(1),
+      black: +b.toFixed(1),
+      shouldBe: toHex(right),
+      passes: Math.abs(got) >= LC.text,
+      verdict: matches ? 'APCA — correct'
+             : wcagWouldFlip(f) ? 'WCAG ratio — this is the bug, swap in resolve().ctaInk'
+             : 'neither — ink is hard-coded or set elsewhere'
+    };
+  }
+
+  return { resolve, contrast, inkOn, tune, ctaPair, parse, toHex, toOklch, over,
+           audit, wcagRatio, wcagWouldFlip, LC };
+}
+const BrandContrast = brandContrastEngine();
+/* ╚═══════════════════ END BRAND CONTRAST ENGINE ═══════════════════════════╝ */
+
+/* Brand presets. The last three are deliberately in the failure band — pick
+   one and watch the Contrast panel nudge the fill and darken the links. */
 const BRAND_PRESETS = ['#096ef2','#000000','#0f8b4c','#7c3aed','#e11d48','#c9a961'];
+/* one-click proof cases: raw brand as text scores Lc 16–45 on a white panel */
+const CONTRAST_TESTS = [
+  {c:'#ff0d0d', n:'Red — a WCAG picker puts BLACK here; APCA correctly picks white'},
+  {c:'#ffd700', n:'Gold — links drop to Lc 17 untreated'},
+  {c:'#00d4ff', n:'Cyan — links drop to Lc 28 untreated'},
+  {c:'#96ceb4', n:'Mint — links drop to Lc 30 untreated'},
+  {c:'#7da5e6', n:'Sky — no ink reads on the raw fill; fill gets nudged'},
+  {c:'#ff7d50', n:'Coral — no ink reads on the raw fill; fill gets nudged'},
+  {c:'#55b90a', n:'Lime — no ink reads on the raw fill; fill gets nudged'},
+];
 
-function hexRGB(hex){
-  let h = String(hex||'').replace('#','').trim();
-  if(h.length===3) h = h.split('').map(c=>c+c).join('');
-  if(!/^[0-9a-f]{6}$/i.test(h)) h = '096ef2';
-  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
-}
-const rgbHex = a => '#' + a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');
-/* WCAG relative luminance → used to pick readable text on any brand colour */
-function luminance(rgb){
-  const f = c => { c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); };
-  const [r,g,b] = rgb.map(f);
-  return 0.2126*r + 0.7152*g + 0.0722*b;
-}
-const contrast = (a,b) => { const l1=luminance(a), l2=luminance(b);
-  return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05); };
-
-/* ── Readable ink, chosen with APCA rather than a WCAG 2.x ratio ──────────────
-   WCAG ratios misjudge saturated hues badly. On pure red #FF0A0A the ratio
-   says near-black (4.70) beats white (3.96) — but white is plainly the
-   readable choice, and every brand in the world sets white on red.
-   APCA (the perceptual model behind WCAG 3) scores the same pair
-   white Lc 70 vs black Lc 40, which matches what the eye reports.
-   Y here is APCA's luminance, with its soft black-level clamp applied. */
-function apcaY(rgb){
-  const f = c => Math.pow(c/255, 2.4);
-  const y = 0.2126729*f(rgb[0]) + 0.7151522*f(rgb[1]) + 0.0721750*f(rgb[2]);
-  return y < 0.022 ? y + Math.pow(0.022 - y, 1.414) : y;   /* flare compensation */
-}
-/* Lightness contrast of text on bg, as a positive magnitude (0 = invisible,
-   60+ = comfortable for UI text, 75+ = strong). */
-function apcaLc(txtRGB, bgRGB){
-  const Yt = apcaY(txtRGB), Yb = apcaY(bgRGB);
-  return Yb > Yt
-    ? (Math.pow(Yb,0.56) - Math.pow(Yt,0.57)) * 114 - 2.7     /* dark ink, light fill */
-    : (Math.pow(Yt,0.62) - Math.pow(Yb,0.65)) * 114 - 2.7;    /* light ink, dark fill */
-}
-function readableInk(hex){
-  const bg = hexRGB(hex);
-  return apcaLc([255,255,255], bg) >= apcaLc([10,18,38], bg) ? '#ffffff' : '#0a1226';
-}
-const mixWhite = (hex, amt) => {           /* amt 0..1 → how much white */
-  const rgb = hexRGB(hex);
-  return rgbHex(rgb.map(v => v + (255-v)*amt));
+/* Per-theme surfaces the engine measures against. The summary panel is always
+   a derived brand tint; the payment column comes from the theme. */
+const THEME_SURFACES = {
+  'theme-light':    { payBg:'#ffffff' },
+  'theme-navy':     { payBg:'#ffffff' },
+  'theme-midnight': { payBg:'#0b1428', sumBase:'#060d1f' },
 };
-/* the full derived palette */
+
+function hexRGB(hex){ return BrandContrast.parse(hex); }
+const rgbHex = a => BrandContrast.toHex(a);
+const apcaLc = (t,b) => BrandContrast.contrast(t,b);
+
+/* the full derived palette — one brand colour in, every safe token out */
 function brandPalette(){
-  const brand = state.design.brand;
-  const rgb = hexRGB(brand);
+  const t = THEME_SURFACES[state.design.theme] || THEME_SURFACES['theme-light'];
+  const p = BrandContrast.resolve(state.design.brand, t);
   return {
-    brand,
-    rgb: rgb.join(','),
-    ink:        readableInk(brand),             /* text on a brand-filled CTA */
-    panelBg:    mixWhite(brand, 0.93),          /* left panel — muted, black text safe */
-    panelField: mixWhite(brand, 0.97),
-    panelBorder:mixWhite(brand, 0.68),          /* clearly visible against the 93% panel tint */
-    panelSub:   '#5b6472',                      /* text stays a neutral muted grey — never tinted */
-    softBg:     mixWhite(brand, 0.90),
+    brand:  p.brand,
+    rgb:    p.brandRgb,
+    accent: p.ctaFill,                /* ← what CTAs are actually painted with */
+    ink:    p.ctaInk,
+    payText:p.payText, payUi:p.payUi,
+    sumText:p.sumText, sumUi:p.sumUi,
+    panelBg:p.panelBg, panelField:p.panelField, panelBorder:p.panelBorder,
+    panelSub:p.panelSub, softBg:p.softBg,
+    report: p.report
   };
 }
 function applyBrand(){
   const p = brandPalette();
   const co = $('#checkout');
   if(!co) return p;
-  co.style.setProperty('--co-accent', p.brand);
+  /* filled surfaces — fill may differ from the raw brand (RULE 2) */
+  co.style.setProperty('--co-accent', p.accent);
   co.style.setProperty('--co-accent-ink', p.ink);
+  /* brand as text / icon, resolved per column (RULE 3) */
+  co.style.setProperty('--co-accent-pay', p.payText);
+  co.style.setProperty('--co-accent-pay-ui', p.payUi);
+  co.style.setProperty('--co-accent-sum', p.sumText);
+  co.style.setProperty('--co-accent-sum-ui', p.sumUi);
+  /* raw brand, for decoration only — alpha tints, gradients, shadows */
+  co.style.setProperty('--co-brand-raw', p.brand);
   co.style.setProperty('--brand-rgb', p.rgb);
   co.style.setProperty('--co-sum-bg', p.panelBg);
   co.style.setProperty('--co-sum-field', p.panelField);
@@ -2599,7 +2944,7 @@ function applyBrand(){
   /* background blobs + animated particles follow the brand too */
   document.documentElement.style.setProperty('--brand-rgb', p.rgb);
   /* the editor's own controls (toggles) echo the brand so the panel feels live */
-  document.documentElement.style.setProperty('--ed-brand', p.brand);
+  document.documentElement.style.setProperty('--ed-brand', p.accent);
   document.documentElement.style.setProperty('--ed-brand-ink', p.ink);
   return p;
 }
@@ -2610,13 +2955,56 @@ function buildDesignUI(){
     + `<div class="swatch-custom" title="Custom brand colour"><input type="color" id="customAccent" value="${state.design.brand}"></div>`;
   const p = brandPalette();
   const hexEl = $('#brandHex'); if(hexEl && document.activeElement!==hexEl) hexEl.value = state.design.brand.toUpperCase();
-  const prev = $('#brandPrev');
-  /* same row pattern as the toggle settings: title · subtitle · value on the right */
+  /* ── live contrast readout: what the engine decided, and what v1 would have
+     shipped instead. This panel exists to make the fix visible — it is a
+     builder-only diagnostic and is NOT part of the exported page. ── */
+  const prev = $('#brandPrev'), r = p.report;
+  const lcTag = (lc, target, was) => {
+    const pass = Math.abs(lc) >= target;
+    return `<span class="cx-lc ${pass?'cx-pass':'cx-fail'}">`
+      + (was!=null && Math.abs(was) < target ? `<i>${Math.round(Math.abs(was))}</i> ` : '')
+      + Math.round(Math.abs(lc)) + `</span>`;
+  };
   if(prev) prev.innerHTML = `
-    <div class="dz-toggle-row">
-      <div><div class="tr-name">CTA</div><div class="tr-sub">Accent Button text</div></div>
-      <span class="bp-ink" style="background:${p.brand};color:${p.ink};">${p.ink==='#ffffff'?'White':'Black'}</span>
+    <div class="cx-row cx-head">
+      <div class="cx-k" style="font-weight:700;color:var(--ink);">Token</div>
+      <span class="cx-lc" style="color:var(--muted);font-weight:700;">Lc</span>
+    </div>
+    <div class="cx-row">
+      <div class="cx-k">Button fill + label<small>target Lc ${r.targets.text}</small>
+        ${r.ctaNudged?`<span class="cx-badge" title="No ink could read on the raw brand colour, so the fill's lightness moved">fill nudged</span>`:''}
+        ${r.wcagDisagrees?`<span class="cx-badge cx-badge-wcag" title="A WCAG 2.x ratio picks the OPPOSITE ink on this colour — that is the bug that ships black text on a red button">WCAG picks ${p.ink==='#ffffff'?'black':'white'} here</span>`:''}
+      </div>
+      <span class="cx-chip" style="background:${p.accent};color:${p.ink};">${p.ink==='#ffffff'?'White':'Black'}</span>
+      ${lcTag(r.ctaLc, r.targets.text, r.ctaNudged ? r.rawInkLc : null)}
+    </div>
+    <div class="cx-row">
+      <div class="cx-k">Links · payment column<small>Edit, support email, bank rows</small></div>
+      <span class="cx-chip" style="background:#fff;color:${p.payText};">Aa</span>
+      ${lcTag(r.payTextLc, r.targets.text, r.rawPayTextLc)}
+    </div>
+    <div class="cx-row">
+      <div class="cx-k">Links · summary panel<small>Add discount code</small></div>
+      <span class="cx-chip" style="background:${p.panelBg};color:${p.sumText};">Aa</span>
+      ${lcTag(r.sumTextLc, r.targets.text, r.rawSumTextLc)}
+    </div>
+    <div class="cx-row">
+      <div class="cx-k">Icons &amp; rings<small>target Lc ${r.targets.ui}</small></div>
+      <span class="cx-chip" style="background:${p.softBg};color:${p.payUi};">◆</span>
+      <span class="cx-chip" style="background:${p.panelBg};color:${p.sumUi};">◆</span>
+      ${lcTag(r.payUiLc, r.targets.ui)}
+    </div>
+    <div class="cx-verdict ${r.capped?'warn':''}">
+      ${r.capped
+        ? 'This colour is too close to its own surface to carry text at the target. Pushed as far as sRGB allows — consider a different brand colour.'
+        : (r.ctaNudged || Math.abs(r.rawSumTextLc) < r.targets.text || Math.abs(r.rawPayTextLc) < r.targets.text)
+          ? 'Corrected. Struck-through figures are what the raw brand colour scored — unreadable; the engine replaced them.'
+          : 'This brand colour is readable everywhere as-is. No correction needed.'}
     </div>`;
+  /* one-click failure cases, so the correction can be demoed in a second */
+  const tests = $('#contrastTests');
+  if(tests) tests.innerHTML = CONTRAST_TESTS.map(t=>
+    `<div class="cx-test ${state.design.brand.toLowerCase()===t.c?'on':''}" data-c="${t.c}" title="${t.n} — ${t.c}" style="background:${t.c}"></div>`).join('');
 }
 function syncDesignUI(){
   buildDesignUI();
@@ -2645,6 +3033,13 @@ function setBrand(hex, snap){
 $('#swatchRow').addEventListener('click', e=>{
   const sw = e.target.closest('.swatch'); if(!sw) return;
   setBrand(sw.dataset.c, true);
+});
+$('#contrastTests').addEventListener('click', e=>{
+  const sw = e.target.closest('.cx-test'); if(!sw) return;
+  setBrand(sw.dataset.c, true);
+  const r = brandPalette().report;
+  toast(r.ctaNudged ? 'Fill nudged + links re-toned — see the Contrast check'
+                    : 'Links re-toned for contrast — see the Contrast check');
 });
 $('#swatchRow').addEventListener('input', e=>{
   if(e.target.id==='customAccent') setBrand(e.target.value, false);
@@ -3320,41 +3715,71 @@ function buildExportHTML(){
      ══════════════════════════════════════════════════════════════════════════ -->
 <div class="trust-strip">${pageChrome}</div>` : '';
   /* derived brand palette, emitted as its own clearly-titled CSS block */
-  const BP = brandPalette();
+  /* every brand token, already contrast-resolved (see the Brand Contrast Engine) */
+  const BP = BrandContrast.resolve(d.brand, THEME_SURFACES['theme-light']);
   const brandBlock = `
 /* ══════════════════════════════════════════════════════════════════════════
-   1 · BRAND COLOUR
-   Change ONE value — --brand — and the CTAs, the product panel, the
-   background blobs and the moving particles all follow.
-   --brand-ink is pre-computed for best contrast (WCAG) against --brand:
-   white on dark brand colours, near-black on light ones.
+   1 · BRAND COLOUR  —  resolved by the Brand Contrast Engine
+   ──────────────────────────────────────────────────────────────────────────
+   --brand is the merchant's colour as supplied. Every other value below was
+   DERIVED from it and is already contrast-safe; do not hand-edit them.
+
+   Two of them are corrections, and they are the reason this block exists:
+
+   --brand-cta   the colour CTAs are actually filled with. Usually identical
+                 to --brand. It differs only when NO label colour could read
+                 on the raw brand colour (12.3% of sRGB cannot carry a label
+                 at APCA Lc 60 with either white or black). In that case the
+                 engine moved the fill's OKLCH lightness by the smallest
+                 amount that makes the label pass, holding hue and chroma.
+   --brand-on-*  the brand colour as TEXT or as an ICON, per surface. The raw
+                 brand colour is NOT safe as text: on a white or lightly
+                 tinted panel a gold or cyan brand scores Lc 16-30, i.e.
+                 invisible. These are the same hue, re-toned until they clear
+                 Lc 60 (text) / Lc 45 (icons, strokes) on that exact surface.
+
+   --brand stays available for DECORATION ONLY — alpha tints, gradients,
+   glows, the particle canvas. Never set it as a text colour.
+
+   To re-tone at runtime (merchant changes colour without a rebuild), call
+   applyBrandTokens('#rrggbb') — the engine ships in the script below.
    ══════════════════════════════════════════════════════════════════════════ */
 :root{
-  --brand:        ${BP.brand};        /* your brand colour — the only input      */
-  --brand-rgb:    ${BP.rgb};          /* same colour as r,g,b for rgba() use     */
-  --brand-ink:    ${BP.ink};          /* text/icon colour ON a --brand fill      */
-  --brand-panel:  ${BP.panelBg};      /* muted tint — product panel background   */
-  --brand-field:  ${BP.panelField};   /* inputs/chips inside the panel           */
-  --brand-border: ${BP.panelBorder};  /* hairlines inside the panel              */
-  --brand-sub:    ${BP.panelSub};     /* secondary text on the panel             */
-  --brand-soft:   ${BP.softBg};       /* solid muted tint — icon tiles, chips    */
+  --brand:          ${BP.brand};        /* merchant input — DECORATION ONLY      */
+  --brand-rgb:      ${BP.brandRgb};     /* same colour as r,g,b for rgba()       */
+  --brand-cta:      ${BP.ctaFill};      /* CTA fill  (Lc ${Math.round(BP.report.ctaLc)} with its label) */
+  --brand-ink:      ${BP.ctaInk};       /* label ON --brand-cta                  */
+  --brand-on-pay:   ${BP.payText};      /* brand as TEXT, payment column  Lc ${Math.round(BP.report.payTextLc)}  */
+  --brand-on-pay-ui:${BP.payUi};        /* brand as ICON/STROKE, payment  Lc ${Math.round(BP.report.payUiLc)}  */
+  --brand-on-sum:   ${BP.sumText};      /* brand as TEXT, summary panel   Lc ${Math.round(BP.report.sumTextLc)}  */
+  --brand-on-sum-ui:${BP.sumUi};        /* brand as ICON/STROKE, summary  Lc ${Math.round(BP.report.sumUiLc)}  */
+  --brand-panel:    ${BP.panelBg};      /* muted tint — product panel background */
+  --brand-field:    ${BP.panelField};   /* inputs/chips inside the panel         */
+  --brand-border:   ${BP.panelBorder};  /* hairlines inside the panel            */
+  --brand-sub:      ${BP.panelSub};     /* secondary text on the panel           */
+  --brand-soft:     ${BP.softBg};       /* solid muted tint — icon tiles, chips  */
 }
 .checkout{
-  --co-accent:     var(--brand);      /* every CTA, radio, link, active state     */
-  --co-accent-ink: var(--brand-ink);  /* label colour on those CTAs               */
-  --co-sum-bg:     var(--brand-panel);
-  --co-sum-field:  var(--brand-field);
-  --co-sum-border: var(--brand-border);
-  --co-sum-sub:    var(--brand-sub);
-  --co-soft:       var(--brand-soft);
-  --co-font-head:  ${d.font};
-  --co-r:          ${d.radius}px;
+  --co-accent:        var(--brand-cta);       /* filled surfaces: buttons, chips  */
+  --co-accent-ink:    var(--brand-ink);       /* label colour on those fills      */
+  --co-accent-pay:    var(--brand-on-pay);    /* links/text, payment column       */
+  --co-accent-pay-ui: var(--brand-on-pay-ui); /* icons/rings, payment column      */
+  --co-accent-sum:    var(--brand-on-sum);    /* links/text, summary panel        */
+  --co-accent-sum-ui: var(--brand-on-sum-ui); /* icons/rings, summary panel       */
+  --co-brand-raw:     var(--brand);           /* decorative tints only            */
+  --co-sum-bg:        var(--brand-panel);
+  --co-sum-field:     var(--brand-field);
+  --co-sum-border:    var(--brand-border);
+  --co-sum-sub:       var(--brand-sub);
+  --co-soft:          var(--brand-soft);
+  --co-font-head:     ${d.font};
+  --co-r:             ${d.radius}px;
 }
-/* payment-method accordion icons: brand glyph on a muted brand tile */
-.bm-ic{ background:var(--brand-soft); color:var(--brand); }
+/* payment-method accordion icons: re-toned brand glyph on a muted brand tile */
+.bm-ic{ background:var(--brand-soft); color:var(--brand-on-pay-ui); }
 /* default logo tile (shown when no logo image is uploaded) */
-.b-brand .bb-logo{ background:var(--brand); color:var(--brand-ink); }
-/* background blobs + animated particles inherit the brand colour */
+.b-brand .bb-logo{ background:var(--brand-cta); color:var(--brand-ink); }
+/* background blobs + animated particles inherit the raw brand colour */
 .bg-blob.b1{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.09),transparent);}
 .bg-blob.b2{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.06),transparent);}
 body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),transparent);}
@@ -3438,7 +3863,7 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "(function(){",
     "  var cv=document.getElementById('flowBg'); if(!cv) return;",
     "  var cx=cv.getContext('2d'), reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;",
-    "  var W=0,H=0,dpr=1,pk=[],raf=null,last=0,GRID=48,BR=\"" + BP.rgb + "\";",
+    "  var W=0,H=0,dpr=1,pk=[],raf=null,last=0,GRID=48,BR=\"" + BP.brandRgb + "\";",
     "  function mk(dir,pos){return {dir:dir,pos:pos,t:Math.random(),v:0.00022+Math.random()*0.00042,len:55+Math.random()*85,back:Math.random()<0.35};}",
     "  function size(){",
     "    W=cv.clientWidth;H=cv.clientHeight; if(!W||!H) return false;",
@@ -3479,6 +3904,30 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  start();",
     "})();"
     ].join('\n') : '',
+    "/* ╔══════════════════════════════════════════════════════════════════════╗",
+    "   ║  BRAND CONTRAST ENGINE — identical source to the builder.            ║",
+    "   ║  The CSS above already carries the RESOLVED values, so this is only  ║",
+    "   ║  needed if the brand colour can change at runtime (merchant theming, ║",
+    "   ║  a white-label tenant, a colour picker). Call:                       ║",
+    "   ║      applyBrandTokens('#ffd700')                                     ║",
+    "   ║  and every token below is recomputed and re-applied in one pass.     ║",
+    "   ║  Server-side/template-time use: require() it and emit resolve()'s    ║",
+    "   ║  output straight into the :root block — no client JS at all.         ║",
+    "   ╚══════════════════════════════════════════════════════════════════════╝ */",
+    "var BrandContrast = (" + brandContrastEngine.toString() + ")();",
+    "/* the surfaces this page's theme actually uses */",
+    "var BRAND_SURFACES = " + JSON.stringify(THEME_SURFACES['theme-light']) + ";",
+    "function applyBrandTokens(hex){",
+    "  var t = BrandContrast.resolve(hex, BRAND_SURFACES), r = document.documentElement.style;",
+    "  r.setProperty('--brand', t.brand);              r.setProperty('--brand-rgb', t.brandRgb);",
+    "  r.setProperty('--brand-cta', t.ctaFill);        r.setProperty('--brand-ink', t.ctaInk);",
+    "  r.setProperty('--brand-on-pay', t.payText);     r.setProperty('--brand-on-pay-ui', t.payUi);",
+    "  r.setProperty('--brand-on-sum', t.sumText);     r.setProperty('--brand-on-sum-ui', t.sumUi);",
+    "  r.setProperty('--brand-panel', t.panelBg);      r.setProperty('--brand-field', t.panelField);",
+    "  r.setProperty('--brand-border', t.panelBorder); r.setProperty('--brand-soft', t.softBg);",
+    "  return t;   /* .report tells you whether anything had to be corrected */",
+    "}",
+    "/* ╚═══════════════════ END BRAND CONTRAST ENGINE ══════════════════════╝ */",
     "/* Decentro pay loader — logo cube streaming into the D */",
     "var DL_LOADER='" + payLoader('Processing payment','').replace(/'/g,"\\'").replace(/\n\s*/g,'') + "';",
     "function goStep(n){",
