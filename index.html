@@ -11,16 +11,37 @@
 :root{
   --border:#e2e8f0; --surface:#f1f5f9; --muted:#94a3b8; --sub:#475569; --ink:#1c2024;
   --r:10px;
-  /* ── TYPE SCALE ──────────────────────────────────────────────────────────
-     Declared here, NOT only on .checkout. The side panels, toast and modals
-     live outside the checkout card; when the scale was scoped to the card,
-     var(--fs-sub) resolved to nothing out here and every field, toast and
-     modal title fell back to the browser default of 16px — which is why the
-     inputs looked huge next to their own 11px labels. */
-  --fs-title:1.0625rem;   /* 17px */
-  --fs-body:0.9375rem;    /* 15px */
-  --fs-sub:0.8125rem;     /* 13px */
-  --fs-note:0.6562rem;    /* 10.5px — panel subtext, and the panel form fields */
+  /* Declared at :root, NOT only on .checkout — the side panels, toast and
+     modals live outside the card, and a token that resolves to nothing there
+     silently falls back to the browser's 16px default. */
+  /* ── TYPE SCALE · one source of truth for the whole demo ─────────────────
+     Eight steps. Nothing in this file may set a font-size in px or rem
+     directly — use a token, and if none fits, the scale is wrong, not the
+     component. Sizes are rem so they track the root and respect browser
+     text-size settings.
+
+       PRODUCT · what the payer reads on the checkout
+         --fs-sub       11px   body copy, subtext, breakdown rows, inputs
+         --fs-body      13px   emphasis: field labels, item names, buttons
+         --fs-title     15px   card titles, Total Payable
+         --fs-headline  20px   stage headings, receipt outcome title
+         --fs-amount    24px   the one number per screen that matters most
+
+       CHROME · the builder's own panels, denser by design
+         --fs-micro     10px   badges, legal fine print, code, eyebrows
+         --fs-note      11px   sidebar labels, form fields, yellow notes
+         --fs-control   12px   control names, buttons, toggle labels
+
+     Changing a value here changes it everywhere, in the builder and in
+     every page it exports. */
+  --fs-micro:0.625rem;/* 10px */
+  --fs-note:0.6875rem;/* 11px */
+  --fs-control:0.75rem;/* 12px */
+  --fs-sub:0.6875rem;/* 11px */
+  --fs-body:0.8125rem;/* 13px */
+  --fs-title:0.9375rem;/* 15px */
+  --fs-headline:1.25rem;/* 20px */
+  --fs-amount:1.5rem;/* 24px */
 }
 html,body{height:100%;}
 body{font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink);background:#f8fafc;overflow:hidden;}
@@ -36,16 +57,16 @@ input,select,textarea{font-family:inherit;}
 .tb-logo{display:flex;align-items:center;gap:9px;}
 .tb-mark{width:26px;height:26px;background:#000;border-radius:7px;display:flex;align-items:center;justify-content:center;}
 .tb-mark svg{width:14px;height:14px;fill:#fff;}
-.tb-name{font-size:15px;font-weight:700;letter-spacing:-.2px;}
+.tb-name{font-size:var(--fs-body);font-weight:700;letter-spacing:-.2px;}
 .tb-name span{color:var(--muted);font-weight:500;}
-.tb-chip{font-size:10px;font-weight:700;letter-spacing:.6px;background:var(--surface);color:var(--sub);border:1px solid var(--border);border-radius:100px;padding:3px 9px;}
+.tb-chip{font-size:var(--fs-micro);font-weight:700;letter-spacing:.6px;background:var(--surface);color:var(--sub);border:1px solid var(--border);border-radius:100px;padding:3px 9px;}
 .tb-right{display:flex;align-items:center;gap:10px;}
 .seg{display:flex;background:var(--surface);border-radius:var(--r);padding:3px;gap:2px;}
-.seg button{height:28px;padding:0 14px;border-radius:8px;font-size:12px;font-weight:600;color:var(--sub);display:flex;align-items:center;gap:6px;transition:all .15s;}
+.seg button{height:28px;padding:0 14px;border-radius:8px;font-size:var(--fs-control);font-weight:600;color:var(--sub);display:flex;align-items:center;gap:6px;transition:all .15s;}
 .seg button svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .seg button.on{background:#000;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);}
 .seg.seg-device button.on{background:#fff;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.08);}
-.btn{height:34px;padding:0 14px;border-radius:var(--r);font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:7px;transition:all .15s;}
+.btn{height:34px;padding:0 14px;border-radius:var(--r);font-size:var(--fs-control);font-weight:600;display:inline-flex;align-items:center;gap:7px;transition:all .15s;}
 .btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .btn-outline{border:1px solid var(--border);background:#fff;color:var(--sub);}
 .btn-outline:hover{background:var(--surface);}
@@ -63,12 +84,12 @@ input,select,textarea{font-family:inherit;}
 /* palette */
 .palette{width:270px;min-width:270px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;}
 .pal-tabs{display:flex;padding:12px 14px 0;gap:4px;border-bottom:1px solid var(--border);}
-.pal-tabs button{flex:1;height:34px;font-size:12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;}
+.pal-tabs button{flex:1;height:34px;font-size:var(--fs-control);font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;}
 .pal-tabs button.on{color:#000;border-bottom-color:#000;}
 .pal-body{flex:1;overflow-y:auto;padding:14px;}
-.pal-hint{font-size:11px;line-height:1.55;color:var(--muted);background:var(--surface);border-radius:var(--r);padding:10px 12px;margin-bottom:14px;}
+.pal-hint{font-size:var(--fs-note);line-height:1.55;color:var(--muted);background:var(--surface);border-radius:var(--r);padding:10px 12px;margin-bottom:14px;}
 .pal-group{margin-bottom:16px;}
-.pal-group-label{font-size:10.5px;font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+.pal-group-label{font-size:var(--fs-note);font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
 .pal-item{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:var(--r);padding:9px 11px;margin-bottom:6px;background:#fff;cursor:grab;transition:all .15s;user-select:none;}
 .pal-item:hover{border-color:#000;box-shadow:0 1px 4px rgba(0,0,0,.06);}
 .pal-item:active{cursor:grabbing;}
@@ -76,18 +97,18 @@ input,select,textarea{font-family:inherit;}
 .pal-item .pi-ic{width:28px;height:28px;min-width:28px;border-radius:7px;background:var(--surface);display:flex;align-items:center;justify-content:center;}
 .pal-item .pi-ic svg{width:14px;height:14px;stroke:var(--sub);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .pal-item .pi-tx{flex:1;min-width:0;}
-.pal-item .pi-name{font-size:12px;font-weight:600;}
-.pal-item .pi-sub{font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.pal-item .pi-grip{color:#cbd5e1;font-size:11px;letter-spacing:-1px;}
+.pal-item .pi-name{font-size:var(--fs-control);font-weight:600;}
+.pal-item .pi-sub{font-size:var(--fs-micro);color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pal-item .pi-grip{color:#cbd5e1;font-size:var(--fs-note);letter-spacing:-1px;}
 
 /* design tab controls */
-.dz-label{font-size:10.5px;font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;margin:0 0 8px;}
+.dz-label{font-size:var(--fs-note);font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;margin:0 0 8px;}
 .dz-section{margin-bottom:18px;}
 .theme-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 .theme-card{border:1.5px solid var(--border);border-radius:var(--r);padding:6px;cursor:pointer;transition:all .15s;background:#fff;}
 .theme-card.on{border-color:#000;box-shadow:0 0 0 2px rgba(0,0,0,.07);}
 .theme-card .th-prev{height:44px;border-radius:6px;overflow:hidden;display:flex;}
-.theme-card .th-name{font-size:10px;font-weight:600;text-align:center;margin-top:5px;color:var(--sub);}
+.theme-card .th-name{font-size:var(--fs-micro);font-weight:600;text-align:center;margin-top:5px;color:var(--sub);}
 .swatch-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
 .swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .12s;}
 .swatch:hover{transform:scale(1.12);}
@@ -98,21 +119,21 @@ input,select,textarea{font-family:inherit;}
 .dz-select{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-note);font-weight:500;color:var(--ink);background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
 .dz-range{width:100%;accent-color:#000;}
 .dz-flex{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.dz-val{font-size:11px;font-weight:600;color:var(--sub);min-width:34px;text-align:right;}
+.dz-val{font-size:var(--fs-note);font-weight:600;color:var(--sub);min-width:34px;text-align:right;}
 .mini-seg{display:flex;background:var(--surface);border-radius:8px;padding:2px;gap:2px;width:100%;}
-.mini-seg button{flex:1;height:26px;border-radius:6px;font-size:11px;font-weight:600;color:var(--sub);}
+.mini-seg button{flex:1;height:26px;border-radius:6px;font-size:var(--fs-note);font-weight:600;color:var(--sub);}
 .mini-seg button.on{background:#fff;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.08);}
 .sim-wrap{display:flex;align-items:center;gap:7px;}
-.sim-wrap > span{font-size:11px;font-weight:600;color:var(--muted);}
-.sim-wrap select{height:34px;min-width:118px;border:1px solid var(--border);border-radius:var(--r);padding:0 30px 0 11px;font-size:12px;font-weight:600;color:var(--ink);background:#fff;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;}
+.sim-wrap > span{font-size:var(--fs-note);font-weight:600;color:var(--muted);}
+.sim-wrap select{height:34px;min-width:118px;border:1px solid var(--border);border-radius:var(--r);padding:0 30px 0 11px;font-size:var(--fs-control);font-weight:600;color:var(--ink);background:#fff;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;}
 .sim-wrap select:focus{outline:none;border-color:#000;box-shadow:0 0 0 3px rgba(0,0,0,.06);}
 .dz-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;}
-.dz-sublabel{font-size:0.625rem;font-weight:700;letter-spacing:.4px;color:var(--sub);text-transform:uppercase;margin-top:4px;}
+.dz-sublabel{font-size:var(--fs-micro);font-weight:700;letter-spacing:.4px;color:var(--sub);text-transform:uppercase;margin-top:4px;}
 .dz-datetime{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-family:inherit;font-size:var(--fs-note);font-weight:600;color:var(--ink);background:#fff;}
 .dz-datetime:focus{outline:none;border-color:#000;box-shadow:0 0 0 3px rgba(0,0,0,.06);}
-.dz-when{font-size:0.5938rem;font-weight:600;color:var(--muted);margin-top:5px;}
-.dz-toggle-row .tr-name{font-size:12px;font-weight:600;}
-.dz-toggle-row .tr-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.dz-when{font-size:var(--fs-micro);font-weight:600;color:var(--muted);margin-top:5px;}
+.dz-toggle-row .tr-name{font-size:var(--fs-control);font-weight:600;}
+.dz-toggle-row .tr-sub{font-size:var(--fs-micro);color:var(--muted);margin-top:1px;}
 
 /* switch */
 .sw{position:relative;width:34px;height:20px;min-width:34px;background:#e2e8f0;border-radius:100px;cursor:pointer;transition:background .15s;}
@@ -145,9 +166,9 @@ input,select,textarea{font-family:inherit;}
 .checkout-shell{transition:max-width .25s ease;width:100%;max-width:1060px;display:flex;flex-direction:column;}
 .checkout-shell.mobile{max-width:420px;}
 .canvas-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.ct-label{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;}
+.ct-label{font-size:var(--fs-note);font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;}
 .ct-label .dot{width:7px;height:7px;border-radius:50%;background:#10b981;}
-.ct-zoom{font-size:11px;color:var(--muted);font-weight:500;}
+.ct-zoom{font-size:var(--fs-note);color:var(--muted);font-weight:500;}
 
 /* ── TYPE SCALE ───────────────────────────────────────────────
    Three sizes, in rem so they track the root font size:
@@ -156,7 +177,7 @@ input,select,textarea{font-family:inherit;}
      --fs-sub   13px · every piece of subtext, breakdown rows included
    Declared on the shell AND the card, so the timer, trust strip and
    Powered-by line inherit them outside the card too. */
-.checkout,.checkout-shell,.page{--fs-title:1.0625rem;--fs-body:0.9375rem;--fs-sub:0.8125rem;}
+/* the scale lives at :root — nothing re-declares it */
 
 /* ───────────────────── CHECKOUT (the built page) ───────────────────── */
 /* grid-template-rows:minmax(0,1fr) bounds the row, so .co-col inherits the card's
@@ -223,8 +244,8 @@ input,select,textarea{font-family:inherit;}
 /* The pinned foot runs tight: discount CTA · recurring · totals */
 .zone-foot{--stack:10px;}
 /* the merchant footer needs air under the primary CTA, on both steps */
-.zone-foot .co-nav{margin-bottom:20px;}
-.zone-foot .b-mfoot{margin-top:10px;}
+.zone-foot .co-nav{margin-bottom:12px;}
+.zone-foot .b-mfoot{margin-top:0;}
 .zone-foot .b-recur{align-items:center;gap:10px;}
 .zone-foot .b-recur .rc-name{font-size:var(--fs-body);font-weight:600;}
 .zone-foot .b-recur .rc-sub{display:none;}        /* the foot is for one-liners */
@@ -272,7 +293,8 @@ input,select,textarea{font-family:inherit;}
 .co-timer .ct-in{display:inline-flex;align-items:center;gap:10px;min-width:0;}
 .co-timer .ct-ic{width:17px;height:17px;min-width:17px;display:flex;align-items:center;justify-content:center;}
 .co-timer .ct-ic svg{width:17px;height:17px;stroke:#dc2626;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.co-timer .ct-t{font-size:var(--fs-body);font-weight:700;color:#b91c1c;line-height:1.3;}
+.co-timer .ct-t{font-size:var(--fs-body);font-weight:500;color:#b91c1c;line-height:1.3;}
+.co-timer .ct-t b{font-weight:700;}
 /* the two timers sit side by side, split by a hairline */
 .co-timer{flex-wrap:wrap;row-gap:4px;}
 .co-timer .ct-div{width:1px;height:18px;background:#b91c1c;opacity:.22;flex:none;}
@@ -309,15 +331,17 @@ input,select,textarea{font-family:inherit;}
 .co-persist{margin-top:18px;}
 .co-persist > .blk:first-child{margin-top:0;}
 @keyframes stagein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-.co-stage-head{margin-bottom:16px;}
-.co-stage-head .sh-k{font-size:0.6562rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--co-pay-sub);}
+/* the zone head already pads, rules and margins below this — a margin
+   here stacked on top of all three and pushed the first field 45px away */
+.co-stage-head{margin-bottom:0;}
+.co-stage-head .sh-k{font-size:var(--fs-note);font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--co-pay-sub);}
 .co-stage-head .sh-t{font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);margin-top:3px;}
 
 .co-recap{display:flex;align-items:center;gap:12px;border:1px solid var(--co-pay-border);background:var(--co-pay-field);border-radius:var(--co-r);padding:11px 14px;margin-bottom:18px;}
 .co-recap .rc-i{flex:1;min-width:0;}
 .co-recap .rc-n{font-size:var(--fs-body);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .co-recap .rc-c{font-size:var(--fs-sub);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.co-recap .rc-e{font-size:0.7188rem;font-weight:700;color:var(--co-accent-pay);flex:none;padding:6px 10px;border-radius:8px;}
+.co-recap .rc-e{font-size:var(--fs-note);font-weight:700;color:var(--co-accent-pay);flex:none;padding:6px 10px;border-radius:8px;}
 .co-recap .rc-e:hover{background:color-mix(in srgb,var(--co-brand-raw) 10%,transparent);}
 
 .co-nav{display:flex;gap:10px;align-items:center;margin-top:20px;}
@@ -329,12 +353,12 @@ input,select,textarea{font-family:inherit;}
 .co-nav .nav-next svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
 
 .b-field.err input{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12);}
-.b-field .fe{display:none;font-size:0.6875rem;font-weight:600;color:#ef4444;margin-top:5px;}
+.b-field .fe{display:none;font-size:var(--fs-note);font-weight:600;color:#ef4444;margin-top:5px;}
 .b-field.err .fe{display:block;}
 
 /* edit-mode step switcher on the canvas */
 .step-switch{display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:3px;}
-.step-switch button{height:24px;padding:0 12px;border-radius:100px;font-size:0.6875rem;font-weight:600;color:var(--sub);white-space:nowrap;}
+.step-switch button{height:24px;padding:0 12px;border-radius:100px;font-size:var(--fs-note);font-weight:600;color:var(--sub);white-space:nowrap;}
 .step-switch button.on{background:#000;color:#fff;}
 
 /* block wrapper + edit chrome */
@@ -364,7 +388,7 @@ input,select,textarea{font-family:inherit;}
 /* ── checkout block content styles (use per-column vars via .co-summary/.co-payment scoping) ── */
 .co-summary .cv-sub{color:var(--co-sum-sub);} .co-payment .cv-sub{color:var(--co-pay-sub);}
 .b-brand{display:flex;align-items:center;gap:10px;}
-.b-brand .bb-logo{width:32px;height:32px;border-radius:8px;background:var(--co-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.875rem;color:var(--co-accent-ink);}
+.b-brand .bb-logo{width:32px;height:32px;border-radius:8px;background:var(--co-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:var(--fs-body);color:var(--co-accent-ink);}
 .b-brand .bb-name{font-size:var(--fs-title);font-weight:700;letter-spacing:.1px;font-family:var(--co-font-head);}
 .b-heading{font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);letter-spacing:-.2px;}
 .b-para{font-size:var(--fs-sub);line-height:1.6;}
@@ -418,12 +442,12 @@ input,select,textarea{font-family:inherit;}
 .info-tip:hover .info-pop,.info-tip:focus-within .info-pop{opacity:1;visibility:visible;}
 .b-payhead .phd-d{font-size:var(--fs-sub);line-height:1.6;margin-top:6px;}
 .b-payhead .phd-t + .phd-d{margin-top:5px;}
-.phd-empty{font-size:0.6875rem;font-style:italic;opacity:.55;}
+.phd-empty{font-size:var(--fs-note);font-style:italic;opacity:.55;}
 .co-payment .b-divider{background:var(--co-pay-border);}
 
 /* min-height keeps the row identical whether or not a product image is set */
 .b-item{display:flex;align-items:center;gap:14px;min-height:52px;}
-.b-item .it-thumb{width:52px;height:52px;min-width:52px;border-radius:12px;background:linear-gradient(135deg,var(--co-accent),#0000 220%);opacity:.92;display:flex;align-items:center;justify-content:center;color:var(--co-accent-ink);font-weight:700;font-size:1rem;}
+.b-item .it-thumb{width:52px;height:52px;min-width:52px;border-radius:12px;background:linear-gradient(135deg,var(--co-accent),#0000 220%);opacity:.92;display:flex;align-items:center;justify-content:center;color:var(--co-accent-ink);font-weight:700;font-size:var(--fs-body);}
 .b-item .it-main{flex:1;min-width:0;}
 .b-item .it-name{font-size:var(--fs-body);font-weight:600;}
 /* both sub-lines under the item name share the subtitle treatment */
@@ -432,13 +456,16 @@ input,select,textarea{font-family:inherit;}
 .b-item .it-amt{margin-left:auto;flex:none;font-size:var(--fs-body);font-weight:700;text-align:right;white-space:nowrap;}
 
 /* ── TOTALS ────────────────────────────────────────────────────────────────
-   A collapsible Price Breakdown sits directly above Total Payable. It is
-   inline on every breakpoint — the old hover-popover hid the charges behind
+   Price Breakdown is a dropdown sitting directly above Total Payable, and
+   every charge lives inside it — subtotal, discount, shipping, tax. The
+   heading comes first and the charges open underneath it. The chevron points
+   down while open (the way the list folds away) and up while closed.
+   Inline at every breakpoint — the old hover-popover hid the charges behind
    an icon, which phones could not reach at all. ───────────────────────────*/
 .b-totals .tr{display:flex;justify-content:space-between;font-size:var(--fs-sub);padding:4px 0;}
 .b-totals .pb{margin-bottom:2px;}
-.pb-head{display:inline-flex;align-items:center;gap:7px;padding:2px 0 6px;background:none;border:none;cursor:pointer;text-align:left;color:inherit;}
-.pb-t{font-size:0.6875rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--co-sum-sub);}
+.pb-head{display:inline-flex;align-items:center;gap:7px;padding:2px 0 4px;background:none;border:none;cursor:pointer;text-align:left;color:inherit;}
+.pb-t{font-size:var(--fs-micro);font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--co-sum-sub);}
 .pb-chev{width:20px;height:20px;min-width:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   background:color-mix(in srgb,var(--co-brand-raw) 13%,transparent);color:var(--co-accent-sum-ui);transition:transform .22s ease,background .15s;}
 .pb-head:hover .pb-chev{background:color-mix(in srgb,var(--co-brand-raw) 22%,transparent);}
@@ -471,7 +498,7 @@ input,select,textarea{font-family:inherit;}
 .dc-go{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:7px;background:var(--co-accent);color:var(--co-accent-ink);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:filter .13s;}
 .dc-go:hover{filter:brightness(.92);}
 .dc-go svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
-.dc-pill{display:inline-flex;align-items:center;gap:6px;font-size:0.6875rem;font-weight:700;line-height:1;color:var(--co-accent-sum);padding:5px 6px 5px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-brand-raw) 12%,transparent);white-space:nowrap;}
+.dc-pill{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-note);font-weight:700;line-height:1;color:var(--co-accent-sum);padding:5px 6px 5px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-brand-raw) 12%,transparent);white-space:nowrap;}
 .dc-x{width:16px;height:16px;min-width:16px;border-radius:50%;background:color-mix(in srgb,var(--co-brand-raw) 20%,transparent);color:var(--co-accent-sum);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:background .13s,color .13s;}
 .dc-x:hover{background:var(--co-accent);color:var(--co-accent-ink);}
 .dc-x svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;}
@@ -495,8 +522,8 @@ input,select,textarea{font-family:inherit;}
 .theme-dark .bm-ic{background:color-mix(in srgb,var(--co-brand-raw) 20%,transparent);}
 .bm-ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
 .bm-title{font-size:var(--fs-body);font-weight:700;flex:1;}
-.bm-sub{font-size:0.6562rem;font-weight:500;margin-top:1px;}
-.bm-badge{font-size:0.5625rem;font-weight:800;letter-spacing:.6px;padding:3px 8px;border-radius:100px;background:color-mix(in srgb,#10b981 14%,transparent);color:#10b981;}
+.bm-sub{font-size:var(--fs-note);font-weight:500;margin-top:1px;}
+.bm-badge{font-size:var(--fs-micro);font-weight:800;letter-spacing:.6px;padding:3px 8px;border-radius:100px;background:color-mix(in srgb,#10b981 14%,transparent);color:#10b981;}
 .bm-chev{transition:transform .2s;color:var(--co-pay-sub);}
 .bm-chev svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .b-method.open .bm-chev{transform:rotate(180deg);}
@@ -513,7 +540,7 @@ input,select,textarea{font-family:inherit;}
 .upi-app{display:flex;align-items:center;gap:10px;border:1px solid var(--co-pay-border);border-radius:var(--co-r);padding:9px 12px;cursor:pointer;transition:all .13s;}
 .upi-app:hover{border-color:var(--co-accent-pay-ui);}
 .upi-app.sel{border-color:var(--co-accent-pay-ui);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--co-brand-raw) 18%,transparent);}
-.upi-app .ua-logo{width:26px;height:26px;min-width:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:0.5938rem;font-weight:800;color:#fff;}
+.upi-app .ua-logo{width:26px;height:26px;min-width:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:var(--fs-micro);font-weight:800;color:#fff;}
 .upi-app .ua-name{font-size:var(--fs-sub);font-weight:600;flex:1;}
 .upi-app .ua-radio{width:16px;height:16px;min-width:16px;border-radius:50%;border:1.7px solid var(--co-pay-border);transition:all .13s;}
 .upi-app.sel .ua-radio{border-width:5px;border-color:var(--co-accent-pay-ui);}
@@ -521,11 +548,11 @@ input,select,textarea{font-family:inherit;}
 .upi-any .ua-logo{background:var(--co-accent);color:var(--co-accent-ink);}
 .upi-any .ua-logo svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .upi-vpa{margin-top:10px;}
-.upi-vpa .uv-hint{font-size:0.6562rem;margin-top:6px;}
+.upi-vpa .uv-hint{font-size:var(--fs-note);margin-top:6px;}
 .uc-badge{width:66px;height:66px;border-radius:50%;background:var(--co-accent);color:var(--co-accent-ink);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 10px 26px color-mix(in srgb,var(--co-brand-raw) 35%,transparent);animation:popin .4s cubic-bezier(.2,1.6,.4,1);}
 .uc-badge svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.uc-pow{margin-top:16px;font-size:0.5312rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;}
-.uc-pow b{font-size:0.6875rem;letter-spacing:2px;}
+.uc-pow{margin-top:16px;font-size:var(--fs-micro);font-weight:700;letter-spacing:1.6px;text-transform:uppercase;}
+.uc-pow b{font-size:var(--fs-note);letter-spacing:2px;}
 
 /* netbanking — NBBL Banking Connect */
 .bm-logo{display:flex;align-items:center;flex-shrink:0;margin-right:2px;}
@@ -544,8 +571,8 @@ input,select,textarea{font-family:inherit;}
 .nb-bank{border:1px solid var(--co-pay-border);border-radius:var(--co-r);padding:10px 6px;text-align:center;cursor:pointer;transition:all .13s;}
 .nb-bank:hover{border-color:var(--co-accent-pay-ui);}
 .nb-bank.sel{border-color:var(--co-accent-pay-ui);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--co-brand-raw) 18%,transparent);}
-.nb-bank .nb-ic{width:26px;height:26px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:0.5625rem;font-weight:800;color:#fff;}
-.nb-bank .nb-name{font-size:0.6562rem;font-weight:600;}
+.nb-bank .nb-ic{width:26px;height:26px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:var(--fs-micro);font-weight:800;color:#fff;}
+.nb-bank .nb-name{font-size:var(--fs-note);font-weight:600;}
 
 /* pay button */
 .b-pay button.paybtn{width:100%;height:50px;border-radius:var(--co-r);background:var(--co-accent);color:var(--co-accent-ink);font-size:var(--fs-body);font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;transition:filter .15s, transform .1s;letter-spacing:.1px;}
@@ -594,7 +621,7 @@ input,select,textarea{font-family:inherit;}
 .b-qrd .qr-side{flex:1;min-width:0;}
 .b-qrd .qr-t{font-size:var(--fs-sub);font-weight:600;line-height:1.55;margin-bottom:5px;}
 .b-qrd .qr-s{font-size:var(--fs-sub);line-height:1.55;}
-.b-qrd .qr-timer{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:0.6562rem;font-weight:700;padding:4px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-brand-raw) 10%,transparent);color:var(--co-accent-pay);}
+.b-qrd .qr-timer{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:var(--fs-note);font-weight:700;padding:4px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-brand-raw) 10%,transparent);color:var(--co-accent-pay);}
 .b-qrm{display:none;font-size:var(--fs-sub);line-height:1.6;padding:10px 12px;border:1px dashed var(--co-pay-border);border-radius:var(--co-r);}
 /* ── LIVE QR ────────────────────────────────────────────────────────────────
    Tapping Pay with the QR method selected does not open an overlay. The QR
@@ -646,15 +673,15 @@ input,select,textarea{font-family:inherit;}
 .po-btnrow{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
 .po-primary{height:40px;padding:0 22px;border-radius:var(--co-r);background:var(--co-accent);color:var(--co-accent-ink);font-size:var(--fs-sub);font-weight:700;}
 .po-primary:hover{filter:brightness(1.1);}
-.po-ws{margin-top:16px;font-size:0.625rem;display:inline-flex;align-items:center;gap:6px;opacity:.55;}
+.po-ws{margin-top:16px;font-size:var(--fs-micro);display:inline-flex;align-items:center;gap:6px;opacity:.55;}
 .po-ws .ws-dot{width:6px;height:6px;border-radius:50%;background:#10b981;animation:dlpulse 1.2s infinite;}
 
 /* mock netbanking journey */
 .po-bank{width:min(400px,90%);margin:0 auto;text-align:left;border:1px solid var(--co-pay-border);border-radius:12px;overflow:hidden;background:var(--co-pay-field);}
 .po-bank .pb-head{display:flex;align-items:center;gap:10px;padding:13px 16px;color:#fff;font-size:var(--fs-sub);font-weight:700;}
-.po-bank .pb-head .nb-ic{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:0.5625rem;font-weight:800;}
+.po-bank .pb-head .nb-ic{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:var(--fs-micro);font-weight:800;}
 .po-bank .pb-body{padding:18px 16px;}
-.po-bank .pb-note{font-size:0.625rem;text-align:center;margin-top:12px;opacity:.6;}
+.po-bank .pb-note{font-size:var(--fs-micro);text-align:center;margin-top:12px;opacity:.6;}
 .po-bank .b-field + .b-field{margin-top:12px;}
 .po-bank .pb-amt{display:flex;justify-content:space-between;font-size:var(--fs-sub);margin-bottom:14px;padding:10px 12px;border-radius:8px;background:var(--co-pay-hover);border:1px solid var(--co-pay-border);}
 .po-bank .pb-amt b{font-size:var(--fs-body);}
@@ -662,60 +689,10 @@ input,select,textarea{font-family:inherit;}
 /* net-banking QR / bank-app overlay screens */
 .po-qrcard{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:12px;display:inline-block;line-height:0;margin-bottom:18px;}
 .po-qrcard svg{width:min(150px,40vw);height:min(150px,40vw);display:block;}
-.po-appic{width:64px;height:64px;border-radius:18px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.25rem;font-weight:800;box-shadow:0 10px 26px rgba(2,11,30,.22);animation:popin .4s cubic-bezier(.2,1.6,.4,1);}
+.po-appic{width:64px;height:64px;border-radius:18px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:var(--fs-headline);font-weight:800;box-shadow:0 10px 26px rgba(2,11,30,.22);animation:popin .4s cubic-bezier(.2,1.6,.4,1);}
 
 /* ── payment result — centred in the checkout, no card chrome ── */
 .pay-overlay{overflow-y:auto;}
-.pr-wrap{margin:auto;text-align:center;padding:clamp(16px,3.5vh,34px) 26px;max-width:480px;display:flex;flex-direction:column;align-items:center;color:var(--co-pay-text);}
-.pr-ill{width:clamp(110px,22vh,190px);margin-bottom:2px;}
-.pr-ill svg{width:100%;height:auto;display:block;}
-.pr-amt-row{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:4px;}
-.pr-meta{font-size:var(--fs-sub);}
-.pr-txn{font-size:0.6562rem;opacity:.85;word-break:break-all;}
-.pr-count{margin-top:16px;border:1.5px solid var(--co-pay-border);border-radius:100px;padding:10px 28px;font-size:var(--fs-sub);font-weight:700;}
-.pr-count b{color:var(--co-accent-pay);}
-.pr-note{margin-top:16px;font-size:var(--fs-sub);line-height:1.6;background:var(--co-pay-hover);border:1px solid var(--co-pay-border);border-radius:10px;padding:10px 16px;max-width:400px;}
-.pr-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center;}
-.pr-btn{height:40px;padding:0 26px;border-radius:100px;font-size:var(--fs-sub);font-weight:700;background:var(--co-accent);color:var(--co-accent-ink);}
-.pr-btn:hover{filter:brightness(1.1);}
-.pr-help{margin-top:12px;font-size:0.6875rem;line-height:1.6;max-width:420px;border:1px dashed var(--co-pay-border);border-radius:10px;padding:12px 14px;text-align:left;}
-.pr-help b{font-weight:700;}
-.pr-help .ph-head{text-align:center;font-weight:700;font-size:0.7188rem;color:var(--co-pay-text);margin-bottom:8px;}
-.co-summary .pr-help .ph-head{color:var(--co-sum-text);}
-.pr-help .ph-body{text-align:left;}
-.pr-help .ph-fine{text-align:left;margin-top:10px;padding-top:10px;border-top:1px solid var(--co-pay-border);opacity:.85;}
-.pr-help .ph-mail{font-weight:700;color:var(--co-accent-pay);word-break:break-word;}
-.pr-trust{display:flex;align-items:center;gap:6px;font-size:0.7188rem;font-weight:600;color:#2f80ed;margin-top:14px;}
-/* Help & FAQ — the quietest line on the result screen, but always present */
-.pr-faq{margin-top:14px;font-size:var(--fs-note);font-weight:600;}
-.pr-faq a{color:var(--co-pay-sub);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;opacity:.85;}
-.pr-faq a:hover{opacity:1;color:var(--co-accent-pay);}
-.pr-trust svg{width:14px;height:14px;fill:#2f80ed;}
-@media (max-width:640px){
-  .pr-wrap{padding:20px 16px;}
-  .pr-count{padding:9px 22px;}
-}
-/* short viewports — compact everything so the result fits with zero scroll */
-@media (max-height:720px){
-  .pr-wrap .po-title{font-size:var(--fs-title);}
-  .pr-wrap .po-sub{margin-top:5px;font-size:var(--fs-sub);}
-  .pr-wrap .po-amount{font-size:var(--fs-title);margin-top:8px;}
-  .pr-count{margin-top:11px;padding:8px 22px;font-size:var(--fs-sub);}
-  .pr-note{margin-top:11px;padding:8px 14px;font-size:0.6875rem;}
-  .pr-trust{margin-top:10px;}
-  .pr-actions{margin-top:11px;}
-  .pr-wrap .po-close{margin-top:12px;height:34px;}
-  .uc-badge{width:54px;height:54px;margin-bottom:12px;}
-  .uc-pow{margin-top:10px;}
-}
-@media (max-height:560px){
-  .pr-ill{width:96px;}
-  .pr-wrap{padding:12px 16px;}
-  .pr-wrap .po-sub{max-width:460px;}
-  .uc-badge{width:44px;height:44px;margin-bottom:8px;}
-  .uc-badge svg{width:20px;height:20px;}
-}
-
 /* pay overlay — takes over the viewport so results always fit without page scroll */
 .pay-overlay{position:absolute;inset:0;background:var(--co-pay-bg);display:none;align-items:center;justify-content:center;z-index:40;border-radius:inherit;}
 .pay-overlay.show{display:flex;position:fixed;top:60px;left:0;right:0;bottom:0;z-index:80;border-radius:0;}
@@ -772,6 +749,391 @@ input,select,textarea{font-family:inherit;}
 .po-close{margin-top:22px;height:38px;padding:0 20px;border-radius:var(--co-r);border:1px solid var(--co-pay-border);color:inherit;font-size:var(--fs-sub);font-weight:700;}
 .po-close:hover{background:var(--co-pay-hover);}
 
+
+
+/* ┌──────────────────────────────────────────────────────────────────────┐
+   │  BLOCK 5 of 8 · PAYFX ANIMATION MODULE — CSS     COPIED VERBATIM     │
+   └──────────────────────────────────────────────────────────────────────┘ */
+.payfx{
+  --payfx-ink:#171A1F;
+  --payfx-ink-soft:#4A525C;
+  /* ── BRAND COLOUR ────────────────────────────────────────────────────
+     Inherited from the host checkout. The Checkout Builder writes --brand,
+     the card maps it to --co-accent; we follow whichever exists. If your
+     build names it something else, add it to this chain or pass
+     { brand:'#RRGGBB' } to PayFX.create().                              */
+  --payfx-brand:var(--co-accent, var(--brand, #0092FF));
+  /* overall diameter of the animation. It deliberately does NOT fill the
+     host — a loader should sit at a comfortable size inside the card. */
+  --payfx-size:min(272px,46vmin);
+  /* The art does NOT fill the stage box: the viewBox is 600 units wide and
+     the outermost thing drawn (the orbit at r=148, plus the comet arcs'
+     stroke width and glow) measures ~r=209, so the visible circle is 0.70 of
+     the box. The caption is placed off THIS, not off the box — measured off
+     the box it floated ~80px clear of the orbit and read as a separate
+     element rather than part of one piece. */
+  --payfx-art:.70;
+  position:absolute; inset:0; z-index:60;
+  opacity:0; pointer-events:none; transition:opacity .34s cubic-bezier(.4,0,.2,1);
+}
+.payfx.is-on{opacity:1; pointer-events:auto}
+.payfx-scrim{position:absolute; inset:0; background:var(--payfx-scrim,rgba(248,248,248,.82))}
+.payfx-stage{position:absolute; left:50%; top:50%; width:var(--payfx-size); height:var(--payfx-size);
+  transform:translate(-50%,-50%); pointer-events:none}
+.payfx-svg{position:absolute; inset:0; width:100%; height:100%; display:block; overflow:visible}
+/* the caption is real HTML, so it picks up the host's own body type size */
+.payfx-cap{position:absolute; left:0; right:0; text-align:center; pointer-events:none;
+  top:calc(50% + (var(--payfx-size) * var(--payfx-art)) / 2 + 13px);
+  font-family:inherit; font-weight:600; letter-spacing:.01em;
+  font-size:var(--fs-body,15px); color:var(--co-pay-text,var(--payfx-ink,#1c2024)); opacity:0}
+.payfx-cap i{font-style:normal; animation:payfxDot 1.25s ease-in-out infinite}
+.payfx-cap i:nth-child(2){animation-delay:.16s}
+.payfx-cap i:nth-child(3){animation-delay:.32s}
+@keyframes payfxDot{0%,100%{opacity:.25}40%{opacity:1}}
+.payfx-l{transform-box:view-box; transform-origin:0px 0px; will-change:transform,opacity}
+.payfx-arc{fill:none; stroke:var(--payfx-brand); stroke-linecap:round; stroke-linejoin:round}
+.payfx-glyph{display:none}
+.payfx-glyph path{fill:none; stroke:#fff; stroke-width:26; stroke-linecap:round; stroke-linejoin:round}
+
+/* ┌────────────────────────────────────────────────────────────────────────┐
+   │  BLOCK 1 of 8 · RECEIPT SCREEN — CSS              VERDICT: COPY + ADAPT │
+   │  Pairs with BLOCK 4 (markup). Rename .pr-* to suit; keep the two        │
+   │  colour inputs at the top of .pay-result intact.                        │
+   └────────────────────────────────────────────────────────────────────────┘ */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   3 · PAYMENT RESULT SCREEN  (receipt)
+   ──────────────────────────────────────────────────────────────────────────
+   COLOUR RULE — read this before changing any colour in this block.
+
+   STATUS COLOUR (--rc-c / --rc-t / --rc-d)  is deliberately confined to:
+     · the animated disc + ring (the PayFX overlay)
+     · the hero disc this animation lands in
+     · the tinted header band it sits on
+     · the Status pill, which literally names the status
+   Nothing else. It is NOT a theme colour — it only ever says
+   "this payment succeeded / is pending / failed / expired".
+
+   MERCHANT BRAND COLOUR (--co-accent, set from --brand in block 1) drives
+   everything else on this screen:
+     · the help-card contact rows and their icons
+     · the primary CTA (Try again / Done) and the ghost CTA border
+   If your builder exposes the brand colour under a different token, map it
+   once here — do not hard-code it further down:
+
+       .pay-result{ --rc-brand: var(--co-accent); }      <-- single input
+
+   --co-accent already resolves to the colour the merchant picked in the
+   Checkout Builder (block 1: --brand -> .checkout --co-accent).
+   ══════════════════════════════════════════════════════════════════════════ */
+/* On desktop the full-width checkout leaves a lot of empty space behind a
+   380px receipt, so the card itself narrows (and stays centred) for the
+   result. Phones are already full-bleed, so they skip it. */
+.checkout{transition:max-width .55s cubic-bezier(.2,.8,.3,1);}
+/* 412 = 380 of content + --pr-pad on each side. The card width IS the
+   receipt's horizontal padding, which is why .pr-in below is uncapped:
+   a capped, auto-centred .pr-in added leftover gutter to the sides only,
+   so the CTA sat further from the card edge than from the card bottom. */
+.checkout.is-result{max-width:412px;margin-left:auto;margin-right:auto;}
+/* .is-flow lands AFTER the icon has, so the height collapse never moves the
+   target mid-flight. The columns leave the flow and the result becomes the
+   card's only child, so the card takes exactly the receipt's height. */
+.checkout.is-flow{grid-template-columns:1fr;min-height:0;flex:0 0 auto;}
+.checkout.is-flow > .co-col{display:none;}
+.checkout.is-flow .pay-result{position:relative;overflow:visible;height:auto;}
+/* The collapse is a dissolve, not a resize. BLOCK 6 measures the card before
+   and after .is-flow and tweens the height between the two, while the receipt
+   cross-fades through the reflow — otherwise the card snapped to its new
+   height the instant the class landed. */
+.checkout.is-melt{transition:max-width .62s cubic-bezier(.2,.8,.3,1),
+                             height .62s cubic-bezier(.2,.8,.3,1);
+                  overflow:hidden;}
+.checkout.is-melt .pay-result{animation:prMelt .62s cubic-bezier(.3,.7,.3,1) both;}
+@keyframes prMelt{
+  0%{opacity:.5;transform:scale(.988)}
+  55%{opacity:.92;transform:scale(.998)}
+  100%{opacity:1;transform:none}}
+@media (max-width:760px){
+  .checkout.is-result{max-width:none;}
+  .checkout.is-flow{min-height:0;}
+}
+/* desktop: the session banner tracks the card's width */
+body.is-result .co-timer{max-width:412px;transition:max-width .55s cubic-bezier(.2,.8,.3,1);}
+/* centre the receipt in the viewport — but swap the fixed height for a
+   min-height first. A centred flex child in a fixed-height container is
+   clipped at BOTH ends once it outgrows it, with nothing to scroll to; with
+   min-height the column grows instead and the page scrolls normally. */
+body.is-result .page{justify-content:center;overflow:visible;
+  height:auto;min-height:100dvh;}
+body.is-result.has-demobar .page{min-height:calc(100dvh - 58px);}
+
+.pay-result{
+  --rc-brand: var(--co-accent);          /* merchant brand — see note above  */
+  --rc-brand-ink: var(--co-accent-ink);  /* label colour on a brand fill     */
+  position:absolute; inset:0; z-index:50; display:none; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  color:var(--co-pay-text);          /* body ink — NOT the brand colour */
+  background:#fff;
+  background-image:linear-gradient(180deg,var(--rc-t) 0%,var(--rc-t) 30%,rgba(255,255,255,0) 100%);
+  background-size:100% 470px; background-repeat:no-repeat; background-position:top;
+}
+.pay-result.on{display:block;}
+/* the card grows to the receipt, so this panel never needs a bar of its own */
+/* no scrollbars anywhere in the flow — scrolling still works, it just
+   doesn't paint a track over the card or down the side of the page */
+html,body{scrollbar-width:none;-ms-overflow-style:none;}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;}
+.pay-result{scrollbar-width:none;}
+.pay-result::-webkit-scrollbar{display:none;}
+.pr-in{min-height:100%;padding:0 0 var(--pr-pad,16px);}
+/* the backdrop is opaque from frame one; only the content rises in, so the
+   checkout underneath never shows through during the hand-off */
+.pr-fade .pr-hero{animation:rcFadeOnly .44s cubic-bezier(.2,.8,.3,1) both;}
+@keyframes rcFadeOnly{from{opacity:0}to{opacity:1}}
+.pr-fade .pr-card,.pr-fade .pr-act{animation:rcIn .5s cubic-bezier(.2,.8,.3,1) both;}
+.pr-fade .pr-card:nth-of-type(1){animation-delay:.06s;}
+.pr-fade .pr-card:nth-of-type(2){animation-delay:.12s;}
+.pr-fade .pr-act{animation-delay:.18s;}
+@keyframes rcIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.pr-hero{padding:34px var(--pr-pad,16px) 18px;text-align:center;}
+@media (max-width:760px){
+  .pr-hero{padding-top:calc(46px + env(safe-area-inset-top,0px));}
+}
+.pr-mark{width:62px;height:62px;margin:0 auto 15px;position:relative;}
+.pr-mark::before{content:"";position:absolute;inset:-9px;border-radius:50%;background:#fff;opacity:.6;}
+.pr-mark svg{position:relative;display:block;width:100%;height:100%;}
+.pr-rip{position:absolute;inset:-9px;border-radius:50%;border:2.5px solid #fff;opacity:0;}
+.pr-mark.land .pr-rip{animation:rcRip 1.15s cubic-bezier(.17,.72,.3,1) both;}
+.pr-mark.land .pr-rip:nth-of-type(2){animation-delay:.18s;border-width:1.5px;}
+@keyframes rcRip{0%{transform:scale(.92);opacity:.85}100%{transform:scale(2.5);opacity:0}}
+.pr-mark.land::before{animation:rcHalo .7s cubic-bezier(.2,.8,.3,1) both;}
+@keyframes rcHalo{0%{transform:scale(.8);opacity:.2}55%{transform:scale(1.12);opacity:.75}100%{transform:scale(1);opacity:.6}}
+.pr-mark.land svg{animation:rcBeat .68s cubic-bezier(.2,.8,.3,1) both;}
+@keyframes rcBeat{0%{transform:scale(.86)}38%{transform:scale(1.09)}62%{transform:scale(.97)}82%{transform:scale(1.02)}100%{transform:scale(1)}}
+.pr-h1{margin:0;font-size:var(--fs-headline);font-weight:700;letter-spacing:-.2px;font-family:var(--co-font-head);}
+.pr-big{font-size:var(--fs-amount);font-weight:800;letter-spacing:-.9px;line-height:1.18;margin-top:1px;font-family:var(--co-font-head);}
+.pr-to{font-size:var(--fs-sub);color:var(--co-pay-sub);}
+.pr-msg{font-size:var(--fs-sub);line-height:1.62;color:var(--co-pay-sub);margin:13px auto 0;max-width:330px;}
+
+.pr-card{background:#fff;border-radius:14px;margin:0 var(--pr-pad,16px) 12px;padding:15px 16px;
+  box-shadow:0 2px 12px -5px rgba(16,21,28,.16),0 0 0 1px rgba(23,26,31,.045);}
+/* The rows already carry 9px of their own padding, so the card's 15px on top
+   of that left the first and last rows sitting noticeably looser than the gap
+   between rows. Pull the card's vertical padding back on this variant only —
+   the help card below keeps its roomier 15px. */
+.pr-card-rows{padding-top:7px;padding-bottom:7px;}
+.pr-rows{margin-top:0;}
+.pr-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:9px 0;
+  font-size:var(--fs-sub);border-bottom:1px solid #EFF1F4;}
+.pr-row:last-child{border-bottom:0;}
+.pr-row span{color:var(--co-pay-sub);}
+.pr-row b{font-weight:700;text-align:right;}
+/* the Status pill is the one chip that MUST read as the status */
+.pr-pill{background:var(--rc-t);color:var(--rc-d);font-size:var(--fs-note);font-weight:700;padding:3px 11px;border-radius:999px;}
+
+.pr-h4{font-size:var(--fs-sub);font-weight:700;margin:0 0 11px;}
+/* contact rows: brand only on the icon, the address itself stays body ink */
+.pr-con{display:flex;align-items:center;justify-content:center;gap:9px;background:#F4F5F7;border-radius:9px;
+  padding:10px 12px;margin-bottom:8px;font-size:var(--fs-sub);font-weight:600;
+  color:var(--co-pay-text);text-decoration:none;}
+.pr-con svg{width:15px;height:15px;stroke:var(--rc-brand);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+.pr-fine{font-size:var(--fs-note);line-height:1.6;color:var(--co-pay-sub);margin:11px 0 0;}
+.pr-act{display:flex;gap:10px;padding:3px var(--pr-pad,16px) 0;}
+/* the quietest line on the receipt — inside the same gutter as the CTA,
+   and the last thing in the scroll container, so .pr-in's padding is the
+   only space below it */
+.pr-faq{text-align:center;padding:14px var(--pr-pad,16px) 0;font-size:var(--fs-note);font-weight:600;}
+.pr-faq a{color:var(--co-pay-sub);text-decoration:underline;text-underline-offset:3px;opacity:.85;}
+.pr-faq a:hover{opacity:1;}
+/* primary CTA: MERCHANT BRAND, not status */
+/* one control height across the whole flow — see the type note below */
+.pr-cta{flex:1;height:var(--co-ctl,46px);display:flex;align-items:center;justify-content:center;
+  border-radius:var(--co-r);border:0;font:700 var(--fs-sub) var(--co-font-head);cursor:pointer;}
+.pr-cta.pri{background:var(--rc-brand);color:var(--rc-brand-ink);}
+.pr-cta.pri:hover{filter:brightness(1.1);}
+.pr-cta.gho{background:#fff;color:var(--co-pay-text);border:1px solid #DCDFE4;}
+/* └── END BLOCK 1 ─────────────────────────────────────────────────────── */
+
+/* ┌────────────────────────────────────────────────────────────────────────┐
+   │  BLOCK 2 of 8 · HOST GLUE — CSS                   VERDICT: COPY + ADAPT │
+   │  These rules bend YOUR checkout to the result state. Every selector     │
+   │  here names a host element (.checkout, .page, .co-timer, .pay-overlay,  │
+   │  .trust-strip), so this is the block to re-point at your own classes.   │
+   │  What it does:                                                          │
+   │    · narrows + shrinks the card to the receipt, centred in the viewport │
+   │    · keeps the animation inside the card on desktop, full screen on     │
+   │      mobile                                                             │
+   │    · one control height across inputs, nav and CTAs                     │
+   │    · mobile: flush top edge, status tint behind the expiry banner only  │
+   └────────────────────────────────────────────────────────────────────────┘ */
+/* ── the result + animation are confined to the checkout card ──────────
+   The stock rule makes .pay-overlay.show position:fixed over the whole
+   viewport; inside the card is where this belongs on desktop. Phones keep
+   the fixed overlay because there the card already is the full screen and
+   the page itself scrolls. */
+.pay-overlay{background:transparent;}
+.pay-overlay.show{position:absolute;inset:0;top:0;border-radius:inherit;
+  align-items:stretch;justify-content:stretch;z-index:80;
+  /* The overlay sits ABOVE the receipt (80 vs 50) so the disc can fly over it.
+     Once PayFX fades, the overlay must stop swallowing clicks or the receipt's
+     CTA underneath is unreachable — .payfx re-enables them only while it is
+     actually on, which is exactly when interaction should be blocked. */
+  pointer-events:none;}
+.pay-overlay.show .payfx.is-on{pointer-events:auto;}
+@media (max-width:760px){
+  .pay-overlay.show{position:fixed;inset:0;border-radius:0;}
+}
+/* Page chrome below the card — the security line and the Decentro credit —
+   is a footnote, so it reads BELOW the body copy (13px) rather than level
+   with it. This was mobile-only; on desktop both sat at 13px and competed
+   with the paragraph above them. The logo is scaled to match its caption. */
+.trust-strip .b-secure .sc-item{font-size:var(--fs-note);}
+.trust-strip .b-secure .sc-item svg{width:12px;height:12px;}
+.powered{font-size:var(--fs-note);}
+.powered svg{width:74px;height:auto;}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   OPTIONAL · SPLIT RECEIPT  (status panel left, receipt right)
+   ──────────────────────────────────────────────────────────────────────────
+   The card keeps the checkout's own width, height and 1fr/1.1fr split, so the
+   result lands in exactly the frame the customer has been looking at — nothing
+   resizes. The two columns keep their jobs: the LEFT column was the contextual
+   branded panel (what you're buying) and now carries the status visually; the
+   RIGHT column was the form and still holds everything you read and act on,
+   in the same top-to-bottom order as the portrait receipt.
+
+   The left panel carries NO information the receipt needs. Below 900px it is
+   not rendered and the portrait hero disc takes over, so there is nothing to
+   keep in sync between the two layouts.
+
+   Add .is-split to the checkout element to switch; remove it for portrait.
+   ══════════════════════════════════════════════════════════════════════════ */
+.pr-panel{display:none;}
+
+@media (min-width:900px){
+  /* Keep the checkout's height as a FLOOR, not a ceiling. The right column
+     carries the whole portrait receipt, disc included, which needs ~715px —
+     more than the card gets on a 900px-tall window, so the CTA was clipped
+     off the bottom. At least the checkout's height, and room to grow when
+     the content asks for it. */
+  /* Split uses the same .is-flow mechanism as portrait — without it the
+     receipt is absolutely positioned, contributes nothing to the card's
+     height, and the CTA is clipped off the bottom. The difference is the
+     floor: the card never drops below the checkout's own height, so it
+     holds its frame instead of collapsing to a narrow panel. */
+  .checkout.is-split.is-result{max-width:1012px;
+    min-height:min(660px,calc(100dvh - 190px));}
+  .checkout.is-split.is-flow{min-height:min(660px,calc(100dvh - 190px));}
+  body.is-result.is-split-page .co-timer{max-width:1012px;}
+  .checkout.is-split .pay-result{background-image:none;background:#fff;}
+  .checkout.is-split .pr-in{
+    display:grid; grid-template-columns:1fr 1.1fr;
+    /* two 1fr spacer rows top and bottom: the right column's content sits
+       as one vertically centred group, matching the panel disc, instead of
+       pinning the CTA to the floor with a hole above it */
+    grid-template-rows:1fr auto auto auto 1fr;
+    max-width:none; padding:0; min-height:100%;}
+
+  .checkout.is-split .pr-panel{
+    display:block; grid-column:1; grid-row:1 / -1; position:relative;
+    background:var(--rc-t); overflow:hidden;}
+  .checkout.is-split .pr-hero{grid-column:2;grid-row:2;padding:18px 34px 10px;margin:0;}
+  .checkout.is-split .pr-msg{max-width:42ch;margin-left:auto;margin-right:auto;}
+  .checkout.is-split .pr-card-rows{grid-column:2;grid-row:3;margin:0 34px 10px;}
+  .checkout.is-split .pr-card:not(.pr-card-rows){grid-column:2;grid-row:4;margin:0 34px 14px;}
+  .checkout.is-split .pr-act{grid-column:2;grid-row:5;padding:0 34px 30px;}
+}
+
+/* ── the panel's canvas and caption ───────────────────────────────────────
+   BLOCK 8 inserts its own <canvas class="panelfx-canvas"> as the panel's
+   first child. #prLand is an invisible target the flying status circle lands
+   on: the host sizes it to the scene's own disc so the hand-off is exact. */
+.panelfx-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;
+  opacity:0;transition:opacity .2s linear;}
+.pr-panel.lit .panelfx-canvas{opacity:1;}
+.pr-land{position:absolute;left:50%;top:50%;width:112px;height:112px;
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;}
+
+.pr-panel-tag{position:absolute;left:20px;bottom:18px;z-index:3;
+  display:inline-flex;align-items:center;gap:8px;padding:6px 12px;
+  border-radius:999px;background:rgba(255,255,255,.68);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:0 2px 10px -4px rgba(15,23,42,.12);
+  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--rc-d);pointer-events:none;user-select:none;
+  opacity:0;transition:opacity .3s ease .1s;}
+.pr-panel.lit .pr-panel-tag{opacity:1;}
+.pr-panel-tag .tag-dot{width:6px;height:6px;border-radius:50%;
+  background:var(--rc-c);flex:none;}
+.pr-panel.amb-pending .tag-dot{animation:tagPulse 1.6s ease-in-out infinite;}
+@keyframes tagPulse{0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.4;transform:scale(.82)}}
+
+/* The panel carries the status emblem in split, so the right column drops its
+   disc — the same tick 400px away read as the same information twice. */
+@media (min-width:900px){
+  .checkout.is-split .pr-mark{display:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  .pr-panel .tag-dot{animation:none!important;}
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CONTROL HEIGHT — the receipt's CTA sets the height every control follows,
+   so the flow feels like one screen rather than three.
+   ══════════════════════════════════════════════════════════════════════════ */
+:root{--co-ctl:46px;}
+.checkout .b-field input{height:var(--co-ctl);}
+.checkout .co-nav .nav-next,
+.checkout .co-nav .nav-back{height:var(--co-ctl);}
+.checkout .b-pay button.paybtn{height:var(--co-ctl);font-size:var(--fs-sub);}
+.checkout .co-nav .nav-next{font-size:var(--fs-sub);}
+
+/* mobile: flush to the top edge, and the status tint runs behind the banner */
+@media (max-width:760px){
+  /* tint sits behind the banner only — a full-body tint showed up as a
+     coloured band under the Done button once the card shrank to content */
+  body.is-result{background-color:#fff;
+    background-image:linear-gradient(180deg,var(--rc-t,#fff),var(--rc-t,#fff));
+    background-size:100% 170px;background-repeat:no-repeat;background-position:top;}
+  body.is-result .page{padding-top:0;background:transparent;}
+  /* In the result state the banner runs to the very top edge of the viewport.
+     A margin-top pushed it down and left the tint showing in the strip above
+     it; the inset belongs in the banner's OWN padding so its background is
+     what fills that strip. Full-bleed and square while it's up there, same as
+     the docked state — a rounded bar with side gaps but a flush top edge
+     reads like a mistake. */
+  body.is-result .co-timer{
+    margin:0 0 14px; width:100%; max-width:none;
+    border-radius:0; border:0;
+    padding-top:calc(11px + var(--co-safe-t,env(safe-area-inset-top,0px)));
+    /* Sit ON the status tint rather than over it. Once the bar runs edge to
+       edge it meets the tint with no gap, and its own warning pink stacked
+       against an amber or green tint read as two unrelated colours with a
+       hard seam across the top of the screen. Transparent, the tint runs
+       unbroken from the top edge down through the hero and the bar is just
+       its text — in the status's own deep tone so it stays legible. */
+    background:transparent; box-shadow:none;}
+  body.is-result .co-timer .ct-t{color:var(--rc-d,#b91c1c);}
+  body.is-result .co-timer .ct-ic svg{stroke:var(--rc-d,#dc2626);}
+  body.is-result .co-timer.urgent{animation:none;}
+  /* Docked, the banner is fixed at top:0 — which on a notched or curved-edge
+     phone put it underneath the status bar, so the page scrolled visibly
+     through the strip above it. Pad the inset into the banner's OWN box: its
+     background then fills the full height above it, the way it already fills
+     the full width. The page gets the same clearance so nothing hides under
+     the taller bar. --co-safe-t is an override hook for testing; it falls
+     back to the real inset. */
+  .is-docked .co-timer{padding-top:calc(11px + var(--co-safe-t,env(safe-area-inset-top,0px)));}
+  .page.is-docked{padding-top:calc(12px + var(--co-safe-t,env(safe-area-inset-top,0px)));}
+  body.is-result .checkout{min-height:0;}
+  body.is-result .trust-strip,body.is-result .powered{background:#fff;}
+}
+/* └── END BLOCK 2 ─────────────────────────────────────────────────────── */
+
+
 /* ───────────────────────── DEV MODE ───────────────────────── */
 .btn.on{background:#000;color:#fff;border-color:#000;}
 body.dev-mode .canvas-wrap{cursor:crosshair;}
@@ -787,39 +1149,39 @@ body.dev-mode .topbar{z-index:95;}
 .type-card:hover{border-color:#000;box-shadow:0 2px 10px rgba(2,11,30,.08);}
 .type-card .tc-ic{font-size:var(--fs-title);}
 .type-card .tc-n{font-size:var(--fs-body);font-weight:700;}
-.type-card .tc-s{font-size:0.7188rem;line-height:1.55;color:var(--muted);}
-.dev-badge{position:fixed;z-index:95;background:#2563eb;color:#fff;font-size:0.625rem;font-weight:700;padding:3px 7px;border-radius:5px;pointer-events:none;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2);display:none;}
+.type-card .tc-s{font-size:var(--fs-note);line-height:1.55;color:var(--muted);}
+.dev-badge{position:fixed;z-index:95;background:#2563eb;color:#fff;font-size:var(--fs-micro);font-weight:700;padding:3px 7px;border-radius:5px;pointer-events:none;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2);display:none;}
 .dev-badge.show{display:block;}
 
 .dv-crumbs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;}
-.dv-crumb{font-family:ui-monospace,Menlo,monospace;font-size:0.625rem;font-weight:600;padding:3px 7px;border-radius:5px;background:var(--surface);border:1px solid var(--border);color:var(--sub);cursor:pointer;}
+.dv-crumb{font-family:ui-monospace,Menlo,monospace;font-size:var(--fs-micro);font-weight:600;padding:3px 7px;border-radius:5px;background:var(--surface);border:1px solid var(--border);color:var(--sub);cursor:pointer;}
 .dv-crumb:hover{border-color:#000;color:#000;}
 .dv-crumb.on{background:#2563eb;border-color:#2563eb;color:#fff;}
-.dv-sel{font-family:ui-monospace,Menlo,monospace;font-size:0.6875rem;font-weight:700;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:7px 9px;margin-bottom:12px;word-break:break-all;line-height:1.5;}
+.dv-sel{font-family:ui-monospace,Menlo,monospace;font-size:var(--fs-note);font-weight:700;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:7px 9px;margin-bottom:12px;word-break:break-all;line-height:1.5;}
 .dv-tabs{display:flex;gap:3px;background:var(--surface);border-radius:8px;padding:3px;margin-bottom:10px;}
-.dv-tabs button{flex:1;height:26px;border-radius:6px;font-size:0.6875rem;font-weight:600;color:var(--sub);}
+.dv-tabs button{flex:1;height:26px;border-radius:6px;font-size:var(--fs-note);font-weight:600;color:var(--sub);}
 .dv-tabs button.on{background:#fff;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.08);}
 .dv-code{position:relative;background:#0f172a;border-radius:8px;margin-bottom:10px;}
-.dv-code pre{font-family:ui-monospace,Menlo,monospace;font-size:0.6562rem;line-height:1.65;color:#cbd5e1;padding:11px 12px;white-space:pre-wrap;word-break:break-word;max-height:none;overflow:visible;}
+.dv-code pre{font-family:ui-monospace,Menlo,monospace;font-size:var(--fs-note);line-height:1.65;color:#cbd5e1;padding:11px 12px;white-space:pre-wrap;word-break:break-word;max-height:none;overflow:visible;}
 .dv-code .k{color:#7dd3fc;} .dv-code .v{color:#fca5a5;} .dv-code .s{color:#c4b5fd;} .dv-code .c{color:#64748b;font-style:italic;}
-.dv-copy{position:absolute;top:7px;right:7px;height:22px;padding:0 9px;border-radius:5px;background:rgba(255,255,255,.12);color:#e2e8f0;font-size:0.625rem;font-weight:700;}
+.dv-copy{position:absolute;top:7px;right:7px;height:22px;padding:0 9px;border-radius:5px;background:rgba(255,255,255,.12);color:#e2e8f0;font-size:var(--fs-micro);font-weight:700;}
 .dv-copy:hover{background:rgba(255,255,255,.22);}
-.dv-sec{font-size:0.625rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;}
-.dv-kv{display:flex;justify-content:space-between;gap:10px;font-size:0.6875rem;padding:5px 0;border-bottom:1px solid #f1f5f9;}
+.dv-sec{font-size:var(--fs-micro);font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;}
+.dv-kv{display:flex;justify-content:space-between;gap:10px;font-size:var(--fs-note);padding:5px 0;border-bottom:1px solid #f1f5f9;}
 .dv-kv:last-child{border-bottom:none;}
 .dv-kv .dk{color:var(--muted);font-weight:600;flex:none;}
 .dv-kv .dv{font-family:ui-monospace,Menlo,monospace;color:var(--ink);text-align:right;word-break:break-all;}
 .dv-swatch{display:inline-block;width:10px;height:10px;border-radius:3px;border:1px solid rgba(0,0,0,.15);vertical-align:-1px;margin-right:5px;}
-.dv-hint{font-size:0.6875rem;line-height:1.6;color:var(--muted);background:var(--surface);border-radius:8px;padding:10px 12px;}
+.dv-hint{font-size:var(--fs-note);line-height:1.6;color:var(--muted);background:var(--surface);border-radius:8px;padding:10px 12px;}
 .dv-asset{display:flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:8px;padding:7px 9px;margin-bottom:6px;}
 .dv-asset .da-prev{width:28px;height:28px;min-width:28px;border-radius:6px;background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .dv-asset .da-prev svg{width:16px;height:16px;}
 .dv-asset .da-prev img{max-width:100%;max-height:100%;object-fit:contain;}
-.dv-asset .da-n{flex:1;min-width:0;font-family:ui-monospace,Menlo,monospace;font-size:0.625rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.dv-asset .da-b{flex:none;height:24px;padding:0 9px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:0.625rem;font-weight:700;color:var(--sub);}
+.dv-asset .da-n{flex:1;min-width:0;font-family:ui-monospace,Menlo,monospace;font-size:var(--fs-micro);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dv-asset .da-b{flex:none;height:24px;padding:0 9px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:var(--fs-micro);font-weight:700;color:var(--sub);}
 .dv-asset .da-b:hover{border-color:#000;color:#000;}
 .dv-actions{display:flex;gap:7px;margin-bottom:12px;}
-.dv-actions .btn{flex:1;justify-content:center;height:30px;font-size:0.6875rem;}
+.dv-actions .btn{flex:1;justify-content:center;height:30px;font-size:var(--fs-note);}
 
 /* ───────────────────────── INSPECTOR ───────────────────────── */
 .inspector{width:290px;min-width:290px;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;}
@@ -827,22 +1189,22 @@ body.dev-mode .topbar{z-index:95;}
 .ins-head .ih-ic{width:26px;height:26px;border-radius:7px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
 .ins-head .ih-ic svg{width:13px;height:13px;stroke:var(--sub);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .ins-head .ih-title{font-size:var(--fs-sub);font-weight:700;}
-.ins-head .ih-sub{font-size:0.625rem;color:var(--muted);margin-top:1px;}
+.ins-head .ih-sub{font-size:var(--fs-micro);color:var(--muted);margin-top:1px;}
 .ins-body{flex:1;overflow-y:auto;padding:16px;}
 .ins-empty{text-align:center;padding:44px 18px;color:var(--muted);}
 .ins-empty svg{width:34px;height:34px;stroke:#cbd5e1;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin-bottom:12px;}
 .ins-empty .ie-t{font-size:var(--fs-sub);font-weight:600;color:var(--sub);}
-.ins-empty .ie-s{font-size:0.6875rem;line-height:1.55;margin-top:5px;}
+.ins-empty .ie-s{font-size:var(--fs-note);line-height:1.55;margin-top:5px;}
 .ins-field{margin-bottom:14px;}
-.ins-count{font-size:0.625rem;color:var(--muted);text-align:right;margin-top:3px;}
-.ins-field>label{display:block;font-size:0.6875rem;font-weight:600;color:var(--sub);margin-bottom:5px;}
+.ins-count{font-size:var(--fs-micro);color:var(--muted);text-align:right;margin-top:3px;}
+.ins-field>label{display:block;font-size:var(--fs-note);font-weight:600;color:var(--sub);margin-bottom:5px;}
 /* panel form fields sit at the note size — they read as controls, not copy */
 .ins-field input[type=text],.ins-field input[type=number]{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-note);color:var(--ink);}
 .ins-field input:focus,.dz-select:focus{outline:none;border-color:#000;box-shadow:0 0 0 3px rgba(0,0,0,.06);}
 .ins-check{display:flex;align-items:center;justify-content:space-between;padding:7px 0;}
-.ins-check .ic-name{font-size:12px;font-weight:500;}
+.ins-check .ic-name{font-size:var(--fs-control);font-weight:500;}
 .ins-note{font-size:var(--fs-note);line-height:1.5;color:var(--muted);background:#fffbeb;border:1px solid #fef08a;border-radius:var(--r);padding:9px 11px;color:#854d0e;margin-top:4px;}
-.ins-del{width:100%;height:34px;border:1px solid #fecaca;color:#b91c1c;border-radius:var(--r);font-size:12px;font-weight:600;margin-top:8px;}
+.ins-del{width:100%;height:34px;border:1px solid #fecaca;color:#b91c1c;border-radius:var(--r);font-size:var(--fs-control);font-weight:600;margin-top:8px;}
 .ins-del:hover{background:#fef2f2;}
 
 /* ───────────────────────── EXPORT MODAL ───────────────────────── */
@@ -851,11 +1213,11 @@ body.dev-mode .topbar{z-index:95;}
 .modal{background:#fff;border-radius:14px;width:100%;max-width:760px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px rgba(2,11,30,.3);}
 .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface);}
 .modal-head .mh-t{font-size:var(--fs-body);font-weight:700;}
-.modal-head .mh-s{font-size:0.6875rem;color:var(--muted);margin-top:2px;}
+.modal-head .mh-s{font-size:var(--fs-note);color:var(--muted);margin-top:2px;}
 .modal-x{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--sub);}
 .modal-x:hover{background:#e2e8f0;}
 .modal-body{flex:1;overflow:auto;padding:0;background:#0f172a;}
-.modal-body pre{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:0.6875rem;line-height:1.6;color:#cbd5e1;padding:18px 20px;white-space:pre-wrap;word-break:break-all;}
+.modal-body pre{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:var(--fs-note);line-height:1.6;color:#cbd5e1;padding:18px 20px;white-space:pre-wrap;word-break:break-all;}
 .modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border);}
 
 /* toast */
@@ -866,17 +1228,17 @@ body.dev-mode .topbar{z-index:95;}
 /* logo upload (customer branding) */
 .logo-drop{border:1.5px dashed #cbd5e1;border-radius:var(--r);padding:14px 12px;text-align:center;cursor:pointer;transition:all .15s;background:#fafbfc;}
 .logo-drop:hover{border-color:#000;background:#f8fafc;}
-.logo-drop .ld-hint{font-size:0.6875rem;color:var(--muted);line-height:1.5;}
+.logo-drop .ld-hint{font-size:var(--fs-note);color:var(--muted);line-height:1.5;}
 .logo-drop .ld-hint b{color:var(--sub);display:block;font-size:var(--fs-sub);margin-bottom:2px;}
 .logo-drop img{max-height:34px;max-width:100%;object-fit:contain;display:block;margin:0 auto 8px;}
-.logo-drop .ld-actions{display:flex;justify-content:center;gap:12px;font-size:0.6875rem;font-weight:600;}
+.logo-drop .ld-actions{display:flex;justify-content:center;gap:12px;font-size:var(--fs-note);font-weight:600;}
 .logo-drop .ld-actions span{color:var(--sub);cursor:pointer;}
 .logo-drop .ld-actions span:hover{color:#000;text-decoration:underline;}
 .logo-drop .ld-actions .ld-rm{color:#b91c1c;}
 .b-brand{min-height:32px;}
 .b-brand .bb-img{height:32px;max-width:170px;object-fit:contain;display:block;}
-.b-brand .bb-empty{font-size:0.6875rem;font-style:italic;opacity:.55;}
-.bb-up{margin-left:auto;font-size:0.6562rem;font-weight:600;padding:5px 10px;border-radius:100px;border:1.5px dashed currentColor;color:inherit;opacity:.55;transition:opacity .15s;}
+.b-brand .bb-empty{font-size:var(--fs-note);font-style:italic;opacity:.55;}
+.bb-up{margin-left:auto;font-size:var(--fs-note);font-weight:600;padding:5px 10px;border-radius:100px;border:1.5px dashed currentColor;color:inherit;opacity:.55;transition:opacity .15s;}
 .bb-up:hover{opacity:1;}
 
 /* mobile block-panel FAB + drawer scrim */
@@ -943,7 +1305,7 @@ body.dev-mode .topbar{z-index:95;}
   .topbar{padding:0 10px;gap:6px;}
   .co-nav{position:sticky;bottom:0;background:var(--co-pay-bg);padding:10px 0 2px;margin-top:16px;z-index:5;}
   .co-recap{padding:10px 12px;}
-  .step-switch button{padding:0 9px;font-size:0.6562rem;}
+  .step-switch button{padding:0 9px;font-size:var(--fs-note);}
   .tb-name{display:none;}
   .tb-left{gap:8px;}
   .tb-left > .tb-logo > span[style*="width:1px"]{display:none;}
@@ -1063,7 +1425,7 @@ body.dev-mode .topbar{z-index:95;}
         </div>
         <div class="dz-sublabel">1 · Payment session</div>
         <div class="dz-flex" style="margin-top:4px;">
-          <span style="font-size:0.6875rem;font-weight:600;color:var(--sub);">Duration</span>
+          <span style="font-size:var(--fs-note);font-weight:600;color:var(--sub);">Duration</span>
           <input type="range" class="dz-range" id="timerRange" min="1" max="30" step="1" value="10" style="flex:1;margin:0 10px;">
           <span class="dz-val" id="timerVal">10 min</span>
         </div>
@@ -1138,6 +1500,46 @@ body.dev-mode .topbar{z-index:95;}
           <div class="co-col co-summary" id="regionSummary" data-region="summary"></div>
           <div class="co-col co-payment" id="regionPayment" data-region="payment"></div>
           <div class="pay-overlay" id="payOverlay"></div>
+  <!-- ┌──────────────────────────────────────────────────────────────────────┐
+       │  BLOCK 4 of 8 · RECEIPT SCREEN — MARKUP                              │
+       │  Styled by BLOCK 1, populated by BLOCK 6. The ids are the contract   │
+       │  between the three — rename them in all three or not at all:         │
+       │    #payResult  the screen itself   (BLOCK 6 toggles .on)             │
+       │    #prIn       scroll container                                      │
+       │    #prMark     hero disc wrapper   (.pr-rip spans are the ripple)    │
+       │    #prDisc     the disc the flying icon lands on  <- fx.landOn target│
+       │    #prGlyph    the tick / clock / cross / exclamation                │
+       └──────────────────────────────────────────────────────────────────────┘ -->
+  <!-- PAYMENT RESULT — status colour is confined to the hero disc, the header
+       tint and the Status pill. Contact rows and CTAs use the merchant brand. -->
+  <div class="pay-result" id="payResult"><div class="pr-in" id="prIn">
+    <div class="pr-hero">
+      <div class="pr-mark" id="prMark">
+        <span class="pr-rip"></span><span class="pr-rip"></span>
+        <svg viewBox="-130 -130 260 260"><circle r="98" id="prDisc"></circle>
+          <g transform="scale(.62)" id="prGlyph" fill="none" stroke="#fff" stroke-width="26"
+             stroke-linecap="round" stroke-linejoin="round"></g></svg>
+      </div>
+      <h2 class="pr-h1" id="prTitle"></h2>
+      <div class="pr-big" id="prAmt"></div>
+      <div class="pr-to" id="prTo"></div>
+      <p class="pr-msg" id="prMsg"></p>
+    </div>
+    <div class="pr-card pr-card-rows">
+      <div class="pr-rows">
+        <div class="pr-row"><span>Status</span><b class="pr-pill" id="prPill"></b></div>
+        <div class="pr-row"><span>Merchant</span><b id="prMerchant"></b></div>
+        <div class="pr-row" id="prTxnRow"><span>Transaction ID</span><b id="prTxn"></b></div>
+      </div>
+    </div>
+    <div class="pr-card">
+      <div class="pr-h4">Need help with this payment?</div>
+      <div id="prHelp"></div>
+    </div>
+    <div class="pr-act" id="prAct"></div>
+    <div class="pr-faq"><a href="https://decentro.tech/help/consumer" target="_blank" rel="noopener">Decentro Help &amp; FAQ</a></div>
+  </div></div>
+  <!-- └── END BLOCK 4 ──────────────────────────────────────────────────────── -->
         </div>
         <div id="trustHost"></div>
         <div id="poweredLine" style="width:100%;text-align:center;font-size:var(--fs-note);font-weight:600;color:#94a3b8;margin-top:16px;"></div>
@@ -2315,11 +2717,729 @@ $('#checkout').addEventListener('focusout', e=>{
 document.addEventListener('keydown', e=>{
   const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
   if((e.metaKey||e.ctrlKey) && e.key==='z' && !typing){ e.preventDefault(); undo(); return; }
-  if(e.key==='Escape'){ selId=null; if(qrWatch){clearTimeout(qrWatch); qrWatch=null;} rt.qrLive=false; renderAll(); stopCountdown(); $('#payOverlay').classList.remove('show'); ['exportModal','legalView','legalEdit'].forEach(id=>document.getElementById(id).classList.remove('show')); return; }
+  if(e.key==='Escape'){ selId=null; if(qrWatch){clearTimeout(qrWatch); qrWatch=null;} rt.qrLive=false; renderAll(); stopCountdown(); payReset(); $('#payOverlay').classList.remove('show'); ['exportModal','legalView','legalEdit'].forEach(id=>document.getElementById(id).classList.remove('show')); return; }
   if((e.key==='Backspace'||e.key==='Delete') && selId && !typing && mode==='edit'){
     e.preventDefault(); snapshot(); removeBlock(selId); selId=null; renderAll();
   }
 });
+
+
+
+/* ┌──────────────────────────────────────────────────────────────────────┐
+   │  BLOCK 5 of 8 · PAYFX ANIMATION MODULE — JS      COPIED VERBATIM     │
+   │  No dependencies. Pure DOM + SVG + rAF. Do not edit: the builder     │
+   │  and every page it exports run this exact source.                    │
+   └──────────────────────────────────────────────────────────────────────┘ */
+function payFxModule(root){
+"use strict";
+var PAL={
+  success:{base:'#2FC97A',tint:'#DFF6EA',deep:'#1B8A52'},
+  pending:{base:'#F0A81A',tint:'#FDF0D9',deep:'#9A6A05'},
+  failure:{base:'#EB5547',tint:'#FCE6E3',deep:'#B5362B'},
+  expired:{base:'#5A6478',tint:'#EAECF2',deep:'#414A5C'}
+};
+/* the "D" of the Decentro monogram, in the logo's own 400x100 coordinates */
+var MONO='M39.79,28.86h-18.5v25.12h8.56V37.45h9.69c8.89,0,14.65,4.97,14.65,12.57s-5.76,12.57-14.65,12.57h-1.1v8.58h1.34'+
+         'c13.72,0,23.08-8.46,23.08-21.15S53.5,28.86,39.79,28.86z';
+var MK=3.4;                                   /* monogram scale into comp units */
+var SQ_X=(25.575-42.07)*MK, SQ_Y=(66.825-50.015)*MK;   /* where its blue square sits */
+var TILE=164, SQ_S=(8.59*MK)/TILE;            /* square -> tile scale ratio */
+
+var SQ_A0=224.4, SQ_R0=80.1;      /* the square's corner position, in polar */
+var SPIN_R=148, RING_R=132, COIN_R=98, GLYPH_S=.62;
+var INTRO=2000, TURN=1500, RDUR=2000, REVEAL=1000;
+
+var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
+var seg=function(t,a,b){return clamp((t-a)/(b-a),0,1);};
+var mix=function(a,b,t){return a+(b-a)*t;};
+function bez(x1,y1,x2,y2){
+  var A=function(a,b){return 1-3*b+3*a;},B=function(a,b){return 3*b-6*a;},C=function(a){return 3*a;};
+  var cal=function(t,a,b){return ((A(a,b)*t+B(a,b))*t+C(a))*t;};
+  var slo=function(t,a,b){return 3*A(a,b)*t*t+2*B(a,b)*t+C(a);};
+  return function(x){
+    if(x<=0)return 0; if(x>=1)return 1;
+    var t=x,i,e,d;
+    for(i=0;i<8;i++){e=cal(t,x1,x2)-x; if(Math.abs(e)<1e-5)break; d=slo(t,x1,x2); if(Math.abs(d)<1e-6)break; t-=e/d;}
+    return cal(t,y1,y2);
+  };
+}
+var E={std:bez(.42,0,.58,1), out:bez(.16,.6,.3,1), "in":bez(.6,0,.85,.6),
+       expo:bez(.19,1,.22,1), swift:bez(.4,0,.08,1), back:bez(.34,1.32,.5,1)};
+/* Orbital insertion: two gradual revolutions while the radius winds outward.
+   The angle is the integral of an angular velocity that starts at rest, rises
+   over a broad plateau and lands exactly on the loop rate (0.24 deg/ms), so
+   position AND speed are continuous at the hand-over — no stall, no snap.
+   Integrated once into a table at init, so any frame is a pure lookup. */
+var FT0=900, FT1=2000, FTT=FT1-FT0, SWEEP=720;
+var smoothstep=function(u){return u*u*(3-2*u);};
+var ATAB=(function(){
+  var f=new Float64Array(FTT+1), i, u, S=0;
+  for(i=0;i<=FTT;i++){u=i/FTT; f[i]=Math.pow(Math.sin(Math.PI*u),0.7);}
+  for(i=0;i<FTT;i++) S+=(f[i]+f[i+1])/2;
+  var A=(SWEEP-0.24*FTT*0.5)/S;                 /* solve for the exact sweep */
+  var tab=new Float64Array(FTT+1), acc=0;
+  for(i=0;i<FTT;i++){
+    u=(i+0.5)/FTT;
+    acc+=0.24*smoothstep(u)+A*(f[i]+f[i+1])/2;
+    tab[i+1]=acc;
+  }
+  return tab;
+})();
+var headA=function(t){
+  if(t<=FT0) return SQ_A0;
+  if(t>=FT1) return SQ_A0+ATAB[FTT]+0.24*(t-FT1);
+  var x=t-FT0, i0=x|0;
+  return SQ_A0+ATAB[i0]+(ATAB[i0+1]-ATAB[i0])*(x-i0);
+};
+var headR=function(t){
+  if(t<=FT0) return SQ_R0;
+  if(t>=FT1) return SPIN_R;
+  return mix(SQ_R0,SPIN_R,smoothstep((t-FT0)/FTT));
+};
+var lp=function(t,a,b,e){return (e||E.std)(seg(t,a,b));};
+function spring(t,k,c){
+  k=k||150; c=c||13;
+  var w=Math.sqrt(k), z=c/(2*Math.sqrt(k));
+  if(z<1){var wd=w*Math.sqrt(1-z*z);
+    return 1-Math.exp(-z*w*t)*(Math.cos(wd*t)+(z*w/wd)*Math.sin(wd*t));}
+  return 1-Math.exp(-w*t)*(1+w*t);
+}
+
+var ARC='M0 -'+SPIN_R+' A'+SPIN_R+' '+SPIN_R+' 0 1 1 0 '+SPIN_R+' A'+SPIN_R+' '+SPIN_R+' 0 1 1 0 -'+SPIN_R;
+var CIRC=2*Math.PI*SPIN_R, RINGC=2*Math.PI*RING_R;
+var COMET=[{f:.04,w:17,o:.07},{f:0,w:3,o:.22},{f:.11,w:5.5,o:.5},{f:.25,w:8.5,o:1}];
+/* Decentro as building blocks: the mark is revealed by a grid of modules that
+   stack up from the corner where its own blue square sits. */
+var GRID=6, SPAN=142, CELL=SPAN/GRID, BLK=[];
+(function(){
+  for(var r=0;r<GRID;r++) for(var c=0;c<GRID;c++){
+    BLK.push({cx:-SPAN/2+CELL*(c+0.5), cy:-SPAN/2+CELL*(r+0.5),
+              d:(c+(GRID-1-r))/((GRID-1)*2)});     /* stagger: builds from bottom-left */
+  }
+})();
+function blocksMarkup(){
+  var h='';
+  for(var i=0;i<BLK.length;i++)
+    h+='<g data-blk class="payfx-l"><rect x="'+(-CELL/2-0.6).toFixed(2)+'" y="'+(-CELL/2-0.6).toFixed(2)+
+       '" width="'+(CELL+1.2).toFixed(2)+'" height="'+(CELL+1.2).toFixed(2)+'" fill="#fff"/></g>';
+  return h;
+}
+var SPARK='M0 -13 Q2.2 -2.2 13 0 Q2.2 2.2 0 13 Q-2.2 2.2 -13 0 Q-2.2 -2.2 0 -13 Z';
+var NSPARK=9;
+
+/* ── the core field ──────────────────────────────────────────────────────
+   A scatter of squares filling the disc inside the orbit: random positions,
+   random sizes, each dissolving in and out on its own slow cycle so the
+   field never pulses as one. Density is even across the disc (r = R*sqrt(u),
+   not R*u, which would crowd the centre) and a mild rejection pass keeps
+   clumps apart. Everything is deterministic — a seeded PRNG, not
+   Math.random — so every run of the loader is identical.                   */
+var CFR=122, CNUM=78, COREMK='', CPH=[], CSP=[], CFO=[];
+(function(){
+  var seed=0x9E3779B9;
+  function rnd(){ seed^=seed<<13; seed^=seed>>>17; seed^=seed<<5; return (seed>>>0)/4294967296; }
+  var pts=[], tries, ok, k, x, y, r, a, sz, dx, dy, min;
+  for(k=0;k<CNUM;k++){
+    for(tries=0;tries<40;tries++){
+      sz=4.5+rnd()*13;
+      r=CFR*Math.sqrt(rnd()); a=rnd()*6.2831853;
+      x=Math.cos(a)*r; y=Math.sin(a)*r;
+      ok=true;
+      for(var q=0;q<pts.length;q++){
+        dx=x-pts[q][0]; dy=y-pts[q][1];
+        min=(sz+pts[q][2])/2+3.2;
+        if(dx*dx+dy*dy < min*min){ ok=false; break; }
+      }
+      if(ok) break;
+    }
+    pts.push([x,y,sz]);
+    CPH.push(rnd()*6.2831853);                 /* its own point in the cycle */
+    CSP.push(0.55+rnd()*0.95);                 /* its own speed              */
+    CFO.push(1-0.42*(r/CFR)*(r/CFR));          /* dimmer out at the rim, so
+                                                  the field dissolves into
+                                                  the background rather than
+                                                  ending on a hard edge      */
+    COREMK+='<rect data-blkc x="'+(x-sz/2).toFixed(2)+'" y="'+(y-sz/2).toFixed(2)+
+            '" width="'+sz.toFixed(2)+'" height="'+sz.toFixed(2)+
+            '" rx="'+(sz*0.22).toFixed(2)+'" fill="var(--payfx-brand)" opacity="0"/>';
+  }
+})();
+
+function svgMarkup(uid){
+  var g='';
+  COMET.forEach(function(p){g+='<path class="payfx-arc" d="'+ARC+'" style="stroke-width:'+p.w+';stroke-opacity:'+p.o+'"/>';});
+  var sp='';
+  for(var i=0;i<NSPARK;i++) sp+='<g class="payfx-l"><path d="'+SPARK+'" fill="currentColor"/></g>';
+  return ''+
+  '<svg class="payfx-svg" viewBox="-300 -300 600 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true">'+
+    '<defs>'+
+      '<radialGradient id="'+uid+'b" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="330">'+
+        '<stop offset="0" stop-color="var(--payfx-ink)" stop-opacity=".030"/>'+
+        '<stop offset=".55" stop-color="var(--payfx-ink)" stop-opacity=".015"/>'+
+        '<stop offset="1" stop-color="var(--payfx-ink)" stop-opacity="0"/>'+
+      '</radialGradient>'+
+      '<radialGradient id="'+uid+'a" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="360">'+
+        '<stop offset="0" stop-color="var(--payfx-st)" stop-opacity=".30"/>'+
+        '<stop offset="1" stop-color="var(--payfx-st)" stop-opacity="0"/>'+
+      '</radialGradient>'+
+      '<radialGradient id="'+uid+'v" gradientUnits="objectBoundingBox" cx=".5" cy=".5" r=".5">'+
+        '<stop offset="0" stop-color="#fff" stop-opacity="1"/>'+
+        '<stop offset=".87" stop-color="#fff" stop-opacity="1"/>'+
+        '<stop offset=".95" stop-color="#fff" stop-opacity=".7"/>'+
+        '<stop offset="1" stop-color="#fff" stop-opacity="0"/>'+
+      '</radialGradient>'+
+      '<mask id="'+uid+'m" maskUnits="userSpaceOnUse" x="-300" y="-300" width="600" height="600">'+
+        blocksMarkup()+
+      '</mask>'+
+      '<filter id="'+uid+'s" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>'+
+    '</defs>'+
+
+    '<g data-n="amb" class="payfx-l" opacity="0"><circle r="360" fill="url(#'+uid+'a)"/></g>'+
+    '<g data-n="bub" class="payfx-l" opacity="0"><g data-n="bubS" class="payfx-l">'+
+      '<circle r="330" fill="url(#'+uid+'b)"/></g></g>'+
+
+    /* the monogram: black "D" on light, blue square — brand lockup rules */
+    '<g data-n="monoG" class="payfx-l" opacity="0" mask="url(#'+uid+'m)"><g data-n="monoS" class="payfx-l">'+
+      '<path transform="scale('+MK+') translate(-42.07,-50.015)" fill="var(--payfx-ink)" d="'+MONO+'"/>'+
+    '</g></g>'+
+    '<g data-n="tileG" class="payfx-l" opacity="0">'+
+      '<rect x="-10.5" y="-10.5" width="21" height="21" rx="3" fill="var(--payfx-brand)"/>'+
+    '</g>'+
+
+    '<g data-n="trackG" class="payfx-l" opacity="0">'+
+      '<circle r="'+SPIN_R+'" fill="none" stroke="var(--payfx-brand)" stroke-opacity=".10" stroke-width="3"/>'+
+    '</g>'+
+    '<g data-n="spinG" class="payfx-l"><g data-n="spinS" class="payfx-l">'+
+      g+
+      '<circle data-n="bloom" cx="0" cy="'+(-SPIN_R)+'" r="15" fill="var(--payfx-brand)" opacity=".13" filter="url(#'+uid+'s)"/>'+
+    '</g></g>'+
+
+    '<g data-n="sqG" class="payfx-l" opacity="0"><g data-n="sqS" class="payfx-l">'+
+      '<g data-n="core" class="payfx-l">'+COREMK+'</g>'+
+    '</g></g>'+
+
+    '<g data-n="veilS" class="payfx-l" opacity=".48"><circle r="1000" fill="url(#'+uid+'v)"/></g>'+
+
+    '<g data-n="ringG" class="payfx-l" opacity="0"><g data-n="ringS" class="payfx-l">'+
+      '<circle data-n="ring" r="'+RING_R+'" fill="none" stroke="var(--payfx-st)" stroke-width="11" stroke-linecap="round" transform="rotate(-90)"/>'+
+    '</g></g>'+
+    '<g data-n="haloG" class="payfx-l" opacity="0"><circle r="'+RING_R+'" fill="none" stroke="var(--payfx-st)" stroke-width="2"/></g>'+
+    '<g data-n="sparks" class="payfx-l" opacity="0">'+sp+'</g>'+
+
+    '<g data-n="coinG" class="payfx-l" opacity="0"><g data-n="coinS" class="payfx-l">'+
+      '<circle r="'+COIN_R+'" fill="var(--payfx-st)"/>'+
+      '<g data-n="glyphS" class="payfx-l" transform="scale('+GLYPH_S+')">'+
+        '<g data-g="success" class="payfx-glyph"><path d="M-70 4 L-22 51 L76 -49"/></g>'+
+        '<g data-g="pending" class="payfx-glyph" data-pivot="1"><path style="stroke-width:15" d="M0 -74 A74 74 0 1 1 0 74 A74 74 0 1 1 0 -74"/><path style="stroke-width:19" d="M0 0 L0 -42"/><path style="stroke-width:19" d="M0 0 L30 20"/></g>'+
+        '<g data-g="failure" class="payfx-glyph"><path d="M0 0 L-52 -52"/><path d="M0 0 L52 52"/><path d="M0 0 L52 -52"/><path d="M0 0 L-52 52"/></g>'+
+        '<g data-g="expired" class="payfx-glyph"><path d="M0 -64 L0 12"/><path d="M0 52 L0 53"/></g>'+
+        '<circle data-n="pen" r="7" fill="#fff" opacity="0"/>'+
+      '</g>'+
+    '</g></g>'+
+
+  '</svg>';
+}
+
+function create(mount,opt){
+  opt=opt||{};
+  var uid='p'+Math.random().toString(36).slice(2,7);
+  var cap=opt.caption===undefined?'Processing Payment':opt.caption;
+  var rootEl=document.createElement('div');
+  rootEl.className='payfx';
+  if(opt.scrim) rootEl.style.setProperty('--payfx-scrim',opt.scrim);
+  if(opt.brand) rootEl.style.setProperty('--payfx-brand',opt.brand);
+  var blur=opt.blur===undefined?3:opt.blur;
+  rootEl.innerHTML='<div class="payfx-scrim" data-n="scrim"'+(blur?' style="backdrop-filter:blur('+blur+'px);-webkit-backdrop-filter:blur('+blur+'px)"':'')+'></div>'+
+    '<div class="payfx-stage">'+svgMarkup(uid)+'</div>'+
+    (cap===''?'':'<div class="payfx-cap" data-n="capG">'+cap+'<i>.</i><i>.</i><i>.</i></div>');
+  mount.appendChild(rootEl);
+
+  var N={}; [].forEach.call(rootEl.querySelectorAll('[data-n]'),function(el){N[el.getAttribute('data-n')]=el;});
+  var CP=[].slice.call(rootEl.querySelectorAll('.payfx-arc'));
+  var BL=[].slice.call(rootEl.querySelectorAll('[data-blk]'));
+  var CORE=[].slice.call(rootEl.querySelectorAll('[data-blkc]'));   /* the breathing field */
+  var SPK=[].slice.call(N.sparks.children);
+  var svg=rootEl.querySelector('.payfx-svg');
+
+  function T(el,x,y,sx,sy,r){
+    el.style.transform='translate('+x.toFixed(2)+'px,'+y.toFixed(2)+'px) rotate('+(r||0).toFixed(3)+'deg) scale('+sx.toFixed(4)+','+sy.toFixed(4)+')';
+  }
+  var S=function(el,s){T(el,0,0,s,s,0);};
+  var O=function(el,v){el.style.opacity=v<=0?'0':(v>=1?'1':v.toFixed(3));};
+  function setComet(Tn){
+    for(var i=0;i<CP.length;i++){
+      var a=COMET[i].f*Tn;
+      CP[i].setAttribute('stroke-dasharray',((Tn-a)*CIRC).toFixed(1)+' '+CIRC.toFixed(1));
+      CP[i].setAttribute('stroke-dashoffset',(-a*CIRC).toFixed(1));
+    }
+    var th=Tn*2*Math.PI;
+    N.bloom.setAttribute('cx',(SPIN_R*Math.sin(th)).toFixed(1));
+    N.bloom.setAttribute('cy',(-SPIN_R*Math.cos(th)).toFixed(1));
+  }
+  /* one spark burst: n glints thrown out of (cx,cy), p is 0..1 through the burst */
+  function burst(cx,cy,p,r0,r1,sz,n,seed){
+    if(p<=0||p>=1){O(N.sparks,0); return;}
+    N.sparks.style.color=seed.col;
+    O(N.sparks,1);
+    var e=E.out(p);
+    for(var i=0;i<SPK.length;i++){
+      var on=i<n;
+      if(!on){SPK[i].style.opacity='0'; continue;}
+      var a=seed.a0+(i/n)*Math.PI*2, rad=mix(r0,r1,e)*(0.82+0.3*((i*37)%7)/7);
+      var s=sz*Math.sin(Math.PI*Math.min(1,p*1.25))*(0.55+0.45*((i*53)%5)/5);
+      SPK[i].style.opacity=(1-E.std(p)).toFixed(3);
+      T(SPK[i],cx+Math.cos(a)*rad,cy+Math.sin(a)*rad,Math.max(s,0.001),Math.max(s,0.001),a*57.3);
+    }
+  }
+
+  var st='success', GP=[], gOff={x:0,y:0}, raf=null, t0=0, R0=Infinity, manual=-1, revealed=false, playing=false;
+  var land=null, curT=0;
+  function setStatus(s){
+    st=s; var p=PAL[s]||PAL.success;
+    svg.style.setProperty('--payfx-st',p.base);
+    [].forEach.call(rootEl.querySelectorAll('[data-g]'),function(g){g.style.display='none';});
+    var g=rootEl.querySelector('[data-g="'+s+'"]'); g.style.display='block';
+    /* centre the mark's own bounding box on the disc centre, for every status */
+    g.removeAttribute('transform'); gOff={x:0,y:0};
+    try{
+      var bb=g.getBBox();
+      if(bb.width&&!g.hasAttribute('data-pivot')){
+        gOff={x:-(bb.x+bb.width/2), y:-(bb.y+bb.height/2)};
+        g.setAttribute('transform','translate('+gOff.x.toFixed(2)+','+gOff.y.toFixed(2)+')');
+      }
+    }catch(e){}
+    GP=[].slice.call(g.querySelectorAll('path')).map(function(p2){
+      var L=p2.getTotalLength(); p2.style.strokeDasharray=L+' '+L; p2.style.strokeDashoffset=L; return {el:p2,L:L};
+    });
+  }
+
+  function render(t){
+    curT=t;
+    var direct=(R0<=0), rt=(t>=R0)?(t-R0):-1;
+    var tv=(rt<0)?t:Math.max(R0,INTRO);
+    var u=tv>INTRO?(((tv-INTRO)%TURN)/TURN):0, br=0.5*(1-Math.cos(2*Math.PI*u));
+    var brand=getComputedStyle(rootEl).getPropertyValue('--payfx-brand')||'#0092FF';
+
+    O(N.amb, rt<0?0: lp(rt,60,420,E.out)*0.18*(1-lp(rt,560,980,E.std)));
+
+    var bOp=lp(tv,1000,1480,E.std), bS=0.5+0.5*lp(tv,1000,1700,E.out);
+    if(tv>INTRO) bS=1+0.012*br;
+    if(rt>=0) bOp*=1-lp(rt,0,400,E.std);
+    O(N.bub,bOp); S(N.bubS,bS);
+
+    /* the brand square: corner of the D -> orbit -> revolving head of the loader */
+    var sqA=headA(tv)*Math.PI/180, sqR=headR(tv);
+    var sqPop=clamp(spring(Math.max(tv-740,0)/1000,220,22),0,1.0001);
+    var sqZ=mix(1.39,1,smoothstep(seg(tv,FT0,FT1)))*(tv<FT0?sqPop:1);
+    var sqOp=lp(tv,772,860,E.std);
+    if(rt>=0){sqOp*=1-lp(rt,0,320,E.std); sqR*=1+0.18*lp(rt,0,340,E.out);}
+    O(N.tileG,direct?0:sqOp);
+    T(N.tileG, sqR*Math.sin(sqA), -sqR*Math.cos(sqA),
+       Math.max(sqZ,0.001), Math.max(sqZ,0.001), headA(tv)-SQ_A0);
+
+    if(rt<0&&!direct){
+      /* the mark assembles out of its own modules, then disassembles */
+      for(var bi=0;bi<BL.length;bi++){
+        var bk=BLK[bi];
+        var a0=120+bk.d*430, o0=870+(1-bk.d)*190;
+        var ip=E.expo(seg(t,a0,a0+340)), op2=E.expo(seg(t,o0,o0+300));
+        var bp=ip*(1-op2);
+        T(BL[bi],bk.cx,bk.cy+13*(1-ip),Math.max(bp,0.001),Math.max(bp,0.001),0);
+      }
+      O(N.monoG,lp(t,110,200,E.std));
+      T(N.monoS,0,0,1,1,0);
+    } else O(N.monoG,0);
+
+    /* 4 · the swoosh */
+    var trim=0.40*smoothstep(seg(tv,FT0,FT1-70));
+    var spOp=lp(tv,FT0,FT0+150,E.std), spS=headR(tv)/SPIN_R, spR=headA(tv)-trim*360;
+    if(rt>=0){
+      spOp*=1-lp(rt,40,320,E.std);
+      spR+=67.2*lp(rt,0,420,E.out);
+      trim=mix(0.40,0.64,lp(rt,0,300,E.out));
+      spS=mix(1,1.18,lp(rt,0,340,E.out));
+    } else if(tv>INTRO) trim=0.40+0.016*Math.sin(4*Math.PI*u);
+    O(N.trackG,direct?0:lp(tv,FT1-240,FT1+180,E.std)*(rt>=0?1-lp(rt,0,300,E.std):1));
+    setComet(trim);
+    O(N.spinG,direct?0:spOp); T(N.spinS,0,0,spS,spS,spR);
+    N.bloom.style.opacity=(0.11+0.07*br).toFixed(3);
+
+    /* the core: a field of squares breathing on a diagonal wave — the
+       loader's "work is happening" tell, built out of Decentro's own module */
+    var sq=1;
+    if(tv>INTRO) sq=1-0.07*br;
+    if(rt>=0) sq=mix(sq,0,lp(rt,0,240,E["in"]));
+    O(N.sqG, direct?0:(rt<0?lp(t,1620,1860,E.std):1)); S(N.sqS,Math.max(sq,0.001));
+    if(tv>INTRO){
+      /* each square runs its own sine at its own rate; squaring it holds most
+         of them near zero so individual squares surface and dissolve back
+         instead of the whole field breathing together. */
+      var cwt=(tv-INTRO)*0.0016, cwv, cfin=lp(tv,INTRO,INTRO+520,E.out);
+      for(var ci=0;ci<CORE.length;ci++){
+        cwv=Math.sin(cwt*CSP[ci]+CPH[ci]); cwv=cwv>0?cwv:0;
+        /* ^1.3 rather than ^2: enough of the field is lit at any moment for
+           the disc to read as covered, while each square still dissolves */
+        CORE[ci].style.opacity=(0.52*cwv*Math.sqrt(cwv)*CFO[ci]*cfin).toFixed(3);
+      }
+    } else {
+      for(var cj=0;cj<CORE.length;cj++){CORE[cj].style.opacity='0';}
+    }
+
+    S(N.veilS, rt<0?0.001:Math.max(0.001,lp(rt,500,1000,E.swift)));
+
+    if(!land) T(N.coinG,0,0,1,1,0);          /* never inherit a stale flight pose */
+    if(rt<0){O(N.ringG,0); O(N.coinG,0); O(N.haloG,0); O(N.pen,0);}
+    else{
+      O(N.ringG, lp(rt,80,290,E.out)*(1-lp(rt,700,960,E.std)));
+      var rS=rt<690 ? 0.46+0.54*spring((rt-80)/1000,215,17) : mix(1,1.2,lp(rt,690,960,E.out));
+      S(N.ringS,Math.max(rS,0.01));
+      N.ring.setAttribute('stroke-dasharray',(RINGC*lp(rt,70,460,E.out)).toFixed(1)+' '+RINGC.toFixed(1));
+      N.ring.style.strokeWidth=(11/Math.sqrt(Math.max(rS,.2))).toFixed(2);
+
+      O(N.coinG, lp(rt,250,340,E.std));
+      var cs=rt>260?spring((rt-260)/1000,180,16.5):0;
+      S(N.coinS,Math.max(cs,0.001));
+
+      var dn=GP.length, dEnd=980;
+      GP.forEach(function(p2,i){
+        p2.el.style.strokeDashoffset=(p2.L*(1-lp(rt,560+(i/dn)*170,dEnd,E.out))).toFixed(2);
+      });
+      var act=-1,pr=0;
+      if(dn===1){var q2=seg(rt,560,dEnd); if(q2>0&&q2<1){act=0;pr=E.out(q2);}}
+      if(act>=0){
+        var pt=GP[act].el.getPointAtLength(GP[act].L*pr);
+        N.pen.setAttribute('cx',(pt.x+gOff.x).toFixed(1)); N.pen.setAttribute('cy',(pt.y+gOff.y).toFixed(1));
+        O(N.pen,Math.min(1,pr*9)*(1-Math.max(0,(pr-.86)/.14))*0.9);
+      } else O(N.pen,0);
+      S(N.glyphS, GLYPH_S*(rt>980?1+0.05*Math.sin(Math.PI*seg(rt,980,1200)):1));
+
+      var hp=seg(rt,1140,1820);
+      O(N.haloG,(hp>0&&hp<1)?Math.sin(Math.PI*hp)*0.38:0);
+      S(N.haloG,mix(1,1.4,E.out(hp)));
+    }
+
+    /* sparks: one when the brand square lands, one when the status forms */
+    if(rt<0&&!direct&&t>780&&t<1200) burst(SQ_X,SQ_Y,seg(t,780,1200),12,74,0.85,6,{a0:-0.8,col:brand});
+    else if(rt>=820&&rt<1560) burst(0,0,seg(rt,820,1540),RING_R-40,RING_R+96,1,NSPARK,{a0:0.35,col:(PAL[st]||PAL.success).base});
+    else O(N.sparks,0);
+
+    if(land){
+      var q=seg(t-land.at,0,560), p=E.expo(q), f=1-lp(t-land.at,0,300,E.std);
+      var tb=land.el.getBoundingClientRect(), sb=svg.getBoundingClientRect();
+      var kk=Math.min(sb.width,sb.height)/600, lx=0, ly=0, ls=1;
+      if(kk&&tb.width){
+        lx=((tb.left+tb.width/2)-(sb.left+sb.width/2))/kk;
+        ly=((tb.top+tb.height/2)-(sb.top+sb.height/2))/kk;
+        ls=(tb.width/kk)/(COIN_R*2);
+      }
+      T(N.coinG,lx*p,ly*p,mix(1,ls,p),mix(1,ls,p),0);
+      O(N.coinG,1);
+      if(N.scrim) N.scrim.style.opacity=f.toFixed(3);
+      O(N.veilS,0.48*f); O(N.bub,0); O(N.haloG,0); O(N.sparks,0); O(N.amb,0);
+      if(N.capG) N.capG.style.opacity='0';
+      if(q>=1&&!land.done){land.done=true; if(land.cb) land.cb();}
+      return;
+    }
+
+    if(!revealed&&rt>=REVEAL){revealed=true; if(opt.onReveal) opt.onReveal(st);}
+
+    if(N.capG){
+      var cO,cY;
+      if(rt<0){cO=lp(t,1280,1680,E.std)*0.88; cY=mix(8,0,lp(t,1280,1680,E.expo));}
+      else{cO=direct?0:0.88*(1-lp(rt,0,220,E.std)); cY=-6*lp(rt,0,220,E["in"]);}
+      N.capG.style.opacity=cO.toFixed(3);
+      N.capG.style.transform='translateY('+cY.toFixed(1)+'px)';
+    }
+  }
+
+  function statics(done){
+    O(N.amb,0); O(N.monoG,0); O(N.tileG,0); O(N.trackG,0); O(N.sparks,0); O(N.pen,0); O(N.haloG,0);
+    if(!done){
+      O(N.bub,1); S(N.bubS,1); O(N.spinG,1); O(N.trackG,1); T(N.spinS,0,0,1,1,0); setComet(.4);
+      O(N.sqG,1); S(N.sqS,1); S(N.veilS,0.001); O(N.ringG,0); O(N.coinG,0);
+      if(N.capG){N.capG.style.opacity='.9'; N.capG.style.transform='none';}
+    }else{
+      O(N.bub,0); O(N.spinG,0); O(N.trackG,0); O(N.sqG,0); S(N.veilS,1); O(N.ringG,0);
+      T(N.coinG,0,0,1,1,0);
+      O(N.coinG,1); S(N.coinS,1); S(N.glyphS,GLYPH_S);
+      GP.forEach(function(p2){p2.el.style.strokeDashoffset=0;});
+      if(N.capG) N.capG.style.opacity='0';
+      if(!revealed){revealed=true; if(opt.onReveal) opt.onReveal(st);}
+    }
+  }
+  var RM=rootEl.ownerDocument.defaultView.matchMedia&&
+         rootEl.ownerDocument.defaultView.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function frame(now){
+    var t=manual>=0?manual:(now-t0)*api.rate;
+    if(manual<0&&t>R0+RDUR+6400){t=R0+RDUR+6400; playing=false;}
+    render(Math.max(t,0));
+    if(api.onTick) api.onTick(Math.max(t,0));
+    raf=(playing&&manual<0)?requestAnimationFrame(frame):null;
+  }
+  function run(from){
+    if(raf)cancelAnimationFrame(raf);
+    manual=-1; playing=true; t0=performance.now()-(from||0)/api.rate;
+    raf=requestAnimationFrame(frame);
+  }
+
+  var api={
+    el:rootEl, rate:1, onTick:null,
+    start:function(){
+      revealed=false; land=null; setStatus(st); R0=Infinity;
+      T(N.coinG,0,0,1,1,0);
+      if(N.scrim) N.scrim.style.opacity='';
+      rootEl.classList.add('is-on');
+      if(RM){statics(false); return api;}
+      run(0); return api;
+    },
+    resolve:function(s){
+      setStatus(s); revealed=false;
+      if(RM){statics(true); return api;}
+      var t=(performance.now()-t0)*api.rate;
+      R0=INTRO+TURN*Math.ceil(Math.max(t-INTRO,1)/TURN);
+      if(!playing) run(t);
+      return api;
+    },
+    resolveNow:function(s){
+      setStatus(s); revealed=false; land=null; R0=0;
+      T(N.coinG,0,0,1,1,0);
+      if(N.scrim) N.scrim.style.opacity='';
+      rootEl.classList.add('is-on');
+      if(RM){statics(true); return api;}
+      run(0); return api;
+    },
+    /* The target is re-measured every frame, not captured once, so the page
+       (or the card) can scroll underneath while the icon is in flight and it
+       still lands exactly on the slot. */
+    landOn:function(target,cb){
+      if(!target){if(cb)cb(); return api;}
+      land={at:curT, done:false, cb:cb, el:target};
+      if(!playing) run(curT);
+      return api;
+    },
+    hide:function(instant){
+      /* keep the landed pose and the faded scrim while the overlay fades out —
+         resetting them here made the ring snap back to centre mid-fade.
+         hide(true) cuts instead of fading. Use it when the host is about to
+         resize or reflow the container: the overlay is absolutely positioned
+         inside it, so a reflow during the fade drags the landed disc with it
+         and you briefly see a second circle. */
+      if(instant){ rootEl.style.transition='none'; }
+      rootEl.classList.remove('is-on');
+      if(instant){ void rootEl.offsetWidth; rootEl.style.transition=''; }
+      playing=false; if(raf)cancelAnimationFrame(raf); raf=null;
+      return api;
+    },
+    destroy:function(){if(raf)cancelAnimationFrame(raf); rootEl.remove();},
+    seek:function(ms){if(land&&ms<land.at)land=null; playing=false; if(raf)cancelAnimationFrame(raf); raf=null; manual=ms; render(ms); manual=-1;},
+    pause:function(){playing=false; if(raf)cancelAnimationFrame(raf); raf=null;},
+    play:function(from){run(from||0);},
+    setResultAt:function(ms){R0=ms;},
+    timing:{intro:INTRO,turn:TURN,result:RDUR,reveal:REVEAL}
+  };
+  setStatus('success');
+  return api;
+}
+root.PayFX={create:create, palettes:PAL};
+}
+payFxModule(window);
+
+/* └── END BLOCK 5 ──────────────────────────────────────────────────────── */
+
+/* ┌──────────────────────────────────────────────────────────────────────┐
+   │  BLOCK 6 of 8 · WIRING — JS                     ADAPTED FOR BUILDER  │
+   │  The only block that knows about BOTH the checkout and the module.   │
+   │  Entry points — call these from your real gateway events:            │
+   │    payStart()            on Pay: overlay in, loader runs             │
+   │    payResolve(outcome)   when the web socket reports a status        │
+   │    payShowNow(outcome)   status already known at mount (deep link)   │
+   │    payReset()            back to the form                            │
+   │                                                                      │
+   │  TWO COLOURS, TWO JOBS                                               │
+   │    PayFX.palettes[fx]  status colour — ONLY the animated disc + ring,│
+   │                        the hero disc, the header tint, the pill.     │
+   │    --co-accent         the merchant's brand — contact rows, CTA.     │
+   │    --payfx-brand       Decentro's own mark (#0092FF). The intro IS   │
+   │                        the Decentro monogram, so it is NOT the       │
+   │                        merchant's colour.                            │
+   └──────────────────────────────────────────────────────────────────────┘ */
+/* identical geometry to PayFX, so the disc that flies in matches exactly */
+const PR_GLYPH = {
+  success:'<path d="M-70 4 L-22 51 L76 -49"/>',
+  pending:'<path style="stroke-width:15" d="M0 -74 A74 74 0 1 1 0 74 A74 74 0 1 1 0 -74"/><path style="stroke-width:19" d="M0 0 L0 -42"/><path style="stroke-width:19" d="M0 0 L30 20"/>',
+  failure:'<path d="M0 0 L-52 -52"/><path d="M0 0 L52 52"/><path d="M0 0 L52 -52"/><path d="M0 0 L-52 52"/>',
+  expired:'<path d="M0 -64 L0 12"/><path d="M0 52 L0 53"/>'
+};
+/* The seven backend outcomes collapse onto PayFX's four visual states —
+   green / amber / red / slate — because those are the only four a payer
+   needs to tell apart at a glance. Each keeps its own copy and CTAs. */
+const PR_DATA = {
+  success:{fx:'success', title:'Payment successful', pill:'Successful', txn:true,
+    msg:b=>`Your payment is complete and has been accepted by ${b}. A confirmation has been sent to you.`,
+    act:[['Done','pri']]},
+  pending:{fx:'pending', title:'Payment pending', pill:'Pending', txn:true,
+    msg:b=>`We are confirming this with your bank. It usually takes a few minutes — ${b} will be notified as soon as it settles.`,
+    act:[['Done','pri']]},
+  hold:{fx:'pending', title:'Unconfirmed payment status', pill:'On hold', txn:true,
+    msg:b=>`Your payment went through but has been placed on hold. Please contact ${b} for the updated status.`,
+    act:[['Done','pri']]},
+  failed:{fx:'failure', title:'Payment failed', pill:'Failed', txn:true,
+    msg:()=>`Don't worry — if money was deducted from your account, your bank will refund it automatically. You can try paying again using the same or a different method.`,
+    act:[['Try again','pri'],['Done','gho']]},
+  expired:{fx:'expired', title:'Payment expired', pill:'Expired', txn:false,
+    msg:()=>`This payment timed out before it could be completed. Please contact the merchant for a new link to continue.`,
+    act:[['Done','pri']]},
+  refund:{fx:'pending', title:'Refund initiated', pill:'Refunded', txn:true,
+    msg:b=>`Your payment went through but was rejected by ${b}. The full amount should reach you within 7 business days.`,
+    act:[['Done','pri']]},
+  invalid:{fx:'expired', title:'Invalid link', pill:'Invalid', txn:false,
+    msg:()=>`This link does not belong to Decentro. Please contact the merchant or sender of this link to share a new one with you.`,
+    act:[['Done','pri']]},
+};
+/* the banner stays only where the payer can still act on this session */
+const PR_KEEP_TIMER = {pending:1, hold:1, failed:1};
+
+let prFx = null, prTxnId = null, prCur = 'success';
+const prEl = id => document.getElementById(id);
+
+function prMerchant(){
+  const b = (allBlocks().find(x=>x.type==='brand')||{props:{name:'Merchant'}}).props.name;
+  return String(b).replace(/\.\s*$/,'');        /* "Aurora & Co." + "." = ".." */
+}
+function buildResult(key){
+  prCur = key;
+  const d = PR_DATA[key] || PR_DATA.success, pal = PayFX.palettes[d.fx];
+  const res = prEl('payResult'), brand = prMerchant(), m = state.merchant;
+  res.style.setProperty('--rc-c', pal.base);   /* status: hero disc          */
+  res.style.setProperty('--rc-t', pal.tint);   /* status: header tint + pill */
+  res.style.setProperty('--rc-d', pal.deep);   /* status: pill label         */
+  document.body.style.setProperty('--rc-t', pal.tint);
+  document.body.style.setProperty('--rc-d', pal.deep);
+  prEl('prDisc').setAttribute('fill', pal.base);
+  const g = prEl('prGlyph'); g.innerHTML = '<g>'+PR_GLYPH[d.fx]+'</g>';
+  const inner = g.firstChild;
+  try{ const bb = inner.getBBox();
+    if(bb.width && d.fx!=='pending')
+      inner.setAttribute('transform','translate('+(-(bb.x+bb.width/2)).toFixed(2)+','+(-(bb.y+bb.height/2)).toFixed(2)+')');
+  }catch(e){}
+  if(!prTxnId) prTxnId = '98' + String(Math.floor(1e10 + Math.random()*8.9e10));
+  prEl('prTitle').textContent = d.title;
+  prEl('prMsg').textContent = d.msg(brand);
+  prEl('prPill').textContent = d.pill;
+  prEl('prTo').textContent = 'to ' + brand;
+  prEl('prMerchant').textContent = brand;
+  prEl('prTxnRow').style.display = d.txn ? '' : 'none';
+  prEl('prTxn').textContent = prTxnId;
+  const amt = document.querySelector('[data-tt=total]');
+  prEl('prAmt').textContent = amt ? amt.textContent : fmt(computeTotals().total);
+  /* support rows come from Design → Merchant details */
+  prEl('prHelp').innerHTML =
+    (m.supportEmail?`<a class="pr-con" href="mailto:${esc(m.supportEmail)}"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>${esc(m.supportEmail)}</a>`:'')
+  + (m.supportPhone?`<a class="pr-con" href="tel:${esc(m.supportPhone)}"><svg viewBox="0 0 24 24"><path d="M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 6.5 6.5L17 13l4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.5 5.2 2 2 0 0 1 6.5 3z"/></svg>${esc(m.supportPhone)}</a>`:'')
+  + `<p class="pr-fine">For refunds, order issues or chargebacks, please contact ${esc(brand)}. Decentro only processes this payment on behalf of the merchant and cannot resolve order disputes.</p>`;
+  prEl('prAct').innerHTML = d.act.map(a=>`<button class="pr-cta ${a[1]}">${esc(a[0])}</button>`).join('');
+  prEl('prAct').querySelectorAll('.pr-cta').forEach(b=>b.addEventListener('click', resetFlow));
+}
+function showResult(key){
+  const card = $('#checkout'), res = prEl('payResult'), mark = prEl('prMark'), timer = prEl('coTimer');
+  /* Pin the height FIRST — before the banner is hidden and before the width
+     narrows. Both reflow the card (hiding the banner alone hands it ~60px),
+     and the card visibly jumped. Pinned, the only height change the payer
+     sees is the single eased tween in collapseCard(). */
+  if(card){ card.style.height = card.getBoundingClientRect().height+'px';
+            card.style.flex = '0 0 auto';      /* flex-grow would win over height */
+            card.style.overflow = 'hidden'; }
+  buildResult(key);
+  if(!PR_KEEP_TIMER[key]){ window.__payDone = true; if(timer) timer.style.display='none'; }
+  if(card) card.classList.add('is-result');    /* width narrows now           */
+  document.body.classList.add('is-result');    /* banner follows the card     */
+  mark.querySelector('svg').style.visibility = 'hidden';
+  mark.classList.remove('land');
+  res.classList.add('on');
+  const inner = prEl('prIn');
+  inner.classList.remove('pr-fade'); void inner.offsetWidth; inner.classList.add('pr-fade');
+}
+/* Collapse the card to the receipt's height as a dissolve. Measuring both
+   heights and tweening between them is what makes it read as seamless: the
+   class alone changes the layout in one frame, which looks like a snap. */
+function collapseCard(){
+  const card = $('#checkout'); if(!card) return;
+  const h0 = card.getBoundingClientRect().height;
+  card.style.height=''; card.style.flex=''; card.style.overflow='';
+  card.classList.add('is-flow');
+  const h1 = card.getBoundingClientRect().height;
+  if(Math.abs(h1-h0) < 2) return;
+  card.classList.add('is-melt');
+  card.style.height = h0+'px';
+  void card.offsetWidth;                       /* commit the start height */
+  card.style.height = h1+'px';
+  setTimeout(()=>{ card.style.height=''; card.style.overflow=''; card.style.flex=''; card.classList.remove('is-melt'); }, 660);
+}
+function resetFlow(){
+  const card = $('#checkout'), res = prEl('payResult');
+  $('#payOverlay').classList.remove('show');
+  if(res) res.classList.remove('on');
+  if(card){ card.classList.remove('is-result','is-flow','is-melt');
+            card.style.height=''; card.style.overflow=''; card.style.flex=''; }
+  document.body.classList.remove('is-result');
+  window.__payDone = false;
+  const timer = prEl('coTimer'); if(timer) timer.style.display='';
+  prTxnId = null;
+  if(prFx) prFx.hide();
+}
+function payFx(){
+  if(prFx) return prFx;
+  prFx = PayFX.create($('#payOverlay'), {
+    caption:'Processing Payment',
+    scrim:'rgba(248,248,248,.86)',
+    blur:3,
+    brand:'#0092FF',                 /* Decentro's mark — not the merchant's */
+    onReveal:function(){
+      showResult(prPending);
+      /* carry the page to the top while the icon flies: landOn re-measures
+         its target every frame, so it tracks the slot through the scroll */
+      if((window.pageYOffset||0) > 2){
+        try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
+      }
+      prFx.landOn(prEl('prDisc'), function(){
+        prEl('prMark').querySelector('svg').style.visibility = 'visible';
+        void prEl('prMark').offsetWidth; prEl('prMark').classList.add('land');
+        /* cut the overlay before the card reflows — it is positioned inside
+           the card, so collapsing mid-fade dragged the landed disc upward */
+        prFx.hide(true);
+        collapseCard();
+      });
+    }
+  });
+  return prFx;
+}
+let prPending = 'success';
+function payStart(){
+  resetFlow();
+  $('#payOverlay').classList.add('show');
+  payFx().start();
+}
+function payResolve(key){
+  prPending = key; simOutcome = key;
+  payFx().resolve((PR_DATA[key]||PR_DATA.success).fx);
+}
+function payShowNow(key){
+  prPending = key; simOutcome = key;
+  resetFlow();
+  $('#payOverlay').classList.add('show');
+  showResult(key);
+  payFx().resolveNow((PR_DATA[key]||PR_DATA.success).fx);
+  payFx().landOn(prEl('prDisc'), function(){
+    prEl('prMark').querySelector('svg').style.visibility = 'visible';
+    void prEl('prMark').offsetWidth; prEl('prMark').classList.add('land');
+    prFx.hide(true);
+    collapseCard();
+  });
+}
+function payReset(){ resetFlow(); }
+/* └── END BLOCK 6 ──────────────────────────────────────────────────────── */
+
 
 /* ═══════════════════════ PAY FLOW (preview) ═══════════════════════ */
 /* In production these states arrive over a web socket from the Decentro backend.
@@ -2330,9 +3450,8 @@ $('#simSel').addEventListener('change', e=>{
   /* in Preview, show the chosen status screen straight away — no need to run the
      whole pay flow first (and Dev mode swallows canvas clicks, so this is the way in) */
   if(mode==='preview'){
-    const ov = $('#payOverlay');
-    ov.classList.add('show');
-    showOutcome(ov);
+    $('#payOverlay').classList.remove('show');
+    payShowNow(e.target.value);
     if(devMode) toast('Showing the ' + e.target.value + ' screen — click any element to inspect it');
   }
 });
@@ -2375,102 +3494,8 @@ function showProcessing(ov, method){
   </div>`;
 }
 
-/* ── illustrations — clean geometry, fixed 240×170 canvas, aspect always preserved ── */
-const ILL_LEAVES = `<ellipse cx="50" cy="112" rx="24" ry="38" fill="#dbeafe" transform="rotate(18 50 112)"/>
-<ellipse cx="196" cy="108" rx="20" ry="34" fill="#dbeafe" transform="rotate(-16 196 108)"/>
-<circle cx="66" cy="34" r="5" fill="#bfdbfe"/><circle cx="190" cy="150" r="4" fill="#bfdbfe"/>`;
-const VAULT_CLOSED = `<rect x="78" y="34" width="88" height="120" rx="12" fill="#3b82f6"/>
-<rect x="78" y="34" width="18" height="120" rx="9" fill="#2563eb"/>
-<circle cx="128" cy="84" r="20" fill="none" stroke="#dbeafe" stroke-width="6"/>
-<circle cx="128" cy="84" r="6" fill="#dbeafe"/>
-<path d="M128 60v-7M128 115v-7M104 84h-7M159 84h-7" stroke="#dbeafe" stroke-width="4" stroke-linecap="round"/>
-<rect x="123" y="118" width="10" height="24" rx="5" fill="#dbeafe"/>
-<rect x="86" y="154" width="14" height="9" rx="3" fill="#1d4ed8"/><rect x="144" y="154" width="14" height="9" rx="3" fill="#1d4ed8"/>`;
-const VAULT_OPEN = `<rect x="78" y="34" width="88" height="120" rx="12" fill="#3b82f6"/>
-<rect x="90" y="44" width="64" height="100" rx="4" fill="#1e40af"/>
-<rect x="90" y="91" width="64" height="6" fill="#3b82f6"/>
-<g fill="#f5b32e"><rect x="96" y="78" width="24" height="7" rx="3.5"/><rect x="98" y="69" width="20" height="7" rx="3.5"/><rect x="124" y="78" width="20" height="7" rx="3.5"/>
-<rect x="96" y="134" width="26" height="7" rx="3.5"/><rect x="98" y="125" width="22" height="7" rx="3.5"/><rect x="100" y="116" width="18" height="7" rx="3.5"/></g>
-<g fill="#4ade80"><rect x="126" y="128" width="20" height="6" rx="2"/><rect x="128" y="136" width="16" height="6" rx="2"/></g>
-<rect x="154" y="28" width="26" height="132" rx="9" fill="#2563eb"/>
-<circle cx="167" cy="82" r="10" fill="none" stroke="#dbeafe" stroke-width="4.5"/>
-<rect x="163" y="110" width="8" height="18" rx="4" fill="#dbeafe"/>
-<rect x="86" y="154" width="14" height="9" rx="3" fill="#1d4ed8"/>`;
-const BADGES = {
-  clock: `<circle cx="186" cy="42" r="26" fill="#fff" stroke="#f5b32e" stroke-width="6"/><path d="M186 28v15l10 6" stroke="#f5b32e" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
-  check: `<circle cx="186" cy="42" r="26" fill="#fff" stroke="#4caf50" stroke-width="6"/><path d="M173 43l9 9 17-18" stroke="#4caf50" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
-  fail:  `<circle cx="186" cy="42" r="26" fill="#fff" stroke="#d9534f" stroke-width="6"/><path d="M176 32l20 20M196 32l-20 20" stroke="#d9534f" stroke-width="6" stroke-linecap="round"/>`,
-  warn:  `<path d="M195 6l-8 11h10l-8 11" stroke="#d9534f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M186 22l26 46h-52Z" fill="#fff" stroke="#d9534f" stroke-width="5.5" stroke-linejoin="round"/>
-          <rect x="182" y="38" width="8" height="16" rx="4" fill="#d9534f"/><circle cx="186" cy="61" r="4" fill="#d9534f"/>`,
-  hold:  `<g fill="#f5b32e"><rect x="166" y="16" width="9" height="28" rx="4.5"/><rect x="177" y="11" width="9" height="33" rx="4.5"/><rect x="188" y="13" width="9" height="31" rx="4.5"/><rect x="199" y="18" width="9" height="26" rx="4.5"/><path d="M166 42h42v9a21 21 0 0 1-21 21 21 21 0 0 1-21-21Z"/></g>`,
-  refund:`<circle cx="186" cy="42" r="26" fill="#fff" stroke="#4caf50" stroke-width="6"/><path d="M164 26l-5-9 11-2" fill="none" stroke="#4caf50" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M174 43l9 9 16-17" fill="none" stroke="#4caf50" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`,
-};
-function illusVault(variant, badge){
-  return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">${ILL_LEAVES}${variant==='open'?VAULT_OPEN:VAULT_CLOSED}${BADGES[badge]||''}</svg>`;
-}
-function illusInvalid(){
-  return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">${ILL_LEAVES}
-    <circle cx="160" cy="62" r="30" fill="#e3edfc"/><path d="M136 62h48M160 38c8 7 12 15 12 24s-4 17-12 24c-8-7-12-15-12-24s4-17 12-24Z" stroke="#bfdbfe" stroke-width="3" fill="none"/>
-    <rect x="64" y="46" width="104" height="70" rx="8" fill="#3b82f6"/><rect x="71" y="53" width="90" height="56" rx="4" fill="#dbeafe"/>
-    <rect x="106" y="116" width="20" height="12" fill="#2563eb"/><rect x="92" y="128" width="48" height="9" rx="4.5" fill="#1d4ed8"/>
-    <path d="M88 24l-8 11h10l-8 11" stroke="#d9534f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M116 32l28 48H88Z" fill="#fff" stroke="#d9534f" stroke-width="5.5" stroke-linejoin="round"/>
-    <rect x="112" y="48" width="8" height="17" rx="4" fill="#d9534f"/><circle cx="116" cy="72" r="4" fill="#d9534f"/></svg>`;
-}
-
-/* ── result screens (copy per Decentro payment-link designs; states arrive over web socket) ── */
-const OUTCOMES = {
-  success: { title:'Payment Successful', sub:b=>`Your payment was successful and has been accepted by ${b}.`, note:null, ill:()=>illusVault('open','check'), txn:true, card:true, countdown:true },
-  pending: { title:'Payment Pending', sub:()=>`The payment on this link is under process. Please wait for some time.`, note:b=>`This payment will reflect shortly. If it doesn't update, please contact ${b} for the final status.`, ill:()=>illusVault('open','clock'), txn:true, card:true },
-  hold:    { title:'Unconfirmed Payment Status', sub:()=>`Your payment was successful but has been placed On-Hold.`, note:b=>`Please contact ${b} for the updated status.`, ill:()=>illusVault('open','hold'), txn:true, card:true },
-  failed:  { title:'Payment Failed', sub:()=>`This payment is failed.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusVault('closed','fail'), txn:true, card:true, actions:`<div class="pr-actions"><button class="pr-btn" data-po="retry">Retry payment</button></div>` },
-  expired: { title:'Payment Link Expired', sub:()=>`This payment link is expired.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusVault('closed','warn'), txn:false, card:true },
-  refund:  { title:'Refund Initiated', sub:b=>`Your payment was successful and has been rejected by ${b}.`, note:()=>`You should receive your full refund within 7 business days.`, ill:()=>illusVault('open','refund'), txn:true, card:true },
-  invalid: { title:'Invalid Link', sub:()=>`This link doesn't belong to Decentro.`, note:()=>`Please connect with the merchant/ sender of this link to share a new one with you.`, ill:()=>illusInvalid(), txn:false, card:false, help:false },
-};
 let countTimer = null;
 function stopCountdown(){ if(countTimer){ clearInterval(countTimer); countTimer = null; } }
-
-function showOutcome(ov){
-  stopCountdown();
-  const o = OUTCOMES[simOutcome] || OUTCOMES.success;
-  const brand = (allBlocks().find(x=>x.type==='brand')||{props:{name:'Merchant Name'}}).props.name;
-  const t = computeTotals();
-  const txnId = '98' + String(Math.floor(1e18 + Math.random()*8.9e18));
-  ov.innerHTML = `<div class="pr-wrap">
-    <div class="pr-ill">${o.ill()}</div>
-    <div class="po-title">${o.title}</div>
-    <div class="po-sub cv-sub">${o.sub(esc(brand))}</div>
-    ${o.card?`<div class="pr-amt-row">
-      <span class="po-amount">${fmt(t.total)}</span>
-      <span class="pr-meta cv-sub">to ${esc(brand)} · ${esc(state.merchant.vpa||'merchant@upi')}</span>
-      ${o.txn?`<span class="pr-txn cv-sub">Txn ID ${txnId}</span>`:''}
-    </div>`:''}
-    ${o.countdown?`<div class="pr-count">Redirecting in&nbsp;<b><span id="ppCount">5</span> sec</b></div>`:''}
-    ${o.actions||''}
-    ${o.note ? `<div class="pr-note cv-sub">${o.note(esc(brand))}</div>` : ''}
-    ${o.help===false ? '' : `<div class="pr-help cv-sub">
-      <div class="ph-head">Need help with this payment?</div>
-      <div class="ph-body">For refunds, chargebacks, order issues or any other payment-related support,
-        please contact <b>${esc(brand)}</b> via their app's Help / Support section${state.merchant.supportEmail?` or write to <span class="ph-mail">${esc(state.merchant.supportEmail)}</span>`:''}${state.merchant.supportPhone?` (${esc(state.merchant.supportPhone)})`:''}.</div>
-      <div class="ph-fine">Decentro only processes this payment on the merchant's behalf and cannot action refunds or disputes directly.</div>
-    </div>`}
-    <div class="pr-trust"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5.25 3.8 10.15 9 11.35C17.2 22.15 21 17.25 21 11.996V6l-9-4Zm-1.5 14.5-3.5-3.5 1.41-1.41 2.09 2.08 5.09-5.08L17 10l-6.5 6.5Z"/></svg>100% Trusted &amp; Secure Payments</div>
-    ${o.countdown?'':'<button class="po-close" data-po="close">Back to checkout</button>'}
-    <div class="pr-faq"><a href="${DECENTRO_HELP}" target="_blank" rel="noopener">Decentro Help &amp; FAQ</a></div>
-  </div>`;
-  /* Dev mode: never auto-dismiss the card out from under someone inspecting it */
-  if(o.countdown && !devMode){
-    let n = 5;
-    countTimer = setInterval(()=>{
-      n--;
-      const el = document.getElementById('ppCount');
-      if(el) el.textContent = n;
-      if(n<=0){ stopCountdown(); ov.classList.remove('show'); toast('Redirected back to '+brand); }
-    }, 1000);
-  }
-}
 
 /* mock netbanking redirect journey: redirect → bank login → confirm → outcome */
 function nbJourney(ov, bank){
@@ -2551,8 +3576,8 @@ function startQrLive(){
   qrWatch = setTimeout(()=>{
     qrWatch = null;
     if(!rt.qrLive) return;
-    const ov = $('#payOverlay'); ov.classList.add('show'); showOutcome(ov);
     rt.qrLive = false; renderAll();
+    payShowNow(simOutcome);
   }, 6000);
 }
 function runPayFlow(){
@@ -2578,8 +3603,10 @@ function runPayFlow(){
     if(rt.nbMode==='qr'){ nbQrFlow(ov); return; }
   }
   const method = rt.selUpi ? UPI_APPS[rt.selUpi].name : 'UPI';
-  showProcessing(ov, method);
-  setTimeout(()=>showOutcome(ov, method), 1600);
+  ov.classList.remove('show');       /* PayFX owns the card while it runs */
+  payStart();
+  /* stands in for the web-socket status event from the backend */
+  setTimeout(()=>payResolve(simOutcome), 1500);
 }
 
 /* overlay button routing */
@@ -2642,6 +3669,7 @@ $('#modeSeg').addEventListener('click', e=>{
   stopCountdown();
   if(qrWatch){ clearTimeout(qrWatch); qrWatch = null; }
   rt.qrLive = false;
+  payReset();
   $('#payOverlay').classList.remove('show');
   renderAll();
   renderTimer();          /* restart / freeze the session clock with the mode */
@@ -3326,13 +4354,10 @@ function timerHTML(secs){
       <span class="ct-ic">${CLOCK_IC}</span>
       <span class="ct-t">${done ? 'Payment session expired' : `Payment session expires in <b id="ctClock">${mmss(secs)}</b>`}</span>
     </span>` : '';
-  const page = pe ? `
-    <span class="ct-in ct-page ${peDead?'dead':''}">
-      <span class="ct-ic">${CAL_IC}</span>
-      <span class="ct-t">${peDead
-        ? 'Checkout page expired'
-        : `Checkout page expires in <b id="ctLeft">${untilText(peMs)}</b>`}</span>
-    </span>` : '';
+  /* Checkout page expiry is a BACKEND concern: it still arms the expired
+     screen, but it is never drawn on the banner. The payer only needs the one
+     clock that is counting against them right now. */
+  const page = '';
   if(!session && !page) return '';
   return `<div class="ct-sentinel" id="ctSentinel"></div>
   <div class="co-timer ${urgent?'urgent':''} ${(done||peDead)?'done':''}" id="coTimer">
@@ -3349,8 +4374,8 @@ function pageExpired(){
 function fireExpired(why){
   simOutcome = 'expired';
   const sel = $('#simSel'); if(sel) sel.value = 'expired';
-  const ov = $('#payOverlay'); ov.classList.add('show'); showOutcome(ov);
-  toast(why + ' — showing the expired screen');
+  payShowNow('expired');
+  toast(why + ' — showing the expired receipt');
 }
 function renderTimer(){
   const host = $('#timerHost');
@@ -3664,7 +4689,7 @@ function assetsHTML(el){
       <button class="da-b" data-dlasset="${i}">Download</button>
       ${a.type==='svg'?`<button class="da-b" data-cpasset="${i}">Copy</button>`:''}
     </div>`;
-  }).join('') + `<button class="btn btn-outline" style="width:100%;justify-content:center;height:30px;font-size:11px;margin-top:4px;" data-dlall="sel">Download all ${list.length} asset${list.length>1?'s':''}</button>`;
+  }).join('') + `<button class="btn btn-outline" style="width:100%;justify-content:center;height:30px;font-size:var(--fs-note);margin-top:4px;" data-dlall="sel">Download all ${list.length} asset${list.length>1?'s':''}</button>`;
 }
 
 function renderDevPanel(){
@@ -3678,7 +4703,7 @@ function renderDevPanel(){
       <br><br>Use the breadcrumb to step up to a parent (card shell, shadow, dotted background).
       <br><br><b>Status screens:</b> switch to <b>Preview</b>, then pick any state from the <b>Outcome</b> dropdown in the
       top bar — the card opens immediately and stays put while you inspect it.</div>
-      <button class="btn btn-outline" style="width:100%;justify-content:center;height:32px;font-size:11px;margin-top:12px;" data-dlall="page">Download every icon &amp; image on the page</button>`;
+      <button class="btn btn-outline" style="width:100%;justify-content:center;height:32px;font-size:var(--fs-note);margin-top:12px;" data-dlall="page">Download every icon &amp; image on the page</button>`;
     return;
   }
   /* ancestor breadcrumb */
@@ -3751,7 +4776,7 @@ function devCopy(txt){
 function collectCheckoutCSS(){
   /* .zone- must be here: it carries the head/scroll-body/pinned-foot layout AND the
      separator rule above the foot (discount + total). Without it the export loses both. */
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.ct-sentinel|\.is-docked|\.sw|\.f-label|\.dc-|\.zone-|\.foot-|\.tt-|\.pb-|\.pb\b|\.qr-|\.info-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot|qrIn|qrBreath|qrHalo))/;
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.ct-sentinel|\.is-docked|\.sw|\.f-label|\.dc-|\.zone-|\.foot-|\.tt-|\.pb-|\.pb\b|\.qr-|\.payfx|\.pay-result|\.pr-|\.is-flow|\.is-melt|body\.is-result|\.info-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot|qrIn|qrBreath|qrHalo|prMelt|rcBeat|rcFadeOnly|rcHalo|rcIn|rcRip|tagPulse|payfxDot))/;
   const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell|step-switch)/;
   let css = '';
   for(const sheet of document.styleSheets){
@@ -3911,6 +4936,20 @@ function buildExportHTML(){
 .bg-blob.b2{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.06),transparent);}
 body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),transparent);}
 `;
+  /* every receipt's copy, resolved at export time against this merchant */
+  /* every receipt's copy, resolved at export time against this merchant */
+  const rcBrand = prMerchant();
+  const rcJson = JSON.stringify(Object.keys(PR_DATA).reduce((m,k)=>{
+    const d = PR_DATA[k];
+    m[k] = { fx:d.fx, title:d.title, pill:d.pill, txn:d.txn, msg:d.msg(rcBrand), act:d.act };
+    return m;
+  },{}));
+  const rcMeta = JSON.stringify({ brand:rcBrand, email:state.merchant.supportEmail||'',
+                                  phone:state.merchant.supportPhone||'', help:DECENTRO_HELP,
+                                  glyph:PR_GLYPH, keepTimer:PR_KEEP_TIMER });
+  /* the result screen's markup, lifted straight out of the builder's DOM */
+  const rcMarkup = (document.getElementById('payResult')||{outerHTML:''}).outerHTML
+                     .replace(/ class="pay-result on"/,' class="pay-result"');
   const qrBlk = allBlocks().find(b=>b.type==='upiqr');
   const qrProps = qrBlk ? qrBlk.props : {liveTitle:'Scan to Pay', waitText:'Waiting for payment'};
   const legalJson = JSON.stringify({tnc:state.merchant.tnc||'', privacy:state.merchant.privacy||''});
@@ -3985,12 +5024,7 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  var pad=function(n){return String(n).padStart(2,'0');};",
     "  function expire(msg){",
     "    el.classList.add('done'); el.classList.remove('urgent');",
-    "    var ov=document.getElementById('payOverlay');",
-    "    if(ov){ ov.innerHTML='<div class=\"pr-wrap\"><div class=\"po-title\">Payment Link Expired</div>'",
-    "      +'<div class=\"po-sub cv-sub\">'+msg+'</div>'",
-    "      +'<div class=\"pr-note cv-sub\">Please connect with the merchant/ sender of this link to share a new one with you.</div>'",
-    "      +'<div class=\"pr-faq\"><a href=\"" + DECENTRO_HELP + "\" target=\"_blank\" rel=\"noopener\">Decentro Help &amp; FAQ</a></div></div>';",
-    "      ov.classList.add('show'); }",
+    "    payShowNow('expired');",
     "  }",
     "  function left(ms){",
     "    if(ms<=0) return 'expired';",
@@ -4069,6 +5103,111 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  start();",
     "})();"
     ].join('\n') : '',
+    "/* ══════════════════════════════════════════════════════════════════════",
+    "   PAYMENT STATUS ANIMATION + RECEIPT  ·  BLOCKS 5 + 6",
+    "   The same module and wiring the builder runs. Drive it from your real",
+    "   payment state machine:",
+    "     payStart()              on Pay: overlay in, loader runs",
+    "     payResolve('success')   when the web socket reports a status",
+    "     payShowNow('expired')   status already known at mount (deep link)",
+    "     payReset()              back to the form",
+    "   Statuses: success · pending · hold · failed · expired · refund · invalid",
+    "   ══════════════════════════════════════════════════════════════════════ */",
+    "(" + payFxModule.toString() + ")(window);",
+    "var PR=" + rcJson + ", PRM=" + rcMeta + ", PR_TXN=null, PRFX=null, PR_PENDING='success';",
+    "var prEl=function(i){return document.getElementById(i);};",
+    "function prEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');}",
+    "function buildResult(key){",
+    "  var d=PR[key]||PR.success, pal=PayFX.palettes[d.fx], res=prEl('payResult');",
+    "  res.style.setProperty('--rc-c',pal.base);",
+    "  res.style.setProperty('--rc-t',pal.tint);",
+    "  res.style.setProperty('--rc-d',pal.deep);",
+    "  document.body.style.setProperty('--rc-t',pal.tint);",
+    "  document.body.style.setProperty('--rc-d',pal.deep);",
+    "  prEl('prDisc').setAttribute('fill',pal.base);",
+    "  var g=prEl('prGlyph'); g.innerHTML='<g>'+PRM.glyph[d.fx]+'</g>';",
+    "  var inner=g.firstChild;",
+    "  try{ var bb=inner.getBBox();",
+    "    if(bb.width && d.fx!=='pending') inner.setAttribute('transform','translate('+(-(bb.x+bb.width/2)).toFixed(2)+','+(-(bb.y+bb.height/2)).toFixed(2)+')');",
+    "  }catch(e){}",
+    "  if(!PR_TXN) PR_TXN='98'+String(Math.floor(1e10+Math.random()*8.9e10));",
+    "  prEl('prTitle').textContent=d.title;",
+    "  prEl('prMsg').textContent=d.msg;",
+    "  prEl('prPill').textContent=d.pill;",
+    "  prEl('prTo').textContent='to '+PRM.brand;",
+    "  prEl('prMerchant').textContent=PRM.brand;",
+    "  prEl('prTxnRow').style.display=d.txn?'':'none';",
+    "  prEl('prTxn').textContent=PR_TXN;",
+    "  var amt=document.querySelector('[data-tt=total]'); if(amt) prEl('prAmt').textContent=amt.textContent;",
+    "  /* support rows come from the merchant details set in the builder */",
+    "  prEl('prHelp').innerHTML=",
+    "    (PRM.email?'<a class=\"pr-con\" href=\"mailto:'+prEsc(PRM.email)+'\"><svg viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M3 7l9 6 9-6\"/></svg>'+prEsc(PRM.email)+'</a>':'')",
+    "  + (PRM.phone?'<a class=\"pr-con\" href=\"tel:'+prEsc(PRM.phone)+'\"><svg viewBox=\"0 0 24 24\"><path d=\"M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 6.5 6.5L17 13l4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.5 5.2 2 2 0 0 1 6.5 3z\"/></svg>'+prEsc(PRM.phone)+'</a>':'')",
+    "  + '<p class=\"pr-fine\">For refunds, order issues or chargebacks, please contact '+prEsc(PRM.brand)+'. Decentro only processes this payment on behalf of the merchant and cannot resolve order disputes.</p>';",
+    "  prEl('prAct').innerHTML=d.act.map(function(a){return '<button class=\"pr-cta '+a[1]+'\">'+prEsc(a[0])+'</button>';}).join('');",
+    "  prEl('prAct').querySelectorAll('.pr-cta').forEach(function(b){b.addEventListener('click',payReset);});",
+    "}",
+    "function showResult(key){",
+    "  var card=document.querySelector('.checkout'), res=prEl('payResult'), mark=prEl('prMark'), timer=prEl('coTimer');",
+    "  /* pin the height before the banner hides and the width narrows, so the",
+    "     only height change the payer sees is collapseCard's single tween */",
+    "  if(card){ card.style.height=card.getBoundingClientRect().height+'px';",
+    "            card.style.flex='0 0 auto'; card.style.overflow='hidden'; }",
+    "  buildResult(key);",
+    "  if(!PRM.keepTimer[key]){ window.__payDone=true; if(timer) timer.style.display='none'; }",
+    "  if(card) card.classList.add('is-result');",
+    "  document.body.classList.add('is-result');",
+    "  mark.querySelector('svg').style.visibility='hidden'; mark.classList.remove('land');",
+    "  res.classList.add('on');",
+    "  var inner=prEl('prIn');",
+    "  inner.classList.remove('pr-fade'); void inner.offsetWidth; inner.classList.add('pr-fade');",
+    "}",
+    "function collapseCard(){",
+    "  var card=document.querySelector('.checkout'); if(!card) return;",
+    "  var h0=card.getBoundingClientRect().height;",
+    "  card.style.height=''; card.style.flex=''; card.style.overflow='';",
+    "  card.classList.add('is-flow');",
+    "  var h1=card.getBoundingClientRect().height;",
+    "  if(Math.abs(h1-h0)<2) return;",
+    "  card.classList.add('is-melt'); card.style.height=h0+'px';",
+    "  void card.offsetWidth; card.style.height=h1+'px';",
+    "  setTimeout(function(){card.style.height='';card.style.overflow='';card.style.flex='';card.classList.remove('is-melt');},660);",
+    "}",
+    "function payReset(){",
+    "  var card=document.querySelector('.checkout'), res=prEl('payResult'), timer=prEl('coTimer');",
+    "  var ov=document.getElementById('payOverlay'); if(ov) ov.classList.remove('show');",
+    "  if(res) res.classList.remove('on');",
+    "  if(card){ card.classList.remove('is-result','is-flow','is-melt'); card.style.height=''; card.style.overflow=''; card.style.flex=''; }",
+    "  document.body.classList.remove('is-result');",
+    "  window.__payDone=false; if(timer) timer.style.display='';",
+    "  PR_TXN=null; if(PRFX) PRFX.hide();",
+    "}",
+    "function prLand(){",
+    "  PRFX.landOn(prEl('prDisc'),function(){",
+    "    prEl('prMark').querySelector('svg').style.visibility='visible';",
+    "    void prEl('prMark').offsetWidth; prEl('prMark').classList.add('land');",
+    "    PRFX.hide(true); collapseCard();",
+    "  });",
+    "}",
+    "function payFx(){",
+    "  if(PRFX) return PRFX;",
+    "  PRFX=PayFX.create(document.getElementById('payOverlay'),{",
+    "    caption:'Processing Payment', scrim:'rgba(248,248,248,.86)', blur:3, brand:'#0092FF',",
+    "    onReveal:function(){",
+    "      showResult(PR_PENDING);",
+    "      if((window.pageYOffset||0)>2){ try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);} }",
+    "      prLand();",
+    "    }",
+    "  });",
+    "  return PRFX;",
+    "}",
+    "function payStart(){ payReset(); document.getElementById('payOverlay').classList.add('show'); payFx().start(); }",
+    "function payResolve(k){ PR_PENDING=k; payFx().resolve((PR[k]||PR.success).fx); }",
+    "function payShowNow(k){",
+    "  PR_PENDING=k; payReset();",
+    "  document.getElementById('payOverlay').classList.add('show');",
+    "  showResult(k); payFx().resolveNow((PR[k]||PR.success).fx); prLand();",
+    "}",
     "/* ╔══════════════════════════════════════════════════════════════════════╗",
     "   ║  BRAND CONTRAST ENGINE — identical source to the builder.            ║",
     "   ║  The CSS above already carries the RESOLVED values, so this is only  ║",
@@ -4124,14 +5263,7 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  if(QR_IDLE!==null){ m.querySelector('.bm-body').innerHTML=QR_IDLE; QR_IDLE=null; }",
     "  document.querySelector('.checkout').classList.remove('qr-armed');",
     "}",
-    "function qrDone(){",
-    "  var ov=document.getElementById('payOverlay'); if(!ov) return;",
-    "  ov.innerHTML='<div class=\"pr-wrap\"><div class=\"po-ring\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#10b981\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></div>'",
-    "    +'<div class=\"po-title\">Payment successful</div>'",
-    "    +'<button class=\"po-close\" onclick=\"document.getElementById(&quot;payOverlay&quot;).classList.remove(&quot;show&quot;)\">Back</button>'",
-    "    +'<div class=\"pr-faq\"><a href=\"" + DECENTRO_HELP + "\" target=\"_blank\" rel=\"noopener\">Decentro Help &amp; FAQ</a></div></div>';",
-    "  ov.classList.add('show');",
-    "}",
+    "function qrDone(){ payShowNow('success'); }",
     "/* Decentro pay loader — logo cube streaming into the D */",
     "var DL_LOADER='" + payLoader('Processing payment','').replace(/'/g,"\\'").replace(/\n\s*/g,'') + "';",
     "function goStep(n){",
@@ -4253,15 +5385,19 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  if(e.target.closest('[data-act=qrCancel]')){ qrExit(); return; }",
     "  var pay=e.target.closest('[data-act=pay]');",
     "  if(pay && qrArmed()){ qrEnter(); return; }",
-    "  if(pay){var ov=document.getElementById('payOverlay');ov.innerHTML='<div class=\"po-inner\">'+DL_LOADER+'<div class=\"po-ws cv-sub\"><span class=\"ws-dot\"></span>Listening for payment status · web socket</div></div>';ov.classList.add('show');",
-    "    setTimeout(function(){ov.innerHTML='<div class=\"po-inner\"><div class=\"po-ring\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#10b981\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></div><div class=\"po-title\">Payment successful</div><button class=\"po-close\" onclick=\"document.getElementById(&quot;payOverlay&quot;).classList.remove(&quot;show&quot;)\">Back</button><div class=\"pr-faq\"><a href=\"' + DECENTRO_HELP + '\" target=\"_blank\" rel=\"noopener\">Decentro Help &amp; FAQ</a></div></div>';},1500);return;}",
+    "  if(pay){",
+    "    payStart();",
+    "    /* stands in for the web-socket status event — swap for your own */",
+    "    setTimeout(function(){ payResolve('success'); },1500);",
+    "    return;",
+    "  }",
     "});"
   ].join('\n');
   const legalModal = `<div id="legalModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);align-items:center;justify-content:center;z-index:100;padding:24px;">
   <div style="background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
       <b id="lmTitle" style="font-size:var(--fs-body);color:#1c2024;"></b>
-      <button data-lm-close style="font-size:1rem;color:#475569;line-height:1;">✕</button>
+      <button data-lm-close style="font-size:var(--fs-body);color:#475569;line-height:1;">✕</button>
     </div>
     <div id="lmBody" style="flex:1;overflow:auto;padding:18px;font-size:var(--fs-sub);line-height:1.7;color:#475569;white-space:pre-wrap;"></div>
   </div>
@@ -4284,8 +5420,34 @@ img,svg,canvas,table{max-width:100%;}
 .co-col,.zone-body,.zone-foot,.zone-head{min-width:0;}
 /* --co-bar is the height the fixed session-timer bar occupies at the top */
 :root{--co-bar:50px;
-  /* ── TYPE SCALE ── 17px titles · 15px body · 13px subtext, in rem */
-  --fs-title:1.0625rem; --fs-body:0.9375rem; --fs-sub:0.8125rem; --fs-note:0.6562rem;}
+  /* ── TYPE SCALE · one source of truth for the whole demo ─────────────────
+     Eight steps. Nothing in this file may set a font-size in px or rem
+     directly — use a token, and if none fits, the scale is wrong, not the
+     component. Sizes are rem so they track the root and respect browser
+     text-size settings.
+
+       PRODUCT · what the payer reads on the checkout
+         --fs-sub       11px   body copy, subtext, breakdown rows, inputs
+         --fs-body      13px   emphasis: field labels, item names, buttons
+         --fs-title     15px   card titles, Total Payable
+         --fs-headline  20px   stage headings, receipt outcome title
+         --fs-amount    24px   the one number per screen that matters most
+
+       CHROME · the builder's own panels, denser by design
+         --fs-micro     10px   badges, legal fine print, code, eyebrows
+         --fs-note      11px   sidebar labels, form fields, yellow notes
+         --fs-control   12px   control names, buttons, toggle labels
+
+     Changing a value here changes it everywhere, in the builder and in
+     every page it exports. */
+  --fs-micro:0.625rem;/* 10px */
+  --fs-note:0.6875rem;/* 11px */
+  --fs-control:0.75rem;/* 12px */
+  --fs-sub:0.6875rem;/* 11px */
+  --fs-body:0.8125rem;/* 13px */
+  --fs-title:0.9375rem;/* 15px */
+  --fs-headline:1.25rem;/* 20px */
+  --fs-amount:1.5rem;/* 24px */}
 body{font-family:'Montserrat',sans-serif;background:#f0f2f6;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:0;position:relative;isolation:isolate;}
 /* 48px grid (masked) + soft brand glow blobs */
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -4413,6 +5575,7 @@ ${renderStatic('summary')}
 ${renderStatic('payment')}
   </div>
   <div class="pay-overlay" id="payOverlay"></div>
+${rcMarkup}
 </div>
 ${trustStrip}
 ${powered}
