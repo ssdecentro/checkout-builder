@@ -94,24 +94,7 @@ input,select,textarea{font-family:inherit;}
 .swatch.on{border-color:#000;box-shadow:0 0 0 2px #fff inset;}
 .swatch-custom{width:26px;height:26px;border-radius:50%;border:1.5px dashed #cbd5e1;padding:0;overflow:hidden;position:relative;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);}
 .swatch-custom input{position:absolute;inset:-6px;opacity:0;cursor:pointer;}
-/* ── live contrast readout (Design tab) ── */
-.cx-panel{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:8px;}
-.cx-row{display:flex;align-items:center;gap:8px;padding:7px 9px;border-bottom:1px solid #f1f5f9;}
-.cx-row:last-child{border-bottom:none;}
-.cx-row.cx-head{background:var(--surface);padding:6px 9px;}
-.cx-k{font-size:0.6875rem;font-weight:600;color:var(--sub);flex:1 1 auto;min-width:0;line-height:1.35;}
-.cx-k small{display:block;font-size:0.5938rem;font-weight:500;color:var(--muted);}
-.cx-chip{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:22px;padding:0 7px;border-radius:6px;font-size:0.625rem;font-weight:800;font-family:ui-monospace,Menlo,monospace;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.09);}
-.cx-lc{font-size:0.625rem;font-weight:800;font-family:ui-monospace,Menlo,monospace;min-width:44px;text-align:right;flex:none;white-space:nowrap;}
-.cx-lc i{font-style:normal;font-weight:600;color:var(--muted);text-decoration:line-through;}
-.cx-pass{color:#0f8b4c;} .cx-fail{color:#b91c1c;}
-.cx-badge{display:inline-block;margin-top:4px;font-size:0.5312rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 5px;border-radius:4px;background:#fef3c7;color:#92400e;}
-.cx-badge-wcag{background:#fee2e2;color:#b91c1c;}
-.cx-verdict{font-size:0.6562rem;font-weight:700;line-height:1.5;padding:8px 9px;background:#f0fdf4;color:#166534;}
-.cx-verdict.warn{background:#fffbeb;color:#92400e;}
-.cx-test{width:26px;height:26px;border-radius:7px;cursor:pointer;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1);transition:transform .12s;}
-.cx-test:hover{transform:scale(1.12);}
-.cx-test.on{border-color:#000;}
+
 .dz-select{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-note);font-weight:500;color:var(--ink);background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
 .dz-range{width:100%;accent-color:#000;}
 .dz-flex{display:flex;align-items:center;justify-content:space-between;gap:10px;}
@@ -124,6 +107,10 @@ input,select,textarea{font-family:inherit;}
 .sim-wrap select{height:34px;min-width:118px;border:1px solid var(--border);border-radius:var(--r);padding:0 30px 0 11px;font-size:12px;font-weight:600;color:var(--ink);background:#fff;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;}
 .sim-wrap select:focus{outline:none;border-color:#000;box-shadow:0 0 0 3px rgba(0,0,0,.06);}
 .dz-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;}
+.dz-sublabel{font-size:0.625rem;font-weight:700;letter-spacing:.4px;color:var(--sub);text-transform:uppercase;margin-top:4px;}
+.dz-datetime{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-family:inherit;font-size:var(--fs-note);font-weight:600;color:var(--ink);background:#fff;}
+.dz-datetime:focus{outline:none;border-color:#000;box-shadow:0 0 0 3px rgba(0,0,0,.06);}
+.dz-when{font-size:0.5938rem;font-weight:600;color:var(--muted);margin-top:5px;}
 .dz-toggle-row .tr-name{font-size:12px;font-weight:600;}
 .dz-toggle-row .tr-sub{font-size:10px;color:var(--muted);margin-top:1px;}
 
@@ -208,11 +195,6 @@ input,select,textarea{font-family:inherit;}
 .zone-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;margin-right:-12px;padding-right:9px;}
 /* A soft fade at the bottom edge tells the payer there is more below — the
    scrollbar alone is too easy to miss on a trackpad. */
-@media (min-width:641px){
-  .b-totals .tt-inline{display:none;}          /* folded into the popover */
-  .tt-i{display:inline-flex;}
-  .tt-wrap:hover .tt-pop,.tt-i:focus-visible + .tt-pop{display:block;}
-}
 /* Thin brand scrollbar. A global `* { scrollbar-width: thin }` makes Blink
    ignore ::-webkit-scrollbar and fall back to the OS overlay bar, so reset the
    standard properties where the WebKit pseudo-elements exist and keep them only
@@ -291,6 +273,14 @@ input,select,textarea{font-family:inherit;}
 .co-timer .ct-ic{width:17px;height:17px;min-width:17px;display:flex;align-items:center;justify-content:center;}
 .co-timer .ct-ic svg{width:17px;height:17px;stroke:#dc2626;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .co-timer .ct-t{font-size:var(--fs-body);font-weight:700;color:#b91c1c;line-height:1.3;}
+/* the two timers sit side by side, split by a hairline */
+.co-timer{flex-wrap:wrap;row-gap:4px;}
+.co-timer .ct-div{width:1px;height:18px;background:#b91c1c;opacity:.22;flex:none;}
+.co-timer .ct-page .ct-t{font-weight:600;}
+@media (max-width:760px){
+  .co-timer{flex-direction:column;align-items:flex-start;gap:5px;}
+  .co-timer .ct-div{display:none;}
+}
 .co-timer .ct-t b{font-variant-numeric:tabular-nums;}
 .co-timer.urgent{background:#fee2e2;border-color:#fca5a5;animation:tpulse 1.6s ease-in-out infinite;}
 .co-timer.done{background:#f1f5f9;border-color:#e2e8f0;}
@@ -441,20 +431,26 @@ input,select,textarea{font-family:inherit;}
 .b-item .it-unit{font-size:var(--fs-sub);font-weight:500;margin-top:3px;}
 .b-item .it-amt{margin-left:auto;flex:none;font-size:var(--fs-body);font-weight:700;text-align:right;white-space:nowrap;}
 
-/* ── TOTALS: Total Payable always visible; the itemised charges hide behind an
-   info icon on desktop and sit inline on phones ──────────────────────────── */
+/* ── TOTALS ────────────────────────────────────────────────────────────────
+   A collapsible Price Breakdown sits directly above Total Payable. It is
+   inline on every breakpoint — the old hover-popover hid the charges behind
+   an icon, which phones could not reach at all. ───────────────────────────*/
 .b-totals .tr{display:flex;justify-content:space-between;font-size:var(--fs-sub);padding:4px 0;}
-.tt-wrap{position:static;display:inline-flex;vertical-align:middle;margin-left:7px;}
-.tt-i{display:none;width:17px;height:17px;align-items:center;justify-content:center;border:none;background:none;padding:0;color:var(--co-accent-sum-ui);cursor:help;transition:opacity .13s;}
-.tt-i:hover{opacity:.75;}
-.tt-i svg{width:15px;height:15px;display:block;}   /* filled glyph — colour comes from .tt-i */
-.tt-pop{display:none;position:absolute;bottom:calc(100% + 10px);left:0;z-index:35;width:260px;max-width:100%;padding:12px 14px 10px;background:var(--co-pay-bg);border:1px solid var(--co-sum-border);border-radius:11px;box-shadow:0 12px 30px rgba(2,11,30,.17);font-size:var(--fs-sub);font-weight:500;line-height:1.5;font-family:var(--co-font-head);text-align:left;letter-spacing:0;}
-.tt-pop-h{display:block;font-size:0.6875rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--co-sum-sub);margin-bottom:6px;}
-.tt-pop .tr{font-size:var(--fs-sub);padding:3px 0;font-weight:500;}
-.b-totals .tt-pop .tr .tv{font-size:var(--fs-sub);font-weight:600;font-family:inherit;}
-.b-totals .tr .tv{font-weight:600;}
-/* position:relative makes the row the anchor, so the popover lines up with the
-   T of Total Payable instead of hanging off the icon and clipping the column */
+.b-totals .pb{margin-bottom:2px;}
+.pb-head{display:inline-flex;align-items:center;gap:7px;padding:2px 0 6px;background:none;border:none;cursor:pointer;text-align:left;color:inherit;}
+.pb-t{font-size:0.6875rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--co-sum-sub);}
+.pb-chev{width:20px;height:20px;min-width:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--co-brand-raw) 13%,transparent);color:var(--co-accent-sum-ui);transition:transform .22s ease,background .15s;}
+.pb-head:hover .pb-chev{background:color-mix(in srgb,var(--co-brand-raw) 22%,transparent);}
+.pb-chev svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+/* Expanded → the arrow points DOWN, the way the list collapses. Collapsed →
+   it points UP. The glyph is a chevron-down, so the rotation sits on the
+   CLOSED state, not the open one. */
+.b-totals .pb:not(.open) .pb-chev{transform:rotate(180deg);}
+.pb-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .24s ease;}
+.b-totals .pb.open .pb-body{grid-template-rows:1fr;}
+.pb-body > .tr:first-child{margin-top:0;}
+.pb-body{overflow:hidden;}
 .b-totals .tr-total{position:relative;border-top:1px solid var(--co-sum-border);margin-top:var(--co-sep);padding-top:var(--co-sep);align-items:baseline;}
 .co-payment .b-totals .tr-total{border-color:var(--co-pay-border);}
 .b-totals .tr-total .tl{font-size:var(--title-size);font-weight:700;}
@@ -600,6 +596,33 @@ input,select,textarea{font-family:inherit;}
 .b-qrd .qr-s{font-size:var(--fs-sub);line-height:1.55;}
 .b-qrd .qr-timer{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:0.6562rem;font-weight:700;padding:4px 10px;border-radius:100px;background:color-mix(in srgb,var(--co-brand-raw) 10%,transparent);color:var(--co-accent-pay);}
 .b-qrm{display:none;font-size:var(--fs-sub);line-height:1.6;padding:10px 12px;border:1px dashed var(--co-pay-border);border-radius:var(--co-r);}
+/* ── LIVE QR ────────────────────────────────────────────────────────────────
+   Tapping Pay with the QR method selected does not open an overlay. The QR
+   grows inside the box it already occupied, every other method fades back
+   inactive, and the scan prompt moves beneath the code. The payer's eye never
+   has to re-find the thing it was already looking at. */
+.qr-armed .b-method:not(.m-upiqr){opacity:.3;pointer-events:none;filter:saturate(.35);}
+.qr-armed .b-method{transition:opacity .35s ease,filter .35s ease;}
+.qr-armed .b-method.m-upiqr .bm-head{pointer-events:none;}
+.qr-armed .b-method.m-upiqr .bm-chev{display:none;}
+.qr-armed .b-pay button.paybtn{opacity:.4;pointer-events:none;}
+.qr-live{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 2px;animation:qrIn .3s ease;}
+@keyframes qrIn{from{opacity:0;transform:scale(.97);}to{opacity:1;transform:none;}}
+.qr-live .qr-card.qr-big{padding:14px;border-radius:16px;box-shadow:0 10px 30px rgba(2,11,30,.12);}
+.qr-live .qr-card.qr-big svg{width:min(216px,52vw);height:min(216px,52vw);}
+.qr-live-t{margin-top:16px;font-size:var(--fs-title);font-weight:800;font-family:var(--co-font-head);}
+.qr-wait{display:inline-flex;align-items:center;gap:9px;margin-top:9px;font-size:var(--fs-sub);font-weight:600;color:var(--co-pay-sub);}
+/* a slow breath, not a strobe — two full seconds, eased both ways */
+.qr-dot{width:9px;height:9px;min-width:9px;border-radius:50%;background:#10b981;position:relative;animation:qrBreath 2s ease-in-out infinite;}
+.qr-dot::after{content:'';position:absolute;inset:-5px;border-radius:50%;background:#10b981;opacity:.28;animation:qrHalo 2s ease-in-out infinite;}
+@keyframes qrBreath{0%,100%{opacity:.45;transform:scale(.82);}50%{opacity:1;transform:scale(1);}}
+@keyframes qrHalo{0%,100%{opacity:0;transform:scale(.6);}50%{opacity:.3;transform:scale(1);}}
+.qr-cancel{margin-top:16px;font-size:var(--fs-sub);font-weight:700;color:var(--co-accent-pay);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.qr-cancel:hover{opacity:.75;}
+@media (prefers-reduced-motion:reduce){
+  .qr-dot,.qr-dot::after{animation:none;} .qr-dot{opacity:1;}
+  .qr-live{animation:none;}
+}
 .checkout-shell.mobile .b-qrd{display:none;}
 .checkout-shell.mobile .b-qrm{display:block;}
 
@@ -663,6 +686,10 @@ input,select,textarea{font-family:inherit;}
 .pr-help .ph-fine{text-align:left;margin-top:10px;padding-top:10px;border-top:1px solid var(--co-pay-border);opacity:.85;}
 .pr-help .ph-mail{font-weight:700;color:var(--co-accent-pay);word-break:break-word;}
 .pr-trust{display:flex;align-items:center;gap:6px;font-size:0.7188rem;font-weight:600;color:#2f80ed;margin-top:14px;}
+/* Help & FAQ — the quietest line on the result screen, but always present */
+.pr-faq{margin-top:14px;font-size:var(--fs-note);font-weight:600;}
+.pr-faq a{color:var(--co-pay-sub);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;opacity:.85;}
+.pr-faq a:hover{opacity:1;color:var(--co-accent-pay);}
 .pr-trust svg{width:14px;height:14px;fill:#2f80ed;}
 @media (max-width:640px){
   .pr-wrap{padding:20px 16px;}
@@ -998,11 +1025,7 @@ body.dev-mode .topbar{z-index:95;}
         <div class="dz-label">Brand Colour</div>
         <div class="swatch-row" id="swatchRow"></div>
         <div class="field" style="margin-top:9px;"><input type="text" id="brandHex" maxlength="7" placeholder="#096EF2" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 10px;font-size:var(--fs-note);font-family:ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.3px;"></div>
-        <div class="dz-label" style="margin:14px 0 0;">Contrast check · live</div>
-        <div class="cx-panel" id="brandPrev"></div>
-        <div class="dz-label" style="margin:14px 0 0;">Try a failure case</div>
-        <div class="swatch-row" id="contrastTests" style="margin-top:2px;"></div>
-        <div class="ins-note" style="margin-top:9px;">One colour drives the whole page. Filled surfaces use the brand colour and flip their label to white or black; <b>brand-as-text is a separate token</b>, darkened or lightened per surface until it clears APCA <b>Lc&nbsp;60</b>. Pick a failure case above to see both corrections fire.</div>
+        <div class="ins-note" style="margin-top:9px;">One colour drives the whole page. Filled surfaces use the brand colour and flip their label to white or black; brand-as-text is re-toned per surface until it clears APCA Lc&nbsp;60. Handled automatically by the Brand Contrast Engine.</div>
       </div>
       <div class="dz-section">
         <div class="dz-label">Page Type</div>
@@ -1014,6 +1037,13 @@ body.dev-mode .topbar{z-index:95;}
           <div><div class="tr-name">Multiple Services</div><div class="tr-sub">List services like products</div></div>
           <div class="sw" id="multiSvcSw"></div>
         </div>
+      </div>
+      <div class="dz-section">
+        <div class="dz-label">Taxes &amp; charges</div>
+        <div class="ins-field"><label>Tax label</label><input type="text" id="chTaxLabel" placeholder="GST" maxlength="14"></div>
+        <div class="ins-field"><label>Tax rate (%)</label><input type="number" id="chTaxPct" step="0.01" inputmode="decimal" placeholder="Leave blank to hide"></div>
+        <div class="ins-field"><label>Shipping / Fees (₹)</label><input type="number" id="chShipping" step="0.01" inputmode="decimal" placeholder="Leave blank to hide"></div>
+        <div class="ins-note">Each line shows on the card only when you fill it in. Leave a field blank and that row never appears above Total Payable — so a page with no tax and no shipping shows Subtotal and the total, nothing else.</div>
       </div>
       <div class="dz-section">
         <div class="dz-label">Corner radius</div>
@@ -1028,23 +1058,23 @@ body.dev-mode .topbar{z-index:95;}
       <div class="dz-section">
         <div class="dz-label">Session expiry timer</div>
         <div class="dz-toggle-row">
-          <div><div class="tr-name">Show timer banner</div><div class="tr-sub">Above the checkout card</div></div>
+          <div><div class="tr-name">Show expiry banner</div><div class="tr-sub">Above the checkout card</div></div>
           <div class="sw on" id="timerSw"></div>
         </div>
-        <div class="dz-flex" style="margin-top:6px;">
+        <div class="dz-sublabel">1 · Payment session</div>
+        <div class="dz-flex" style="margin-top:4px;">
           <span style="font-size:0.6875rem;font-weight:600;color:var(--sub);">Duration</span>
           <input type="range" class="dz-range" id="timerRange" min="1" max="30" step="1" value="10" style="flex:1;margin:0 10px;">
           <span class="dz-val" id="timerVal">10 min</span>
         </div>
-        <div class="ins-note" style="margin-top:9px;">Counts down in Preview and in the exported page. On zero it flips to the <b>Payment Link Expired</b> screen.</div>
-      </div>
-      <div class="dz-section">
-        <div class="dz-label">Checkout flow</div>
-        <div class="mini-seg" id="flowSeg">
-          <button class="on" data-flow="single">Single page</button>
-          <button data-flow="twostep">Two step</button>
+        <div class="dz-sublabel" style="margin-top:12px;">2 · Checkout page expiry</div>
+        <div class="dz-toggle-row" style="padding:4px 0 6px;">
+          <div><div class="tr-name">Show page expiry</div><div class="tr-sub">Absolute date &amp; time the link dies</div></div>
+          <div class="sw on" id="pageExpSw"></div>
         </div>
-        <div class="ins-note" style="margin-top:9px;">Two step collects <b>name, email and mobile</b> on step&nbsp;1, then payment on step&nbsp;2. Every other block — addresses, invoice, custom fields, payment methods — stays on step&nbsp;2. The order summary is visible throughout.</div>
+        <input type="datetime-local" id="pageExpInput" class="dz-datetime">
+        <div class="dz-when" id="pageExpWhen"></div>
+        <div class="ins-note" style="margin-top:9px;">Both run in Preview and in the exported page. The <b>payment session</b> counts down per attempt; the <b>checkout page expiry</b> is a fixed date and time for the whole link. Whichever hits zero first flips the page to the <b>Payment Link Expired</b> screen.</div>
       </div>
       <div class="dz-section">
         <div class="dz-label">Payment methods layout</div>
@@ -1110,7 +1140,7 @@ body.dev-mode .topbar{z-index:95;}
           <div class="pay-overlay" id="payOverlay"></div>
         </div>
         <div id="trustHost"></div>
-        <div id="poweredLine" style="width:100%;text-align:center;font-size:var(--fs-sub);font-weight:600;color:#94a3b8;margin-top:16px;"></div>
+        <div id="poweredLine" style="width:100%;text-align:center;font-size:var(--fs-note);font-weight:600;color:#94a3b8;margin-top:16px;"></div>
       </div>
     </div>
   </main>
@@ -1203,7 +1233,11 @@ let uid = 1;
 const nid = () => 'b' + (uid++);
 
 const state = {
-  design: { brand:'#096ef2', theme:'theme-light', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'twostep', timer:true, timerMins:10, rails:false, pageType:'products', multiService:false },
+  design: { brand:'#096ef2', theme:'theme-light', font:"'Montserrat',sans-serif", radius:10, methodLayout:'accordion', powered:true, custLogo:null, flow:'twostep', timer:true, timerMins:10, rails:false, pageType:'products', multiService:false,
+             pageExpOn:true, pageExp:null,
+             /* charges are filled in the left sidebar, not on the block — a blank
+                one never reaches the card */
+             charges:{ taxLabel:'GST', taxPct:'', shipping:'' } },   /* pageExp: 'YYYY-MM-DDTHH:mm' local — set on boot */
   merchant: {
     supportEmail:'support@aurora.co', supportPhone:'+91 80 4000 1234', country:'India', vpa:'aurora@upi',
     socials:{ web:'https://aurora.co', li:'', x:'', ig:'' },
@@ -1215,28 +1249,36 @@ let mode = 'edit', device = 'desktop', selId = null;
 const undoStack = [];
 
 /* runtime (preview-only) */
-const rt = { appliedAmt:0, appliedCode:'', dcOpen:false, selUpi:null, selBank:null, nbMode:null, vpa:'',
+const rt = { appliedAmt:0, appliedCode:'', dcOpen:false, selUpi:null, selBank:null, nbMode:null, vpa:'', pbOpen:null, selQr:false, qrLive:false,
              step:1, payer:{name:'',email:'',phone:''} };
 
 /* ═══════════════════════ HELPERS ═══════════════════════ */
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:2});
+/* payments show paise — always two decimals, matching the amount the PSP charges */
+const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
 const initials = s => (s||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 
 function allBlocks(){ return [...state.blocks.summary, ...state.blocks.payment]; }
 function findBlock(id){ return allBlocks().find(b=>b.id===id); }
 function regionOf(id){ return state.blocks.summary.some(b=>b.id===id) ? 'summary' : 'payment'; }
 
+/* A charge the merchant left blank is ABSENT, not zero, and an absent charge
+   is never drawn on the card — the payer sees only what they are being asked
+   to pay. '', null and undefined are blank; 0 is a real, stated value. */
+const filled = v => v !== null && v !== undefined && String(v).trim() !== '' && !isNaN(+v);
 function computeTotals(){
   let subtotal = 0;
   allBlocks().forEach(b => { if(b.type==='item') subtotal += (+b.props.price||0) * (+b.props.qty||1); });
   const discount = Math.min(subtotal, rt.appliedAmt||0);   /* flat ₹ amount, never below zero */
-  const totalsBlk = allBlocks().find(b=>b.type==='totals');
-  const taxPct = totalsBlk ? (+totalsBlk.props.taxPct||0) : 0;
-  const shipping = totalsBlk ? (+totalsBlk.props.shipping||0) : 0;
+  const c = state.design.charges || {};
+  const hasTax = filled(c.taxPct), hasShip = filled(c.shipping);
+  const taxPct = hasTax ? +c.taxPct : 0;
+  const shipping = hasShip ? +c.shipping : 0;
   const tax = (subtotal - discount) * taxPct/100;
-  return { subtotal, discount, tax, shipping, taxPct, total: subtotal - discount + tax + shipping };
+  return { subtotal, discount, tax, shipping, taxPct, hasTax, hasShip,
+           taxLabel: (c.taxLabel||'GST').trim() || 'GST',
+           total: subtotal - discount + tax + shipping };
 }
 
 function snapshot(){
@@ -1400,7 +1442,7 @@ const REG = {
   item: {
     group:'order', name:'Product / Service Item', sub:'Name, price, image & QTY', region:'summary', icon:IC.item,
     defaults:()=>({name:'Aurora Desk Lamp — Brass', price:3499, qty:1, showQty:true, img:null}),
-    fields:[{k:'name',label:'Product Name',t:'text',max:50},{k:'price',label:'Unit Price (₹)',t:'number'},{k:'qty',label:'Quantity',t:'number'},{k:'img',label:'Product image',t:'img'},{k:'showQty',label:'Show QTY Line',t:'toggle'}],
+    fields:[{k:'name',label:'Product Name',t:'text',max:50},{k:'price',label:'Unit Price (₹)',t:'number',step:'0.01'},{k:'qty',label:'Quantity',t:'number',step:'1'},{k:'img',label:'Product image',t:'img'},{k:'showQty',label:'Show QTY Line',t:'toggle'}],
     render:(b,live)=>{
       const p = b.props;
       /* no image uploaded → text only, no placeholder tile (row height is held by CSS) */
@@ -1425,23 +1467,29 @@ const REG = {
     render:(b,live)=>`<div class="b-inv"><span class="cv-sub" ${ce(live)} data-ei="label">${esc(b.props.label)}</span><span class="iv-num" ${ce(live)} data-ei="value">${esc(b.props.value)}</span></div>`
   },
   totals: {
-    group:'order', name:'Order totals', sub:'Subtotal, tax & total', region:'summary', icon:IC.totals,
-    defaults:()=>({taxPct:18, shipping:0}),
-    fields:[{k:'taxPct',label:'GST %',t:'number'},{k:'shipping',label:'Shipping / Fees (₹)',t:'number'}],
-    render:()=>{
+    group:'order', name:'Order totals', sub:'Price breakdown & total', region:'summary', icon:IC.totals,
+    defaults:()=>({breakdownOpen:true, label:'Price Breakdown'}),
+    fields:[{k:'label',label:'Breakdown heading',t:'text',max:28},
+            {k:'breakdownOpen',label:'Breakdown expanded by default',t:'toggle'}],
+    /* data-tt hooks let the exported runtime re-price every figure in place */
+    render:(b)=>{
       const t = computeTotals();
-      /* data-tt hooks let the exported runtime re-price every copy of a figure */
+      const open = rt.pbOpen==null ? !!b.props.breakdownOpen : rt.pbOpen;
       const rows = `
         <div class="tr"><span class="cv-sub">Subtotal</span><span class="tv" data-tt="sub">${fmt(t.subtotal)}</span></div>
-        <div class="tr"><span class="cv-sub" data-tt="disclbl">Discount${rt.appliedCode?' · '+esc(rt.appliedCode):''}</span><span class="tv" data-tt="disc" ${t.discount>0?'style="color:#10b981"':''}>−${fmt(t.discount)}</span></div>
-        <div class="tr"><span class="cv-sub">${state.design.pageType==='service'?'Fees':'Shipping'}</span><span class="tv">${t.shipping>0?fmt(t.shipping):'Free'}</span></div>
-        <div class="tr"><span class="cv-sub">GST (${t.taxPct}%)</span><span class="tv" data-tt="tax">${fmt(t.tax)}</span></div>`;
-      /* On desktop the breakdown folds into a hover popover on the info icon —
-         that reclaims four rows for the product list. Phones show it inline. */
+        <div class="tr tr-disc"${t.discount>0?'':' style="display:none"'}><span class="cv-sub" data-tt="disclbl">Discount${rt.appliedCode?' · '+esc(rt.appliedCode):''}</span><span class="tv" data-tt="disc" ${t.discount>0?'style="color:#10b981"':''}>−${fmt(t.discount)}</span></div>
+        ${t.hasShip?`<div class="tr"><span class="cv-sub">${state.design.pageType==='service'?'Fees':'Shipping'}</span><span class="tv" data-tt="ship">${t.shipping>0?fmt(t.shipping):'Free'}</span></div>`:''}
+        ${t.hasTax?`<div class="tr"><span class="cv-sub">${esc(t.taxLabel)} (${t.taxPct}%)</span><span class="tv" data-tt="tax">${fmt(t.tax)}</span></div>`:''}`;
       return `<div class="b-totals">
-        <div class="tt-inline">${rows}</div>
+        <div class="pb ${open?'open':''}">
+          <button class="pb-head" type="button" data-act="pbToggle" aria-expanded="${open}">
+            <span class="pb-t">${esc(b.props.label)}</span>
+            <span class="pb-chev">${svg(IC.chev)}</span>
+          </button>
+          <div class="pb-body">${rows}</div>
+        </div>
         <div class="tr tr-total">
-          <span class="tl">Total Payable<span class="tt-wrap"><button class="tt-i" type="button" aria-label="Amount details">${INFO_ICON}</button><span class="tt-pop" role="tooltip"><span class="tt-pop-h">Amount Details</span>${rows}</span></span></span>
+          <span class="tl">Total Payable</span>
           <span class="tv" data-tt="total">${fmt(t.total)}</span>
         </div>
       </div>`;
@@ -1538,17 +1586,33 @@ const REG = {
   },
   upiqr: {
     group:'fields', name:'UPI QR', sub:'Scan-to-pay on desktop', region:'payment', icon:IC.qr, method:true,
-    defaults:()=>({title:'Scan QR To Pay', open:false, note:'Scan the QR with your phone and pay via any UPI app'}),
-    fields:[{k:'title',label:'Title',t:'text'},{k:'note',label:'Helper text',t:'text'}],
-    render:(b)=>methodShell(b, IC.qr, `<span class="bm-logo">${upiSvg(15)}</span>`, `
-      <div class="b-qrd">
-        <div class="qr-card">${qrSvg()}</div>
-        <div class="qr-side">
-          <div class="qr-t">${esc(b.props.note)}</div>
-          <div class="qr-timer">${svg(IC.recur)}Refreshes every 8 min</div>
+    defaults:()=>({title:'Scan QR To Pay', open:false, note:'Scan the QR with your phone and pay via any UPI app',
+                   liveTitle:'Scan to Pay', waitText:'Waiting for payment'}),
+    fields:[{k:'title',label:'Title',t:'text'},{k:'note',label:'Helper text',t:'text'},
+            {k:'liveTitle',label:'Title once Pay is tapped',t:'text'},
+            {k:'waitText',label:'Waiting label',t:'text'}],
+    /* ── TWO STATES ───────────────────────────────────────────────────────
+       idle : the QR sits inline beside its helper copy, like any method
+       live : Pay has been tapped — the QR grows in the SAME box, the other
+              methods fade out inactive, and the scan prompt moves below the
+              code with a softly pulsing dot. No overlay, no context switch. */
+    render:(b)=> rt.qrLive
+      ? methodShell(b, IC.qr, `<span class="bm-logo">${upiSvg(15)}</span>`, `
+        <div class="qr-live">
+          <div class="qr-card qr-big">${qrSvg()}</div>
+          <div class="qr-live-t">${esc(b.props.liveTitle)}</div>
+          <div class="qr-wait"><span class="qr-dot"></span><span>${esc(b.props.waitText)}</span></div>
+          <button class="qr-cancel" type="button" data-act="qrCancel">Cancel and choose another method</button>
+        </div>`)
+      : methodShell(b, IC.qr, `<span class="bm-logo">${upiSvg(15)}</span>`, `
+        <div class="b-qrd">
+          <div class="qr-card">${qrSvg()}</div>
+          <div class="qr-side">
+            <div class="qr-t">${esc(b.props.note)}</div>
+            <div class="qr-timer">${svg(IC.recur)}Refreshes every 8 min</div>
+          </div>
         </div>
-      </div>
-      <div class="b-qrm cv-sub">On mobile, payers see UPI app buttons (TPAP intent links) instead of a QR — pick an app above to continue.</div>`)
+        <div class="b-qrm cv-sub">On mobile, payers see UPI app buttons (TPAP intent links) instead of a QR — pick an app above to continue.</div>`)
   },
   netbanking: {
     group:'fields', name:'Banking Connect', sub:'Net Banking · NBBL rails', region:'payment', icon:IC.netbanking, method:true,
@@ -1581,13 +1645,6 @@ const REG = {
       const t = computeTotals();
       return `<div class="b-pay"><button class="paybtn" data-act="pay">${svg(IC.lock)}<span>${esc(b.props.label)}${b.props.showAmount?' '+fmt(t.total):''}</span></button>${b.props.note?`<div class="pay-note cv-sub">${esc(b.props.note)}</div>`:''}</div>`;
     }
-  },
-  secure: {
-    group:'fields', name:'Trust footer', sub:'Security assurances', region:'payment', icon:IC.secure,
-    defaults:()=>({}), fields:[],
-    render:()=>`<div class="b-secure cv-sub">
-      <span class="sc-item">${svg(IC.secure)}256-bit encrypted</span><span class="sc-sep"></span>
-      <span class="sc-item">RBI-regulated rails</span></div>`
   },
   mfooter: {
     group:'fields', name:'Merchant footer', sub:'T&C, policy, support, socials', region:'payment', icon:IC.mfoot,
@@ -1637,7 +1694,8 @@ function summaryFoot(vis, toHTML){
 function methodShell(b, icon, badge, body){
   const flat = state.design.methodLayout === 'flat';
   const open = flat || b.props.open;
-  return `<div class="b-method ${open?'open':''} ${flat?'flat':''}">
+  /* data-m lets the live-QR state fade every method except the one in play */
+  return `<div class="b-method m-${b.type} ${open?'open':''} ${flat?'flat':''}" data-m="${b.type}">
     <div class="bm-head" data-act="acc">
       <div class="bm-ic">${svg(icon)}</div>
       <div style="flex:1;min-width:0"><div class="bm-title">${esc(b.props.title)}</div></div>
@@ -1785,7 +1843,7 @@ function renderRegion(region){
 
 function renderAll(){
   const co = $('#checkout');
-  co.className = `checkout ${state.design.theme} ${mode==='edit'?'edit-mode':''}`;
+  co.className = `checkout ${state.design.theme} ${mode==='edit'?'edit-mode':''} ${rt.qrLive?'qr-armed':''}`;
   applyBrand();                      /* brand colour → full derived palette */
   co.style.setProperty('--co-font-head', state.design.font);
   co.style.setProperty('--co-r', state.design.radius + 'px');
@@ -1911,7 +1969,7 @@ function renderInspector(){
   d.fields.forEach(f=>{
     const v = b.props[f.k];
     if(f.t==='text') html += `<div class="ins-field"><label>${f.label}</label><input type="text" data-k="${f.k}" value="${esc(v)}"${f.max?` maxlength="${f.max}"`:''}>${f.max?`<div class="ins-count">${String(v||'').length}/${f.max}</div>`:''}</div>`;
-    else if(f.t==='number') html += `<div class="ins-field"><label>${f.label}</label><input type="number" data-k="${f.k}" value="${esc(v)}"></div>`;
+    else if(f.t==='number') html += `<div class="ins-field"><label>${f.label}</label><input type="number" step="${f.step||'any'}" inputmode="decimal" data-k="${f.k}" value="${esc(v)}"></div>`;
     else if(f.t==='toggle') html += `<div class="ins-check"><span class="ic-name">${f.label}</span><div class="sw ${v?'on':''}" data-k="${f.k}" data-t="toggle"></div></div>`;
     else if(f.t==='select') html += `<div class="ins-field"><label>${f.label}</label><select class="dz-select" data-k="${f.k}">${f.options.map(o=>`<option value="${o.v}" ${v===o.v?'selected':''}>${o.l}</option>`).join('')}</select></div>`;
     else if(f.t==='img') html += `<div class="ins-field"><label>${f.label}</label>
@@ -2124,6 +2182,11 @@ $('#checkout').addEventListener('click', e=>{
       }
       return;
     }
+    /* the price-breakdown chevron works while authoring, like the accordions */
+    if(act && act.dataset.act==='pbToggle' && blk){
+      const b = findBlock(blk.dataset.id);
+      if(b){ rt.pbOpen = !(rt.pbOpen==null ? b.props.breakdownOpen : rt.pbOpen); renderAll(); selId = blk.dataset.id; return; }
+    }
     /* allow accordion toggling in edit mode too (persisted) */
     if(act && act.dataset.act==='acc' && blk){
       const b = findBlock(blk.dataset.id);
@@ -2148,16 +2211,20 @@ $('#checkout').addEventListener('click', e=>{
     const wasOpen = b.props.open;
     allBlocks().forEach(x=>{ if(REG[x.type].method) x.props.open = false; });
     b.props.open = !wasOpen;
+    /* whichever method the payer opened is the one Pay will act on */
+    rt.selQr = (b.type==='upiqr' && b.props.open);
+    if(rt.selQr){ rt.selUpi = null; rt.nbMode = null; }
     renderAll(); return;
   }
   if(a==='qty+'||a==='qty-'){
     b.props.qty = Math.max(1, (+b.props.qty||1) + (a==='qty+'?1:-1));
     renderAll(); return;
   }
-  if(a==='upi'){ rt.selUpi = act.dataset.k; rt.selBank=null; rt.nbMode=null; renderAll(); return; }
+  if(a==='upi'){ rt.selUpi = act.dataset.k; rt.selBank=null; rt.nbMode=null; rt.selQr=false; renderAll(); return; }
   if(a==='upiany'){ rt.selUpi = rt.selUpi==='any' ? null : 'any'; rt.selBank=null; rt.nbMode=null; renderAll(); if(rt.selUpi==='any'){ const f=document.querySelector('[data-role=vpa]'); if(f&&f.focus)f.focus(); } return; }
-  if(a==='nbmode'){ rt.nbMode = rt.nbMode===act.dataset.k ? null : act.dataset.k; rt.selUpi=null; renderAll(); return; }
+  if(a==='nbmode'){ rt.nbMode = rt.nbMode===act.dataset.k ? null : act.dataset.k; rt.selUpi=null; rt.selQr=false; renderAll(); return; }
   if(a==='bank'){ rt.selBank = act.dataset.k; rt.selUpi=null; renderAll(); return; }
+  if(a==='pbToggle'){ rt.pbOpen = !(rt.pbOpen==null ? b.props.breakdownOpen : rt.pbOpen); renderAll(); return; }
   if(a==='recur'){ b.props.on = !b.props.on; renderAll(); return; }
   if(a==='sameShip'){ b.props.same = !b.props.same; renderAll(); return; }
   if(a==='dcOpen'){ rt.dcOpen = true; renderAll();
@@ -2177,6 +2244,7 @@ $('#checkout').addEventListener('click', e=>{
     toast('Code applied — ' + fmt(rt.appliedAmt) + ' off');
     return;
   }
+  if(a==='qrCancel'){ exitQrLive(); toast('Cancelled — pick another payment method'); return; }
   if(a==='legal'){ openLegal(act.dataset.doc); return; }
   if(a==='toStep2'){ if(validateStep1()) goStep(2); else toast('Please complete the highlighted fields'); return; }
   if(a==='editDetails'){ goStep(1); return; }
@@ -2247,7 +2315,7 @@ $('#checkout').addEventListener('focusout', e=>{
 document.addEventListener('keydown', e=>{
   const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
   if((e.metaKey||e.ctrlKey) && e.key==='z' && !typing){ e.preventDefault(); undo(); return; }
-  if(e.key==='Escape'){ selId=null; renderAll(); stopCountdown(); $('#payOverlay').classList.remove('show'); ['exportModal','legalView','legalEdit'].forEach(id=>document.getElementById(id).classList.remove('show')); return; }
+  if(e.key==='Escape'){ selId=null; if(qrWatch){clearTimeout(qrWatch); qrWatch=null;} rt.qrLive=false; renderAll(); stopCountdown(); $('#payOverlay').classList.remove('show'); ['exportModal','legalView','legalEdit'].forEach(id=>document.getElementById(id).classList.remove('show')); return; }
   if((e.key==='Backspace'||e.key==='Delete') && selId && !typing && mode==='edit'){
     e.preventDefault(); snapshot(); removeBlock(selId); selId=null; renderAll();
   }
@@ -2273,6 +2341,7 @@ const wsNote = `<div class="po-ws cv-sub"><span class="ws-dot"></span>Listening 
 
 /* Decentro pay loader — the logo's D, its rail, and the blue accent cube.
    Coordinates come straight from the logo artwork (viewBox 0 0 2749.67 538.23). */
+const DECENTRO_HELP = 'https://decentro.tech/help/consumer';
 const D_PATH = 'M250.46,120.82H120.69v176.27h60.11v-116h68c62.42,0,102.83,34.9,102.83,88.17s-40.41,88.16-102.83,88.16h-7.73v60.25h9.39c96.25,0,162-59.37,162-148.41s-65.77-148.44-162-148.44h0Z';
 function payLoader(title, sub){
   return `<div class="dl">
@@ -2389,6 +2458,7 @@ function showOutcome(ov){
     </div>`}
     <div class="pr-trust"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5.25 3.8 10.15 9 11.35C17.2 22.15 21 17.25 21 11.996V6l-9-4Zm-1.5 14.5-3.5-3.5 1.41-1.41 2.09 2.08 5.09-5.08L17 10l-6.5 6.5Z"/></svg>100% Trusted &amp; Secure Payments</div>
     ${o.countdown?'':'<button class="po-close" data-po="close">Back to checkout</button>'}
+    <div class="pr-faq"><a href="${DECENTRO_HELP}" target="_blank" rel="noopener">Decentro Help &amp; FAQ</a></div>
   </div>`;
   /* Dev mode: never auto-dismiss the card out from under someone inspecting it */
   if(o.countdown && !devMode){
@@ -2465,8 +2535,30 @@ function upiCollectFlow(ov, vpa){
   setTimeout(()=>{ if(ov.classList.contains('show') && document.getElementById('ucTimer')){ stopCountdown(); showOutcome(ov); } }, 3800);
 }
 
+/* the live-QR watcher stands in for the web socket that reports the scan */
+let qrWatch = null;
+function exitQrLive(){
+  if(qrWatch){ clearTimeout(qrWatch); qrWatch = null; }
+  rt.qrLive = false; renderAll();
+}
+function startQrLive(){
+  rt.qrLive = true;
+  renderAll();
+  const el = document.querySelector('#checkout .b-method.m-upiqr');
+  if(el && el.scrollIntoView) el.scrollIntoView({behavior:'smooth', block:'center'});
+  /* in production this resolves on the web-socket status event */
+  if(qrWatch) clearTimeout(qrWatch);
+  qrWatch = setTimeout(()=>{
+    qrWatch = null;
+    if(!rt.qrLive) return;
+    const ov = $('#payOverlay'); ov.classList.add('show'); showOutcome(ov);
+    rt.qrLive = false; renderAll();
+  }, 6000);
+}
 function runPayFlow(){
   const ov = $('#payOverlay');
+  /* QR expands in place instead of taking over the screen */
+  if(rt.selQr && !rt.selUpi && !rt.nbMode){ startQrLive(); return; }
   if(rt.selUpi==='any'){
     const vpa = (rt.vpa||'').trim();
     if(!/^[\w.\-]{2,}@[A-Za-z]{2,}$/.test(vpa)){
@@ -2548,6 +2640,8 @@ $('#modeSeg').addEventListener('click', e=>{
   $('#ctMode').textContent = mode==='edit' ? 'Editing — drag, click & type directly on the page' : 'Preview — live checkout · pick a payment outcome to simulate';
   $('#simWrap').style.display = mode==='preview' ? 'flex' : 'none';
   stopCountdown();
+  if(qrWatch){ clearTimeout(qrWatch); qrWatch = null; }
+  rt.qrLive = false;
   $('#payOverlay').classList.remove('show');
   renderAll();
   renderTimer();          /* restart / freeze the session clock with the mode */
@@ -2893,17 +2987,6 @@ const BrandContrast = brandContrastEngine();
 /* Brand presets. The last three are deliberately in the failure band — pick
    one and watch the Contrast panel nudge the fill and darken the links. */
 const BRAND_PRESETS = ['#096ef2','#000000','#0f8b4c','#7c3aed','#e11d48','#c9a961'];
-/* one-click proof cases: raw brand as text scores Lc 16–45 on a white panel */
-const CONTRAST_TESTS = [
-  {c:'#ff0d0d', n:'Red — a WCAG picker puts BLACK here; APCA correctly picks white'},
-  {c:'#ffd700', n:'Gold — links drop to Lc 17 untreated'},
-  {c:'#00d4ff', n:'Cyan — links drop to Lc 28 untreated'},
-  {c:'#96ceb4', n:'Mint — links drop to Lc 30 untreated'},
-  {c:'#7da5e6', n:'Sky — no ink reads on the raw fill; fill gets nudged'},
-  {c:'#ff7d50', n:'Coral — no ink reads on the raw fill; fill gets nudged'},
-  {c:'#55b90a', n:'Lime — no ink reads on the raw fill; fill gets nudged'},
-];
-
 /* Per-theme surfaces the engine measures against. The summary panel is always
    a derived brand tint; the payment column comes from the theme. */
 const THEME_SURFACES = {
@@ -2966,56 +3049,6 @@ function buildDesignUI(){
     + `<div class="swatch-custom" title="Custom brand colour"><input type="color" id="customAccent" value="${state.design.brand}"></div>`;
   const p = brandPalette();
   const hexEl = $('#brandHex'); if(hexEl && document.activeElement!==hexEl) hexEl.value = state.design.brand.toUpperCase();
-  /* ── live contrast readout: what the engine decided, and what v1 would have
-     shipped instead. This panel exists to make the fix visible — it is a
-     builder-only diagnostic and is NOT part of the exported page. ── */
-  const prev = $('#brandPrev'), r = p.report;
-  const lcTag = (lc, target, was) => {
-    const pass = Math.abs(lc) >= target;
-    return `<span class="cx-lc ${pass?'cx-pass':'cx-fail'}">`
-      + (was!=null && Math.abs(was) < target ? `<i>${Math.round(Math.abs(was))}</i> ` : '')
-      + Math.round(Math.abs(lc)) + `</span>`;
-  };
-  if(prev) prev.innerHTML = `
-    <div class="cx-row cx-head">
-      <div class="cx-k" style="font-weight:700;color:var(--ink);">Token</div>
-      <span class="cx-lc" style="color:var(--muted);font-weight:700;">Lc</span>
-    </div>
-    <div class="cx-row">
-      <div class="cx-k">Button fill + label<small>target Lc ${r.targets.text}</small>
-        ${r.ctaNudged?`<span class="cx-badge" title="No ink could read on the raw brand colour, so the fill's lightness moved">fill nudged</span>`:''}
-        ${r.wcagDisagrees?`<span class="cx-badge cx-badge-wcag" title="A WCAG 2.x ratio picks the OPPOSITE ink on this colour — that is the bug that ships black text on a red button">WCAG picks ${p.ink==='#ffffff'?'black':'white'} here</span>`:''}
-      </div>
-      <span class="cx-chip" style="background:${p.accent};color:${p.ink};">${p.ink==='#ffffff'?'White':'Black'}</span>
-      ${lcTag(r.ctaLc, r.targets.text, r.ctaNudged ? r.rawInkLc : null)}
-    </div>
-    <div class="cx-row">
-      <div class="cx-k">Links · payment column<small>Edit, support email, bank rows</small></div>
-      <span class="cx-chip" style="background:#fff;color:${p.payText};">Aa</span>
-      ${lcTag(r.payTextLc, r.targets.text, r.rawPayTextLc)}
-    </div>
-    <div class="cx-row">
-      <div class="cx-k">Links · summary panel<small>Add discount code</small></div>
-      <span class="cx-chip" style="background:${p.panelBg};color:${p.sumText};">Aa</span>
-      ${lcTag(r.sumTextLc, r.targets.text, r.rawSumTextLc)}
-    </div>
-    <div class="cx-row">
-      <div class="cx-k">Icons &amp; rings<small>target Lc ${r.targets.ui}</small></div>
-      <span class="cx-chip" style="background:${p.softBg};color:${p.payUi};">◆</span>
-      <span class="cx-chip" style="background:${p.panelBg};color:${p.sumUi};">◆</span>
-      ${lcTag(r.payUiLc, r.targets.ui)}
-    </div>
-    <div class="cx-verdict ${r.capped?'warn':''}">
-      ${r.capped
-        ? 'This colour is too close to its own surface to carry text at the target. Pushed as far as sRGB allows — consider a different brand colour.'
-        : (r.ctaNudged || Math.abs(r.rawSumTextLc) < r.targets.text || Math.abs(r.rawPayTextLc) < r.targets.text)
-          ? 'Corrected. Struck-through figures are what the raw brand colour scored — unreadable; the engine replaced them.'
-          : 'This brand colour is readable everywhere as-is. No correction needed.'}
-    </div>`;
-  /* one-click failure cases, so the correction can be demoed in a second */
-  const tests = $('#contrastTests');
-  if(tests) tests.innerHTML = CONTRAST_TESTS.map(t=>
-    `<div class="cx-test ${state.design.brand.toLowerCase()===t.c?'on':''}" data-c="${t.c}" title="${t.n} — ${t.c}" style="background:${t.c}"></div>`).join('');
 }
 function syncDesignUI(){
   buildDesignUI();
@@ -3025,7 +3058,6 @@ function syncDesignUI(){
   $('#radiusRange').value = state.design.radius;
   $('#radiusVal').textContent = state.design.radius+'px';
   document.querySelectorAll('#methodSeg button').forEach(b=>b.classList.toggle('on', b.dataset.ml===state.design.methodLayout));
-  document.querySelectorAll('#flowSeg button').forEach(b=>b.classList.toggle('on', b.dataset.flow===state.design.flow));
   document.querySelectorAll('#typeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.pt===state.design.pageType));
   $('#multiSvcRow').style.display = state.design.pageType==='service' ? '' : 'none';
   $('#multiSvcSw').classList.toggle('on', state.design.multiService);
@@ -3033,6 +3065,21 @@ function syncDesignUI(){
   $('#timerSw').classList.toggle('on', state.design.timer);
   $('#timerRange').value = state.design.timerMins;
   $('#timerVal').textContent = state.design.timerMins + ' min';
+  const ch = state.design.charges;
+  [['chTaxLabel','taxLabel'],['chTaxPct','taxPct'],['chShipping','shipping']].forEach(([id,k])=>{
+    const el = document.getElementById(id);
+    if(el && document.activeElement !== el) el.value = ch[k] === null || ch[k] === undefined ? '' : ch[k];
+  });
+  $('#pageExpSw').classList.toggle('on', state.design.pageExpOn);
+  const pei = $('#pageExpInput');
+  if(pei && document.activeElement !== pei) pei.value = state.design.pageExp || '';
+  if(pei) pei.disabled = !state.design.pageExpOn;
+  /* the payer only sees a countdown; the merchant sees the moment it lands on */
+  const when = $('#pageExpWhen');
+  if(when){
+    const d = pageExpDate();
+    when.textContent = state.design.pageExpOn && d && !isNaN(d) ? 'Link dies ' + fmtPageExp(d) : '';
+  }
   $('#poweredSw').classList.toggle('on', state.design.powered);
 }
 function setBrand(hex, snap){
@@ -3044,13 +3091,6 @@ function setBrand(hex, snap){
 $('#swatchRow').addEventListener('click', e=>{
   const sw = e.target.closest('.swatch'); if(!sw) return;
   setBrand(sw.dataset.c, true);
-});
-$('#contrastTests').addEventListener('click', e=>{
-  const sw = e.target.closest('.cx-test'); if(!sw) return;
-  setBrand(sw.dataset.c, true);
-  const r = brandPalette().report;
-  toast(r.ctaNudged ? 'Fill nudged + links re-toned — see the Contrast check'
-                    : 'Links re-toned for contrast — see the Contrast check');
 });
 $('#swatchRow').addEventListener('input', e=>{
   if(e.target.id==='customAccent') setBrand(e.target.value, false);
@@ -3096,14 +3136,6 @@ $('#logoFile').addEventListener('change', e=>{
 $('#methodSeg').addEventListener('click', e=>{
   const btn = e.target.closest('button'); if(!btn) return;
   snapshot(); state.design.methodLayout = btn.dataset.ml; syncDesignUI(); renderAll();
-});
-$('#flowSeg').addEventListener('click', e=>{
-  const btn = e.target.closest('button'); if(!btn) return;
-  snapshot();
-  state.design.flow = btn.dataset.flow;
-  rt.step = 1;
-  syncDesignUI(); renderAll();
-  toast(state.design.flow==='twostep' ? 'Two-step flow on — payer blocks moved to step 1' : 'Single-page flow');
 });
 $('#stepSwitch').addEventListener('click', e=>{
   const btn = e.target.closest('button'); if(!btn) return;
@@ -3253,41 +3285,105 @@ function initFlowBg(){
 
 /* ═══════════════════════ SESSION TIMER ═══════════════════════ */
 const mmss = s => Math.floor(Math.max(s,0)/60).toString().padStart(2,'0') + ':' + (Math.max(s,0)%60).toString().padStart(2,'0');
+
+/* ── CHECKOUT PAGE EXPIRY ───────────────────────────────────────────────────
+   The second timer. Where the payment session is a per-attempt countdown,
+   this is one absolute moment the whole link dies at — set by the merchant
+   with a date + time picker, so it survives reloads and new attempts. */
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function defaultPageExp(){                       /* 3 days out, on the hour */
+  const d = new Date(Date.now() + 3*864e5);
+  d.setMinutes(0,0,0); d.setHours(18);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+const pageExpDate = () => state.design.pageExp ? new Date(state.design.pageExp) : null;
+function fmtPageExp(d){
+  if(!d || isNaN(d)) return '—';
+  let h = d.getHours(), ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}, ${h}:${String(d.getMinutes()).padStart(2,'0')} ${ap}`;
+}
+/* remaining time, in the largest unit that still reads naturally */
+function untilText(ms){
+  if(ms <= 0) return 'expired';
+  const m = Math.floor(ms/60000), h = Math.floor(m/60), d = Math.floor(h/24);
+  if(d >= 1) return d + 'd ' + (h%24) + 'h';
+  if(h >= 1) return h + 'h ' + (m%60) + 'm';
+  return (m%60) + 'm';
+}
+const CLOCK_IC = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.25"/><path d="M12 7.6V12l3.1 1.9"/></svg>';
+const CAL_IC   = '<svg viewBox="0 0 24 24"><rect x="3.2" y="5" width="17.6" height="16" rx="2.6"/><path d="M3.2 10h17.6M8 3v4M16 3v4"/></svg>';
+
 function timerHTML(secs){
-  const urgent = secs <= 120 && secs > 0, done = secs <= 0;
-  return `<div class="ct-sentinel" id="ctSentinel"></div>
-  <div class="co-timer ${urgent?'urgent':''} ${done?'done':''}" id="coTimer">
+  const d = state.design;
+  const urgent = d.timer && secs <= 120 && secs > 0, done = d.timer && secs <= 0;
+  const pe = d.pageExpOn ? pageExpDate() : null;
+  const peMs = pe ? pe - Date.now() : null;
+  const peDead = peMs !== null && peMs <= 0;
+  const session = d.timer ? `
     <span class="ct-in">
-      <span class="ct-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.25"/><path d="M12 7.6V12l3.1 1.9"/></svg></span>
+      <span class="ct-ic">${CLOCK_IC}</span>
       <span class="ct-t">${done ? 'Payment session expired' : `Payment session expires in <b id="ctClock">${mmss(secs)}</b>`}</span>
-    </span>
+    </span>` : '';
+  const page = pe ? `
+    <span class="ct-in ct-page ${peDead?'dead':''}">
+      <span class="ct-ic">${CAL_IC}</span>
+      <span class="ct-t">${peDead
+        ? 'Checkout page expired'
+        : `Checkout page expires in <b id="ctLeft">${untilText(peMs)}</b>`}</span>
+    </span>` : '';
+  if(!session && !page) return '';
+  return `<div class="ct-sentinel" id="ctSentinel"></div>
+  <div class="co-timer ${urgent?'urgent':''} ${(done||peDead)?'done':''}" id="coTimer">
+    ${session}${session && page ? '<span class="ct-div"></span>' : ''}${page}
   </div>`;
 }
 let tSecs = 0, tTotal = 0, tInt = null;
 function stopTimer(){ if(tInt){ clearInterval(tInt); tInt = null; } }
+function pageExpired(){
+  if(!state.design.pageExpOn) return false;
+  const d = pageExpDate();
+  return !!d && !isNaN(d) && (d - Date.now()) <= 0;
+}
+function fireExpired(why){
+  simOutcome = 'expired';
+  const sel = $('#simSel'); if(sel) sel.value = 'expired';
+  const ov = $('#payOverlay'); ov.classList.add('show'); showOutcome(ov);
+  toast(why + ' — showing the expired screen');
+}
 function renderTimer(){
   const host = $('#timerHost');
-  if(!state.design.timer){ host.innerHTML = ''; stopTimer(); if(dockIO){dockIO.disconnect(); dockIO=null;} return; }
+  const anyBanner = state.design.timer || state.design.pageExpOn;
+  if(!anyBanner){ host.innerHTML = ''; stopTimer(); if(dockIO){dockIO.disconnect(); dockIO=null;} return; }
   tTotal = state.design.timerMins * 60;
   if(mode!=='preview'){ stopTimer(); tSecs = tTotal; host.innerHTML = timerHTML(tSecs); initDock(); return; }
-  /* preview: run it */
+  /* preview: run both clocks off one interval */
   stopTimer();
   tSecs = tTotal;
   host.innerHTML = timerHTML(tSecs);
   initDock();
   tInt = setInterval(()=>{
-    tSecs--;
+    if(state.design.timer) tSecs--;
     const clock = document.getElementById('ctClock');
     if(clock) clock.textContent = mmss(tSecs);
     const el = document.getElementById('coTimer');
-    if(el) el.classList.toggle('urgent', tSecs<=120 && tSecs>0);
-    if(tSecs<=0){
-      stopTimer();
-      host.innerHTML = timerHTML(0);
-      simOutcome = 'expired';
-      const sel = $('#simSel'); if(sel) sel.value = 'expired';
-      const ov = $('#payOverlay'); ov.classList.add('show'); showOutcome(ov);
-      toast('Session expired — showing the expired screen');
+    if(el) el.classList.toggle('urgent', state.design.timer && tSecs<=120 && tSecs>0);
+    /* 2 · checkout page expiry — an absolute moment, re-read every tick */
+    const pe = state.design.pageExpOn ? pageExpDate() : null;
+    if(pe && !isNaN(pe)){
+      const left = document.getElementById('ctLeft');
+      if(left) left.textContent = untilText(pe - Date.now());
+      if(pe - Date.now() <= 0){
+        stopTimer(); host.innerHTML = timerHTML(tSecs);
+        fireExpired('Checkout page expired');
+        return;
+      }
+    }
+    /* 1 · payment session */
+    if(state.design.timer && tSecs<=0){
+      stopTimer(); host.innerHTML = timerHTML(0);
+      fireExpired('Payment session expired');
     }
   }, 1000);
 }
@@ -3302,6 +3398,26 @@ $('#timerSw').addEventListener('click', ()=>{
 $('#timerRange').addEventListener('input', e=>{
   state.design.timerMins = +e.target.value;
   $('#timerVal').textContent = e.target.value + ' min';
+  renderTimer();
+});
+/* taxes & charges — blank stays blank, and a blank charge is never rendered */
+[['chTaxLabel','taxLabel'],['chTaxPct','taxPct'],['chShipping','shipping']].forEach(([id,k])=>{
+  const el = document.getElementById(id); if(!el) return;
+  el.addEventListener('input', ()=>{
+    if(!el._snap){ snapshot(); el._snap = true; setTimeout(()=>el._snap=false, 1200); }
+    state.design.charges[k] = el.value;
+    renderRegion('summary'); renderRegion('payment');
+  });
+});
+/* 2 · checkout page expiry — an absolute date + time for the whole link */
+$('#pageExpSw').addEventListener('click', ()=>{
+  snapshot(); state.design.pageExpOn = !state.design.pageExpOn;
+  if(state.design.pageExpOn && !state.design.pageExp) state.design.pageExp = defaultPageExp();
+  syncDesignUI(); renderTimer();
+});
+$('#pageExpInput').addEventListener('change', e=>{
+  snapshot(); state.design.pageExp = e.target.value || null;
+  syncDesignUI();      /* keeps the "Link dies …" hint in step with the picker */
   renderTimer();
 });
 
@@ -3635,7 +3751,7 @@ function devCopy(txt){
 function collectCheckoutCSS(){
   /* .zone- must be here: it carries the head/scroll-body/pinned-foot layout AND the
      separator rule above the foot (discount + total). Without it the export loses both. */
-  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.ct-sentinel|\.is-docked|\.sw|\.f-label|\.dc-|\.zone-|\.foot-|\.tt-|\.info-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot))/;
+  const keep = /^(\.checkout|\.co-|\.b-|\.bm|\.upi|\.nb-|\.card-|\.pay-overlay|\.po-|\.pr-|\.cv-sub|\.ct-sentinel|\.is-docked|\.sw|\.f-label|\.dc-|\.zone-|\.foot-|\.tt-|\.pb-|\.pb\b|\.qr-|\.info-|\.dl\b|\.dl-|@keyframes (draw|popin|spin|dlpulse|stagein|tpulse|dlFly|dlChase|dlTrail|dlDot|qrIn|qrBreath|qrHalo))/;
   const drop = /(edit-mode|blk-tools|drop-line|region-empty|checkout-shell|step-switch)/;
   let css = '';
   for(const sheet of document.styleSheets){
@@ -3717,7 +3833,7 @@ function buildExportHTML(){
       ${foot}
     </div>`;
   };
-  const powered = d.powered ? `<div class="powered"><span>Secured by ${logoSvg(18)}</span></div>` : '';
+  const powered = d.powered ? `<div class="powered"><span>Secured by ${logoSvg(13)}</span></div>` : '';
   /* page chrome — outside the card, above "Secured by Decentro" */
   const pageChrome = allBlocks().filter(isPageBlock).map(b=>REG[b.type].render(b, true)).join('');
   const trustStrip = pageChrome ? `
@@ -3795,6 +3911,8 @@ function buildExportHTML(){
 .bg-blob.b2{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.06),transparent);}
 body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),transparent);}
 `;
+  const qrBlk = allBlocks().find(b=>b.type==='upiqr');
+  const qrProps = qrBlk ? qrBlk.props : {liveTitle:'Scan to Pay', waitText:'Waiting for payment'};
   const legalJson = JSON.stringify({tnc:state.merchant.tnc||'', privacy:state.merchant.privacy||''});
   /* the figures the discount has to recompute against, and the valid codes */
   const dcBlk  = allBlocks().find(b=>b.type==='discount');
@@ -3809,22 +3927,25 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "var ORDER=" + sumJson + ";",
     "var DC={code:'',amt:0};",
     "var DC_COLLAPSED=" + JSON.stringify(dcBlk ? REG.discount.render(dcBlk).replace(/^<div class="b-dc[^"]*">/,'').replace(/<\/div>$/,'') : '') + ";",
-    "var inr=function(n){return '\u20b9'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});};",
+    "var inr=function(n){return '\u20b9'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});};",
     "/* Re-price the order: the discount is a flat rupee amount, GST applies after it. */",
     "function priceOrder(){",
     "  var sub=ORDER.subtotal, disc=Math.min(sub, DC.amt||0);",
     "  var tax=(sub-disc)*(ORDER.taxPct||0)/100, ship=ORDER.shipping||0;",
     "  return {sub:sub, disc:disc, tax:tax, ship:ship, total:sub-disc+tax+ship};",
     "}",
+    "/* every figure is addressed by its data-tt hook, so re-ordering the",
+    "   breakdown rows in the markup cannot break the re-pricing */",
     "function paintTotals(){",
-    "  var t=priceOrder(), rows=document.querySelectorAll('.b-totals .tr');",
-    "  if(rows.length>=5){",
-    "    rows[0].querySelector('.tv').textContent=inr(t.sub);",
-    "    rows[1].querySelector('.cv-sub').textContent='Discount'+(DC.code?' \u00b7 '+DC.code:'');",
-    "    var dv=rows[1].querySelector('.tv'); dv.textContent='\u2212'+inr(t.disc); dv.style.color=t.disc>0?'#10b981':'';",
-    "    rows[3].querySelector('.tv').textContent=inr(t.tax);",
-    "    rows[4].querySelector('.tv').textContent=inr(t.total);",
-    "  }",
+    "  var t=priceOrder(), set=function(k,v){",
+    "    var el=document.querySelector('[data-tt='+k+']'); if(el) el.textContent=v; return el; };",
+    "  set('sub', inr(t.sub));",
+    "  set('ship', t.ship>0 ? inr(t.ship) : 'Free');",
+    "  set('tax', inr(t.tax));",
+    "  set('total', inr(t.total));",
+    "  set('disclbl', 'Discount'+(DC.code?' \u00b7 '+DC.code:''));",
+    "  var dv=set('disc', '\u2212'+inr(t.disc)); if(dv) dv.style.color = t.disc>0 ? '#10b981' : '';",
+    "  var drow=document.querySelector('.b-totals .tr-disc'); if(drow) drow.style.display = t.disc>0 ? '' : 'none';",
     "  var pb=document.querySelector('.paybtn span'); if(pb) pb.textContent='Pay '+inr(t.total);",
     "}",
     "function applyDiscount(){",
@@ -3849,22 +3970,55 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  if(e.key==='Enter' && e.target.dataset && e.target.dataset.role==='dcode'){ e.preventDefault(); applyDiscount(); }",
     "});",
     "/* Payment status (success / failed / expired) is driven by web-socket events from the backend in production. */",
-    d.timer ? [
-    "/* session expiry countdown */",
+    (d.timer || d.pageExpOn) ? [
+    "/* ── EXPIRY ─────────────────────────────────────────────────────────────",
+    "   Two independent clocks, one interval:",
+    "     1. payment session — a countdown, restarts with each attempt",
+    "     2. checkout page   — one absolute moment the whole link dies at",
+    "   Whichever lands first shows the expired screen. The page-expiry moment",
+    "   is baked in below as an ISO string; in production take it from the",
+    "   payment-link record instead. */",
     "(function(){",
-    "  var total=" + (d.timerMins*60) + ", s=total, el=document.getElementById('coTimer');",
-    "  if(!el) return;",
+    "  var SESSION_ON=" + (d.timer?1:0) + ", total=" + (d.timerMins*60) + ", s=total;",
+    "  var PAGE_EXP=" + (d.pageExpOn && d.pageExp ? "new Date('" + new Date(d.pageExp).toISOString() + "')" : "null") + ";",
+    "  var el=document.getElementById('coTimer'); if(!el) return;",
     "  var pad=function(n){return String(n).padStart(2,'0');};",
+    "  function expire(msg){",
+    "    el.classList.add('done'); el.classList.remove('urgent');",
+    "    var ov=document.getElementById('payOverlay');",
+    "    if(ov){ ov.innerHTML='<div class=\"pr-wrap\"><div class=\"po-title\">Payment Link Expired</div>'",
+    "      +'<div class=\"po-sub cv-sub\">'+msg+'</div>'",
+    "      +'<div class=\"pr-note cv-sub\">Please connect with the merchant/ sender of this link to share a new one with you.</div>'",
+    "      +'<div class=\"pr-faq\"><a href=\"" + DECENTRO_HELP + "\" target=\"_blank\" rel=\"noopener\">Decentro Help &amp; FAQ</a></div></div>';",
+    "      ov.classList.add('show'); }",
+    "  }",
+    "  function left(ms){",
+    "    if(ms<=0) return 'expired';",
+    "    var m=Math.floor(ms/60000), h=Math.floor(m/60), dd=Math.floor(h/24);",
+    "    if(dd>=1) return dd+'d '+(h%24)+'h';",
+    "    if(h>=1) return h+'h '+(m%60)+'m';",
+    "    return (m%60)+'m';",
+    "  }",
     "  var t=setInterval(function(){",
-    "    s--;",
-    "    var c=document.getElementById('ctClock');",
-    "    if(c) c.textContent = pad(Math.floor(Math.max(s,0)/60))+':'+pad(Math.max(s,0)%60);",
-    "    el.classList.toggle('urgent', s<=120 && s>0);",
-    "    if(s<=0){",
-    "      clearInterval(t); el.classList.add('done'); el.classList.remove('urgent');",
-    "      el.querySelector('.ct-t').textContent='Payment session expired';",
-    "      var ov=document.getElementById('payOverlay');",
-    "      if(ov){ ov.innerHTML='<div class=\"pr-wrap\"><div class=\"po-title\">Payment Link Expired</div><div class=\"po-sub cv-sub\">This payment link is expired.</div><div class=\"pr-note cv-sub\">Please connect with the merchant/ sender of this link to share a new one with you.</div></div>'; ov.classList.add('show'); }",
+    "    if(SESSION_ON){",
+    "      s--;",
+    "      var c=document.getElementById('ctClock');",
+    "      if(c) c.textContent = pad(Math.floor(Math.max(s,0)/60))+':'+pad(Math.max(s,0)%60);",
+    "      el.classList.toggle('urgent', s<=120 && s>0);",
+    "    }",
+    "    if(PAGE_EXP){",
+    "      var ms=PAGE_EXP-Date.now(), lf=document.getElementById('ctLeft');",
+    "      if(lf) lf.textContent=left(ms);",
+    "      if(ms<=0){",
+    "        clearInterval(t);",
+    "        var pt=el.querySelector('.ct-page .ct-t'); if(pt) pt.textContent='Checkout page expired';",
+    "        expire('This checkout page has expired.'); return;",
+    "      }",
+    "    }",
+    "    if(SESSION_ON && s<=0){",
+    "      clearInterval(t);",
+    "      var st=el.querySelector('.ct-t'); if(st) st.textContent='Payment session expired';",
+    "      expire('This payment link is expired.');",
     "    }",
     "  },1000);",
     "})();"
@@ -3939,6 +4093,45 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  return t;   /* .report tells you whether anything had to be corrected */",
     "}",
     "/* ╚═══════════════════ END BRAND CONTRAST ENGINE ══════════════════════╝ */",
+    "/* ── LIVE QR ───────────────────────────────────────────────────────────",
+    "   Pay with the QR method open does NOT open the status overlay. The QR",
+    "   grows inside the box it already occupies, the other methods fade back",
+    "   inactive, and the scan prompt moves below the code with a pulsing dot.",
+    "   The resolve timeout below stands in for the web-socket status event. */",
+    "var QR_IDLE=null, QR_WATCH=null;",
+    "var QR_LIVE_T=" + JSON.stringify(qrProps.liveTitle) + ", QR_WAIT_T=" + JSON.stringify(qrProps.waitText) + ";",
+    "function qrBox(){ return document.querySelector('.b-method.m-upiqr'); }",
+    "function qrArmed(){ var m=qrBox(); return !!m && m.classList.contains('open'); }",
+    "function qrEnter(){",
+    "  var m=qrBox(); if(!m) return false;",
+    "  var body=m.querySelector('.bm-body'), card=m.querySelector('.qr-card');",
+    "  if(!body||!card) return false;",
+    "  if(QR_IDLE===null) QR_IDLE=body.innerHTML;",
+    "  body.innerHTML='<div class=\"qr-live\"><div class=\"qr-card qr-big\">'+card.innerHTML+'</div>'",
+    "    +'<div class=\"qr-live-t\"></div><div class=\"qr-wait\"><span class=\"qr-dot\"></span><span></span></div>'",
+    "    +'<button class=\"qr-cancel\" type=\"button\" data-act=\"qrCancel\">Cancel and choose another method</button></div>';",
+    "  body.querySelector('.qr-live-t').textContent=QR_LIVE_T;",
+    "  body.querySelector('.qr-wait span:last-child').textContent=QR_WAIT_T;",
+    "  document.querySelector('.checkout').classList.add('qr-armed');",
+    "  if(m.scrollIntoView) m.scrollIntoView({behavior:'smooth',block:'center'});",
+    "  if(QR_WATCH) clearTimeout(QR_WATCH);",
+    "  QR_WATCH=setTimeout(function(){ QR_WATCH=null; qrExit(); qrDone(); },6000);",
+    "  return true;",
+    "}",
+    "function qrExit(){",
+    "  if(QR_WATCH){ clearTimeout(QR_WATCH); QR_WATCH=null; }",
+    "  var m=qrBox(); if(!m) return;",
+    "  if(QR_IDLE!==null){ m.querySelector('.bm-body').innerHTML=QR_IDLE; QR_IDLE=null; }",
+    "  document.querySelector('.checkout').classList.remove('qr-armed');",
+    "}",
+    "function qrDone(){",
+    "  var ov=document.getElementById('payOverlay'); if(!ov) return;",
+    "  ov.innerHTML='<div class=\"pr-wrap\"><div class=\"po-ring\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#10b981\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></div>'",
+    "    +'<div class=\"po-title\">Payment successful</div>'",
+    "    +'<button class=\"po-close\" onclick=\"document.getElementById(&quot;payOverlay&quot;).classList.remove(&quot;show&quot;)\">Back</button>'",
+    "    +'<div class=\"pr-faq\"><a href=\"" + DECENTRO_HELP + "\" target=\"_blank\" rel=\"noopener\">Decentro Help &amp; FAQ</a></div></div>';",
+    "  ov.classList.add('show');",
+    "}",
     "/* Decentro pay loader — logo cube streaming into the D */",
     "var DL_LOADER='" + payLoader('Processing payment','').replace(/'/g,"\\'").replace(/\n\s*/g,'') + "';",
     "function goStep(n){",
@@ -4042,6 +4235,8 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  var lg=e.target.closest('[data-act=legal]');",
     "  if(lg){document.getElementById('lmTitle').textContent=lg.dataset.doc==='tnc'?'Terms & Conditions':'Privacy Policy';document.getElementById('lmBody').textContent=LEGAL[lg.dataset.doc]||'No content provided.';document.getElementById('legalModal').style.display='flex';return;}",
     "  if(e.target.closest('[data-lm-close]')||e.target.id==='legalModal'){document.getElementById('legalModal').style.display='none';return;}",
+    "  var pbt=e.target.closest('[data-act=pbToggle]');",
+    "  if(pbt){var pbw=pbt.closest('.pb'); var o=pbw.classList.toggle('open'); pbt.setAttribute('aria-expanded',o); return;}",
     "  var acc=e.target.closest('[data-act=acc]');",
     "  if(acc){var m=acc.closest('.b-method');if(!m.classList.contains('flat')){var was=m.classList.contains('open');document.querySelectorAll('.b-method').forEach(function(x){x.classList.remove('open')});if(!was)m.classList.add('open');}return;}",
     "  var sel=e.target.closest('.upi-app,.upi-any,.nb-bank,.nb-crow');",
@@ -4055,9 +4250,11 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  if(e.target.closest('[data-act=dcClear]')){ clearDiscount(); return; }",
     "  if(!e.target.closest('.b-dc')) document.querySelectorAll('.b-dc.open').forEach(function(x){x.classList.remove('open')});",
     "  var sw=e.target.closest('.sw, .ad-check');if(sw){sw.classList.toggle('on');return;}",
+    "  if(e.target.closest('[data-act=qrCancel]')){ qrExit(); return; }",
     "  var pay=e.target.closest('[data-act=pay]');",
+    "  if(pay && qrArmed()){ qrEnter(); return; }",
     "  if(pay){var ov=document.getElementById('payOverlay');ov.innerHTML='<div class=\"po-inner\">'+DL_LOADER+'<div class=\"po-ws cv-sub\"><span class=\"ws-dot\"></span>Listening for payment status · web socket</div></div>';ov.classList.add('show');",
-    "    setTimeout(function(){ov.innerHTML='<div class=\"po-inner\"><div class=\"po-ring\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#10b981\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></div><div class=\"po-title\">Payment successful</div><button class=\"po-close\" onclick=\"document.getElementById(&quot;payOverlay&quot;).classList.remove(&quot;show&quot;)\">Back</button></div>';},1500);return;}",
+    "    setTimeout(function(){ov.innerHTML='<div class=\"po-inner\"><div class=\"po-ring\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#10b981\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></div><div class=\"po-title\">Payment successful</div><button class=\"po-close\" onclick=\"document.getElementById(&quot;payOverlay&quot;).classList.remove(&quot;show&quot;)\">Back</button><div class=\"pr-faq\"><a href=\"' + DECENTRO_HELP + '\" target=\"_blank\" rel=\"noopener\">Decentro Help &amp; FAQ</a></div></div>';},1500);return;}",
     "});"
   ].join('\n');
   const legalModal = `<div id="legalModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);align-items:center;justify-content:center;z-index:100;padding:24px;">
@@ -4088,7 +4285,7 @@ img,svg,canvas,table{max-width:100%;}
 /* --co-bar is the height the fixed session-timer bar occupies at the top */
 :root{--co-bar:50px;
   /* ── TYPE SCALE ── 17px titles · 15px body · 13px subtext, in rem */
-  --fs-title:1.0625rem; --fs-body:0.9375rem; --fs-sub:0.8125rem;}
+  --fs-title:1.0625rem; --fs-body:0.9375rem; --fs-sub:0.8125rem; --fs-note:0.6562rem;}
 body{font-family:'Montserrat',sans-serif;background:#f0f2f6;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:0;position:relative;isolation:isolate;}
 /* 48px grid (masked) + soft brand glow blobs */
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -4125,7 +4322,7 @@ input{font-family:inherit;}
 .blk + .blk{margin-top:18px;}
 .trust-strip{margin-top:16px;}
 .trust-strip .b-secure{justify-content:center;color:#8794a8;}
-.powered{width:100%;text-align:center;font-size:var(--fs-sub);font-weight:600;color:#94a3b8;margin-top:14px;}
+.powered{width:100%;text-align:center;font-size:var(--fs-note);font-weight:600;color:#94a3b8;margin-top:14px;}
 .powered span{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;}
 .powered svg{opacity:.85;}
 ${brandBlock}
@@ -4170,12 +4367,6 @@ ${collectCheckoutCSS()}
   .co-stage-head .sh-t{font-size:var(--fs-title);}
   .co-nav{position:sticky;bottom:0;background:var(--co-pay-bg);padding:10px 0 2px;margin-top:16px;z-index:5;}
 }
-/* desktop & tablet: the charge breakdown folds into the info-icon popover */
-@media (min-width:641px){
-  .b-totals .tt-inline{display:none;}
-  .tt-i{display:inline-flex;}
-  .tt-wrap:hover .tt-pop,.tt-i:focus-visible + .tt-pop{display:block;}
-}
 /* Thin brand scrollbar on the scrolling zones. A global scrollbar-width:thin
    makes Blink ignore ::-webkit-scrollbar and use the OS overlay bar, so reset
    the standard properties where the pseudo-elements exist and keep them only
@@ -4211,7 +4402,7 @@ ${d.rails ? '<canvas id="flowBg" aria-hidden="true"></canvas>' : ''}
      CHECKOUT
      ══════════════════════════════════════════════════════════════════════════ -->
 <div class="page">
-${d.timer ? timerHTML(d.timerMins*60) : ''}
+${(d.timer || d.pageExpOn) ? timerHTML(d.timerMins*60) : ''}
 <div class="checkout theme-light">
   <!-- ─────────── LEFT: ORDER SUMMARY ─────────── -->
   <div class="co-col co-summary">
@@ -4293,7 +4484,6 @@ function seed(){
   S('item',  {name:'Aurora Desk Lamp — Brass', price:3499, qty:1});
   S('item',  {name:'Filament Bulb Set (×3)', price:899, qty:1});
   S('recur');
-  S('discount');      /* discount sits above the amount */
   S('totals');
   P('payerName');
   P('email');
@@ -4302,12 +4492,12 @@ function seed(){
   P('upiqr');
   P('netbanking');
   P('pay');
-  P('secure');
   P('mfooter');
   seeding = false;
 }
 document.getElementById('tbLogo').innerHTML = logoSvg(24);
-document.getElementById('poweredLine').innerHTML = '<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle;">Secured by ' + logoSvg(18) + '</span>';
+document.getElementById('poweredLine').innerHTML = '<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle;">Secured by ' + logoSvg(13) + '</span>';
+state.design.pageExp = state.design.pageExp || defaultPageExp();
 buildPalette();
 initFlowBg();
 seed();
