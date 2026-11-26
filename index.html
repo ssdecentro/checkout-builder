@@ -351,6 +351,11 @@ body.preview-mode .checkout-shell{max-height:100%;}
 /* the zone head already pads, rules and margins below this — a margin
    here stacked on top of all three and pushed the first field 45px away */
 .co-stage-head{margin-bottom:0;}
+/* Step 2 keeps the customer recap inside .zone-head, so the zone's own rule
+   lands under the recap and the heading gets none. This gives the heading the
+   same gap + separator step 1 has under "Customer Information". */
+.zone-head .co-stage-head:not(:last-child){padding-bottom:var(--co-sep);margin-bottom:var(--co-sep);
+  border-bottom:1px solid var(--co-pay-border);}
 .co-stage-head .sh-k{font-size:var(--fs-note);font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--co-pay-sub);}
 .co-stage-head .sh-t{font-size:var(--title-size);font-weight:700;font-family:var(--co-font-head);margin-top:3px;}
 
