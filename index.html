@@ -1494,11 +1494,7 @@ body.dev-mode .topbar{z-index:95;}
           <span class="dz-val" id="timerVal">10 min</span>
         </div>
         <div class="dz-sublabel" style="margin-top:12px;">2 · Checkout page expiry</div>
-        <div class="dz-toggle-row" style="padding:4px 0 6px;">
-          <div><div class="tr-name">Show page expiry</div><div class="tr-sub">Absolute date &amp; time the link dies</div></div>
-          <div class="sw on" id="pageExpSw"></div>
-        </div>
-        <input type="datetime-local" id="pageExpInput" class="dz-datetime">
+        <input type="datetime-local" id="pageExpInput" class="dz-datetime" style="margin-top:4px;">
         <div class="dz-when" id="pageExpWhen"></div>
         <div class="ins-note" style="margin-top:9px;">Both run in Preview and in the exported page. The <b>payment session</b> counts down per attempt; the <b>checkout page expiry</b> is a fixed date and time for the whole link. Whichever hits zero first flips the page to the <b>Payment Link Expired</b> screen.</div>
       </div>
@@ -4260,10 +4256,9 @@ function syncDesignUI(){
     const el = document.getElementById(id);
     if(el && document.activeElement !== el) el.value = ch[k] === null || ch[k] === undefined ? '' : ch[k];
   });
-  $('#pageExpSw').classList.toggle('on', state.design.pageExpOn);
+  /* no separate switch any more: a date means on, an empty field means off */
   const pei = $('#pageExpInput');
   if(pei && document.activeElement !== pei) pei.value = state.design.pageExp || '';
-  if(pei) pei.disabled = !state.design.pageExpOn;
   /* the payer only sees a countdown; the merchant sees the moment it lands on */
   const when = $('#pageExpWhen');
   if(when){
@@ -4596,14 +4591,11 @@ $('#timerRange').addEventListener('input', e=>{
     renderRegion('summary'); renderRegion('payment');
   });
 });
-/* 2 · checkout page expiry — an absolute date + time for the whole link */
-$('#pageExpSw').addEventListener('click', ()=>{
-  snapshot(); state.design.pageExpOn = !state.design.pageExpOn;
-  if(state.design.pageExpOn && !state.design.pageExp) state.design.pageExp = defaultPageExp();
-  syncDesignUI(); renderTimer();
-});
+/* 2 · checkout page expiry — an absolute date + time for the whole link.
+   The field is the control: a value arms it, clearing it turns it off. */
 $('#pageExpInput').addEventListener('change', e=>{
   snapshot(); state.design.pageExp = e.target.value || null;
+  state.design.pageExpOn = !!state.design.pageExp;
   syncDesignUI();      /* keeps the "Link dies …" hint in step with the picker */
   renderTimer();
 });
