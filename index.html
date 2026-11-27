@@ -862,7 +862,7 @@ body.preview-mode .checkout-shell{max-height:100%;}
 .payfx-l{transform-box:view-box; transform-origin:0px 0px; will-change:transform,opacity}
 .payfx-arc{fill:none; stroke:var(--payfx-brand); stroke-linecap:round; stroke-linejoin:round}
 .payfx-glyph{display:none}
-.payfx-glyph path{fill:none; stroke:#fff; stroke-width:26; stroke-linecap:round; stroke-linejoin:round}
+.payfx-glyph path{fill:none; stroke:#fff; stroke-width:15; stroke-linecap:round; stroke-linejoin:round}
 
 /* ┌────────────────────────────────────────────────────────────────────────┐
    │  BLOCK 1 of 8 · RECEIPT SCREEN — CSS              VERDICT: COPY + ADAPT │
@@ -970,14 +970,17 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;}
   .pr-hero{padding-top:calc(46px + env(safe-area-inset-top,0px));}
 }
 .pr-mark{width:62px;height:62px;margin:0 auto 15px;position:relative;}
-.pr-mark::before{content:"";position:absolute;inset:-9px;border-radius:50%;background:#fff;opacity:.6;}
+/* A bloom behind the disc as it lands, not a permanent ring. It used to sit
+   at opacity .6 forever and rcHalo settled back to .6, so every outcome kept
+   a white ring around the mark at its final spot. */
+.pr-mark::before{content:"";position:absolute;inset:-9px;border-radius:50%;background:#fff;opacity:0;}
 .pr-mark svg{position:relative;display:block;width:100%;height:100%;}
 .pr-rip{position:absolute;inset:-9px;border-radius:50%;border:2.5px solid #fff;opacity:0;}
 .pr-mark.land .pr-rip{animation:rcRip 1.15s cubic-bezier(.17,.72,.3,1) both;}
 .pr-mark.land .pr-rip:nth-of-type(2){animation-delay:.18s;border-width:1.5px;}
 @keyframes rcRip{0%{transform:scale(.92);opacity:.85}100%{transform:scale(2.5);opacity:0}}
 .pr-mark.land::before{animation:rcHalo .7s cubic-bezier(.2,.8,.3,1) both;}
-@keyframes rcHalo{0%{transform:scale(.8);opacity:.2}55%{transform:scale(1.12);opacity:.75}100%{transform:scale(1);opacity:.6}}
+@keyframes rcHalo{0%{transform:scale(.8);opacity:0}45%{transform:scale(1.12);opacity:.7}100%{transform:scale(1.32);opacity:0}}
 .pr-mark.land svg{animation:rcBeat .68s cubic-bezier(.2,.8,.3,1) both;}
 @keyframes rcBeat{0%{transform:scale(.86)}38%{transform:scale(1.09)}62%{transform:scale(.97)}82%{transform:scale(1.02)}100%{transform:scale(1)}}
 .pr-h1{margin:0;font-size:var(--fs-headline);font-weight:700;letter-spacing:-.2px;font-family:var(--co-font-head);}
@@ -1584,7 +1587,7 @@ body.dev-mode .topbar{z-index:95;}
       <div class="pr-mark" id="prMark">
         <span class="pr-rip"></span><span class="pr-rip"></span>
         <svg viewBox="-130 -130 260 260"><circle r="98" id="prDisc"></circle>
-          <g transform="scale(.62)" id="prGlyph" fill="none" stroke="#fff" stroke-width="26"
+          <g transform="scale(.62)" id="prGlyph" fill="none" stroke="#fff" stroke-width="15"
              stroke-linecap="round" stroke-linejoin="round"></g></svg>
       </div>
       <h2 class="pr-h1" id="prTitle"></h2>
@@ -2882,11 +2885,51 @@ document.addEventListener('keydown', e=>{
    └──────────────────────────────────────────────────────────────────────┘ */
 function payFxModule(root){
 "use strict";
+/* ── the pose a status strikes once its mark has formed ────────────────
+   Returned as data, not applied here, so the same beat can be driven on
+   the landed mark above the amount rather than in the centre of the card.
+   p = ms since the mark arrived. Every beat settles; none loop forever. */
+function beatPose(status, p){
+  var dx=0, rot=0, sy=1, parts=null, e2, d2;
+  if(status==='failure'){
+    /* a short damped shake: refused, not merely delayed */
+    var sh=seg(p,0,STEP*5);
+    if(sh>0&&sh<1) dx=Math.sin(sh*Math.PI*5)*11*(1-sh);
+  } else if(status==='pending'){
+    /* the clock keeps running after the dial is drawn */
+    var pw=Math.max(0,p)/1000;
+    parts={1:'rotate('+(pw*300).toFixed(2)+')', 2:'rotate('+(pw*1080).toFixed(2)+')'};
+  } else if(status==='hold'){
+    /* held, not stopped: the bars breathe in place */
+    var hb=Math.max(0,p)/1400;
+    sy=1-0.12*(0.5-0.5*Math.cos(Math.min(hb,3)*2*Math.PI));
+  } else if(status==='expired'){
+    /* the hourglass tips once and stays over — time already ran out */
+    rot=180*E.out(seg(p,STEP,STEP*8));
+  } else if(status==='refund'){
+    /* the return arrow turns back on itself — one counter-clockwise
+       revolution that lands exactly where it started */
+    rot = -360*E.std(seg(p,0,STEP*8));
+  } else if(status==='invalid'){
+    /* the halves pull apart along the link's own axis: they sit in a
+       rotated group, so a local x shift separates them on the diagonal */
+    d2=E.out(seg(p,0,STEP*7))*13;
+    parts={0:'translate('+(-d2).toFixed(2)+',0)', 1:'translate('+d2.toFixed(2)+',0)'};
+  }
+  return {dx:dx, rot:rot, sy:sy, parts:parts,
+    t:'translate('+dx.toFixed(2)+',0) rotate('+rot.toFixed(2)+') scale(1,'+sy.toFixed(4)+')'};
+}
+
 var PAL={
   success:{base:'#2FC97A',tint:'#DFF6EA',deep:'#1B8A52'},
   pending:{base:'#F0A81A',tint:'#FDF0D9',deep:'#9A6A05'},
   failure:{base:'#EB5547',tint:'#FCE6E3',deep:'#B5362B'},
-  expired:{base:'#5A6478',tint:'#EAECF2',deep:'#414A5C'}
+  expired:{base:'#5A6478',tint:'#EAECF2',deep:'#414A5C'},
+  /* Each backend outcome owns a hue so the disc reads before the words do.
+     deep-on-tint is the pill; both clear Lc 60 against their own tint. */
+  hold:   {base:'#6E79C9',tint:'#E9EBFA',deep:'#3B4598'},
+  refund: {base:'#17A4B8',tint:'#D9F1F5',deep:'#0A6675'},
+  invalid:{base:'#8A5FB0',tint:'#F0E8F8',deep:'#5B3980'}
 };
 /* the "D" of the Decentro monogram, in the logo's own 400x100 coordinates */
 var MONO='M39.79,28.86h-18.5v25.12h8.56V37.45h9.69c8.89,0,14.65,4.97,14.65,12.57s-5.76,12.57-14.65,12.57h-1.1v8.58h1.34'+
@@ -2897,7 +2940,22 @@ var TILE=164, SQ_S=(8.59*MK)/TILE;            /* square -> tile scale ratio */
 
 var SQ_A0=224.4, SQ_R0=80.1;      /* the square's corner position, in polar */
 var SPIN_R=148, RING_R=132, COIN_R=98, GLYPH_S=.62;
-var INTRO=2000, TURN=1500, RDUR=2000, REVEAL=1000;
+var INTRO=2000, TURN=1500, RDUR=2000, REVEAL=2000;
+/* ── one timing ladder for every outcome ──────────────────────────────────
+   The centre sequence runs 0 → REVEAL (2s) and every stage is a whole
+   number of STEPs, so no status enters, draws or settles on a different
+   rhythm than another. Change STEP and the whole sequence rescales. */
+var STEP=120;
+var T_FADE  = STEP*2,   /* 240  ring + disc fade up together              */
+    T_DASH  = STEP*4,   /* 480  ring finishes drawing its circumference   */
+    T_DRAW  = STEP*4,   /* 480  glyph starts stroking                     */
+    T_DRAWE = STEP*12,  /* 1440 glyph complete                            */
+    T_REL   = STEP*3,   /* 360  the ring begins fading as it collapses    */
+    T_RELE  = STEP*6,   /* 720  ring has landed on the disc edge and gone  */
+    T_SPARK = STEP*9,   /* 1080                                           */
+    T_SPARKE= STEP*15,  /* 1800                                           */
+    T_HALO  = STEP*12,  /* 1440                                           */
+    T_HALOE = STEP*16;  /* 1920 — settled before the flight at 2000       */
 
 var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
 var seg=function(t,a,b){return clamp((t-a)/(b-a),0,1);};
@@ -3079,10 +3137,18 @@ function svgMarkup(uid){
     '<g data-n="coinG" class="payfx-l" opacity="0"><g data-n="coinS" class="payfx-l">'+
       '<circle r="'+COIN_R+'" fill="var(--payfx-st)"/>'+
       '<g data-n="glyphS" class="payfx-l" transform="scale('+GLYPH_S+')">'+
-        '<g data-g="success" class="payfx-glyph"><path d="M-70 4 L-22 51 L76 -49"/></g>'+
-        '<g data-g="pending" class="payfx-glyph" data-pivot="1"><path style="stroke-width:15" d="M0 -74 A74 74 0 1 1 0 74 A74 74 0 1 1 0 -74"/><path style="stroke-width:19" d="M0 0 L0 -42"/><path style="stroke-width:19" d="M0 0 L30 20"/></g>'+
-        '<g data-g="failure" class="payfx-glyph"><path d="M0 0 L-52 -52"/><path d="M0 0 L52 52"/><path d="M0 0 L52 -52"/><path d="M0 0 L-52 52"/></g>'+
-        '<g data-g="expired" class="payfx-glyph"><path d="M0 -64 L0 12"/><path d="M0 52 L0 53"/></g>'+
+        '<g data-g="success" class="payfx-glyph"><g data-beat><path d="M-56 3 L-18 41 L60 -39"/></g></g>'+
+        '<g data-g="pending" class="payfx-glyph" data-pivot="1"><g data-beat><path style="stroke-width:10" d="M0 -74 A74 74 0 1 1 0 74 A74 74 0 1 1 0 -74"/><path style="stroke-width:12" d="M0 0 L0 -42"/><path style="stroke-width:12" d="M0 0 L30 20"/></g></g>'+
+        '<g data-g="failure" class="payfx-glyph"><g data-beat><path d="M0 0 L-41 -41"/><path d="M0 0 L41 41"/><path d="M0 0 L41 -41"/><path d="M0 0 L-41 41"/></g></g>'+
+        /* hourglass: frame drawn first, then the sand line through it */
+        '<g data-g="expired" class="payfx-glyph" data-pivot="1"><g data-beat><path d="M-40 -62 L40 -62"/><path d="M-40 62 L40 62"/>'+
+          '<path d="M-36 -62 L-36 -44 L0 0 L36 -44 L36 -62"/><path d="M-36 62 L-36 44 L0 0 L36 44 L36 62"/></g></g>'+
+        /* on hold: two bars, struck down together then held */
+        '<g data-g="hold" class="payfx-glyph"><g data-beat><path style="stroke-width:13" d="M-26 -48 L-26 48"/><path style="stroke-width:13" d="M26 -48 L26 48"/></g></g>'+
+        /* refund: the money turns around — a U-turn arrow back to the payer */
+        '<g data-g="refund" class="payfx-glyph"><g data-beat><path d="M-51.6 -44.8 L-51.6 -11.2 L-18 -11.2"/><path d="M-37.5 16.8 a50.4 50.4 0 1 0 11.9 -52.4 L-51.6 -11.2"/></g></g>'+
+        /* invalid link: two halves of a chain that never joined */
+        '<g data-g="invalid" class="payfx-glyph" data-pivot="1"><g data-beat><g transform="rotate(-45)"><path d="M-14 -27 L-38 -27 A27 27 0 0 0 -38 27 L-14 27"/><path d="M14 -27 L38 -27 A27 27 0 0 1 38 27 L14 27"/></g></g></g>'+
         '<circle data-n="pen" r="7" fill="#fff" opacity="0"/>'+
       '</g>'+
     '</g></g>'+
@@ -3142,7 +3208,7 @@ function create(mount,opt){
     }
   }
 
-  var st='success', GP=[], gOff={x:0,y:0}, raf=null, t0=0, R0=Infinity, manual=-1, revealed=false, playing=false;
+  var st='success', GP=[], BEAT=null, gOff={x:0,y:0}, raf=null, t0=0, R0=Infinity, manual=-1, revealed=false, playing=false;
   var land=null, curT=0;
   function setStatus(s){
     st=s; var p=PAL[s]||PAL.success;
@@ -3158,11 +3224,20 @@ function create(mount,opt){
         g.setAttribute('transform','translate('+gOff.x.toFixed(2)+','+gOff.y.toFixed(2)+')');
       }
     }catch(e){}
+    BEAT=g.querySelector('[data-beat]');
+    if(BEAT) BEAT.removeAttribute('transform');
     GP=[].slice.call(g.querySelectorAll('path')).map(function(p2){
+      p2.removeAttribute('transform');
       var L=p2.getTotalLength(); p2.style.strokeDasharray=L+' '+L; p2.style.strokeDashoffset=L; return {el:p2,L:L};
     });
   }
 
+  /* ── per-outcome motion beat ───────────────────────────────────────────
+     The reveal grammar (stroke-draw, tracer, halo, sparks) is shared so the
+     seven outcomes read as one family. What separates them is what the mark
+     DOES once it has formed — each beat below is the status acting out its
+     own meaning, and each settles rather than looping forever.
+       rt = ms since the status resolved; the mark finishes drawing near 1000. */
   function render(t){
     curT=t;
     var direct=(R0<=0), rt=(t>=R0)?(t-R0):-1;
@@ -3240,37 +3315,50 @@ function create(mount,opt){
     if(!land) T(N.coinG,0,0,1,1,0);          /* never inherit a stale flight pose */
     if(rt<0){O(N.ringG,0); O(N.coinG,0); O(N.haloG,0); O(N.pen,0);}
     else{
-      O(N.ringG, lp(rt,80,290,E.out)*(1-lp(rt,700,960,E.std)));
-      var rS=rt<690 ? 0.46+0.54*spring((rt-80)/1000,215,17) : mix(1,1.2,lp(rt,690,960,E.out));
-      S(N.ringS,Math.max(rS,0.01));
-      N.ring.setAttribute('stroke-dasharray',(RINGC*lp(rt,70,460,E.out)).toFixed(1)+' '+RINGC.toFixed(1));
-      N.ring.style.strokeWidth=(11/Math.sqrt(Math.max(rS,.2))).toFixed(2);
+      /* The ring and the disc enter on ONE spring from ONE start time. They
+         used to run different stiffness (215/17 vs 180/16.5) 170ms apart,
+         so the ring raced the disc and the two were never concentric
+         mid-entrance — that was the misalignment. */
+      var gs = 0.5 + 0.5*spring(rt/1000, 200, 17);
+      /* The ring used to hold station ~15px outside the disc for most of a
+         second and then fly outward — it read as a second, unrelated circle.
+         It now collapses ONTO the disc edge and fades as it arrives, so the
+         loader resolves into the mark instead of orbiting it. Nothing is ever
+         left ringing the disc. */
+      var coll = lp(rt,T_FADE,T_RELE,E.out);
+      O(N.ringG, lp(rt,0,T_FADE,E.out)*(1-lp(rt,T_REL,T_RELE,E.std)));
+      O(N.coinG, lp(rt,0,T_FADE,E.out));
+      S(N.ringS,Math.max(gs*mix(1,COIN_R/RING_R,coll),0.01));
+      S(N.coinS,Math.max(gs,0.001));
+      N.ring.setAttribute('stroke-dasharray',(RINGC*lp(rt,0,T_DASH,E.out)).toFixed(1)+' '+RINGC.toFixed(1));
+      N.ring.style.strokeWidth=(11/Math.sqrt(Math.max(gs,.2))).toFixed(2);
 
-      O(N.coinG, lp(rt,250,340,E.std));
-      var cs=rt>260?spring((rt-260)/1000,180,16.5):0;
-      S(N.coinS,Math.max(cs,0.001));
-
-      var dn=GP.length, dEnd=980;
+      /* every path of every glyph shares the same window; multi-path marks
+         stagger inside it rather than extending it */
+      var dn=GP.length, dEnd=T_DRAWE;
       GP.forEach(function(p2,i){
-        p2.el.style.strokeDashoffset=(p2.L*(1-lp(rt,560+(i/dn)*170,dEnd,E.out))).toFixed(2);
+        p2.el.style.strokeDashoffset=(p2.L*(1-lp(rt,T_DRAW+(i/dn)*(STEP*2),dEnd,E.out))).toFixed(2);
       });
       var act=-1,pr=0;
-      if(dn===1){var q2=seg(rt,560,dEnd); if(q2>0&&q2<1){act=0;pr=E.out(q2);}}
+      if(dn===1){var q2=seg(rt,T_DRAW,dEnd); if(q2>0&&q2<1){act=0;pr=E.out(q2);}}
       if(act>=0){
         var pt=GP[act].el.getPointAtLength(GP[act].L*pr);
         N.pen.setAttribute('cx',(pt.x+gOff.x).toFixed(1)); N.pen.setAttribute('cy',(pt.y+gOff.y).toFixed(1));
         O(N.pen,Math.min(1,pr*9)*(1-Math.max(0,(pr-.86)/.14))*0.9);
       } else O(N.pen,0);
-      S(N.glyphS, GLYPH_S*(rt>980?1+0.05*Math.sin(Math.PI*seg(rt,980,1200)):1));
+      /* the centre only FORMS the mark; the beat plays once it has landed */
+      S(N.glyphS, GLYPH_S*(rt>T_DRAWE ? 1+0.05*Math.sin(Math.PI*seg(rt,T_DRAWE,T_DRAWE+STEP*2)) : 1));
 
-      var hp=seg(rt,1140,1820);
-      O(N.haloG,(hp>0&&hp<1)?Math.sin(Math.PI*hp)*0.38:0);
-      S(N.haloG,mix(1,1.4,E.out(hp)));
+      /* The halo is a STROKED circle at ~1.8x the disc, so it never read as a
+         glow — it read as a second ring floating outside the mark, and it was
+         still fading as the disc began its flight. The sparks and the pop
+         carry the moment; this only added a stray ring. */
+      O(N.haloG, 0);
     }
 
     /* sparks: one when the brand square lands, one when the status forms */
     if(rt<0&&!direct&&t>780&&t<1200) burst(SQ_X,SQ_Y,seg(t,780,1200),12,74,0.85,6,{a0:-0.8,col:brand});
-    else if(rt>=820&&rt<1560) burst(0,0,seg(rt,820,1540),RING_R-40,RING_R+96,1,NSPARK,{a0:0.35,col:(PAL[st]||PAL.success).base});
+    else if(rt>=T_SPARK&&rt<T_SPARKE) burst(0,0,seg(rt,T_SPARK,T_SPARKE),RING_R-40,RING_R+96,1,NSPARK,{a0:0.35,col:(PAL[st]||PAL.success).base});
     else O(N.sparks,0);
 
     if(land){
@@ -3386,12 +3474,13 @@ function create(mount,opt){
     pause:function(){playing=false; if(raf)cancelAnimationFrame(raf); raf=null;},
     play:function(from){run(from||0);},
     setResultAt:function(ms){R0=ms;},
+    beatPose:beatPose, step:STEP,
     timing:{intro:INTRO,turn:TURN,result:RDUR,reveal:REVEAL}
   };
   setStatus('success');
   return api;
 }
-root.PayFX={create:create, palettes:PAL};
+root.PayFX={create:create, palettes:PAL, beatPose:beatPose, step:STEP};
 }
 payFxModule(window);
 
@@ -3416,14 +3505,19 @@ payFxModule(window);
    └──────────────────────────────────────────────────────────────────────┘ */
 /* identical geometry to PayFX, so the disc that flies in matches exactly */
 const PR_GLYPH = {
-  success:'<path d="M-70 4 L-22 51 L76 -49"/>',
-  pending:'<path style="stroke-width:15" d="M0 -74 A74 74 0 1 1 0 74 A74 74 0 1 1 0 -74"/><path style="stroke-width:19" d="M0 0 L0 -42"/><path style="stroke-width:19" d="M0 0 L30 20"/>',
-  failure:'<path d="M0 0 L-52 -52"/><path d="M0 0 L52 52"/><path d="M0 0 L52 -52"/><path d="M0 0 L-52 52"/>',
-  expired:'<path d="M0 -64 L0 12"/><path d="M0 52 L0 53"/>'
+  success:'<path d="M-56 3 L-18 41 L60 -39"/>',
+  pending:'<path style="stroke-width:10" d="M0 -74 A74 74 0 1 1 0 74 A74 74 0 1 1 0 -74"/><path style="stroke-width:12" d="M0 0 L0 -42"/><path style="stroke-width:12" d="M0 0 L30 20"/>',
+  failure:'<path d="M0 0 L-41 -41"/><path d="M0 0 L41 41"/><path d="M0 0 L41 -41"/><path d="M0 0 L-41 41"/>',
+  expired:'<path d="M-40 -62 L40 -62"/><path d="M-40 62 L40 62"/><path d="M-36 -62 L-36 -44 L0 0 L36 -44 L36 -62"/><path d="M-36 62 L-36 44 L0 0 L36 44 L36 62"/>',
+  hold:'<path style="stroke-width:13" d="M-26 -48 L-26 48"/><path style="stroke-width:13" d="M26 -48 L26 48"/>',
+  refund:'<path d="M-51.6 -44.8 L-51.6 -11.2 L-18 -11.2"/><path d="M-37.5 16.8 a50.4 50.4 0 1 0 11.9 -52.4 L-51.6 -11.2"/>',
+  invalid:'<g transform="rotate(-45)"><path d="M-14 -27 L-38 -27 A27 27 0 0 0 -38 27 L-14 27"/><path d="M14 -27 L38 -27 A27 27 0 0 1 38 27 L14 27"/></g>'
 };
-/* The seven backend outcomes collapse onto PayFX's four visual states —
-   green / amber / red / slate — because those are the only four a payer
-   needs to tell apart at a glance. Each keeps its own copy and CTAs. */
+/* Each of the seven backend outcomes owns a PayFX state: its own hue, its own
+   mark, and its own motion beat once that mark has formed — tick, clock,
+   pause bars, cross, hourglass, U-turn arrow, broken link. The reveal grammar
+   is shared so they read as one family; the beat is what tells them apart.
+   Each keeps its own copy and CTAs. */
 const PR_DATA = {
   success:{fx:'success', title:'Payment successful', pill:'Successful', txn:true,
     msg:b=>`Your payment is complete and has been accepted by ${b}. A confirmation has been sent to you.`,
@@ -3431,7 +3525,7 @@ const PR_DATA = {
   pending:{fx:'pending', title:'Payment pending', pill:'Pending', txn:true,
     msg:b=>`We are confirming this with your bank. It usually takes a few minutes — ${b} will be notified as soon as it settles.`,
     act:[['Done','pri']]},
-  hold:{fx:'pending', title:'Unconfirmed payment status', pill:'On hold', txn:true,
+  hold:{fx:'hold', title:'Unconfirmed payment status', pill:'On hold', txn:true,
     msg:b=>`Your payment went through but has been placed on hold. Please contact ${b} for the updated status.`,
     act:[['Done','pri']]},
   failed:{fx:'failure', title:'Payment failed', pill:'Failed', txn:true,
@@ -3440,10 +3534,10 @@ const PR_DATA = {
   expired:{fx:'expired', title:'Payment expired', pill:'Expired', txn:false,
     msg:()=>`This payment timed out before it could be completed. Please contact the merchant for a new link to continue.`,
     act:[['Done','pri']]},
-  refund:{fx:'pending', title:'Refund initiated', pill:'Refunded', txn:true,
+  refund:{fx:'refund', title:'Refund initiated', pill:'Refunded', txn:true,
     msg:b=>`Your payment went through but was rejected by ${b}. The full amount should reach you within 7 business days.`,
     act:[['Done','pri']]},
-  invalid:{fx:'expired', title:'Invalid link', pill:'Invalid', txn:false,
+  invalid:{fx:'invalid', title:'Invalid link', pill:'Invalid', txn:false,
     msg:()=>`This link does not belong to Decentro. Please contact the merchant or sender of this link to share a new one with you.`,
     act:[['Done','pri']]},
 };
@@ -3467,7 +3561,7 @@ function buildResult(key){
   document.body.style.setProperty('--rc-t', pal.tint);
   document.body.style.setProperty('--rc-d', pal.deep);
   prEl('prDisc').setAttribute('fill', pal.base);
-  const g = prEl('prGlyph'); g.innerHTML = '<g>'+PR_GLYPH[d.fx]+'</g>';
+  const g = prEl('prGlyph'); g.innerHTML = '<g data-beat>'+PR_GLYPH[d.fx]+'</g>';
   const inner = g.firstChild;
   try{ const bb = inner.getBBox();
     if(bb.width && d.fx!=='pending')
@@ -3538,6 +3632,26 @@ function resetFlow(){
   prTxnId = null;
   if(prFx) prFx.hide();
 }
+/* ── the landed beat ──────────────────────────────────────────────────────
+   The centre of the card only FORMS the mark. Its meaning is acted out here,
+   once the disc has flown to its slot above the amount, so the motion plays
+   where the payer is actually looking when they read the result. */
+let prBeatRaf = null;
+function prBeat(fx){
+  if(prBeatRaf) cancelAnimationFrame(prBeatRaf);
+  const host = prEl('prGlyph'); if(!host) return;
+  const wrap = host.querySelector('[data-beat]'); if(!wrap) return;
+  const paths = [].slice.call(wrap.querySelectorAll('path'));
+  paths.forEach(function(p2){ p2.removeAttribute('transform'); });
+  const t0 = performance.now(), DUR = PayFX.step*14;      /* same ladder */
+  (function step(now){
+    const p = now - t0;
+    const pose = PayFX.beatPose(fx, p);
+    wrap.setAttribute('transform', pose.t);
+    if(pose.parts) for(const i in pose.parts){ if(paths[i]) paths[i].setAttribute('transform', pose.parts[i]); }
+    if(p < DUR) prBeatRaf = requestAnimationFrame(step); else prBeatRaf = null;
+  })(t0);
+}
 function payFx(){
   if(prFx) return prFx;
   prFx = PayFX.create($('#payOverlay'), {
@@ -3555,6 +3669,7 @@ function payFx(){
       prFx.landOn(prEl('prDisc'), function(){
         prEl('prMark').querySelector('svg').style.visibility = 'visible';
         void prEl('prMark').offsetWidth; prEl('prMark').classList.add('land');
+        prBeat((PR_DATA[prPending]||PR_DATA.success).fx);
         /* cut the overlay before the card reflows — it is positioned inside
            the card, so collapsing mid-fade dragged the landed disc upward */
         prFx.hide(true);
@@ -3583,6 +3698,7 @@ function payShowNow(key){
   payFx().landOn(prEl('prDisc'), function(){
     prEl('prMark').querySelector('svg').style.visibility = 'visible';
     void prEl('prMark').offsetWidth; prEl('prMark').classList.add('land');
+    prBeat((PR_DATA[key]||PR_DATA.success).fx);
     prFx.hide(true);
     collapseCard();
   });
@@ -5285,7 +5401,7 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  document.body.style.setProperty('--rc-t',pal.tint);",
     "  document.body.style.setProperty('--rc-d',pal.deep);",
     "  prEl('prDisc').setAttribute('fill',pal.base);",
-    "  var g=prEl('prGlyph'); g.innerHTML='<g>'+PRM.glyph[d.fx]+'</g>';",
+    "  var g=prEl('prGlyph'); g.innerHTML='<g data-beat>'+PRM.glyph[d.fx]+'</g>';",
     "  var inner=g.firstChild;",
     "  try{ var bb=inner.getBBox();",
     "    if(bb.width && d.fx!=='pending') inner.setAttribute('transform','translate('+(-(bb.x+bb.width/2)).toFixed(2)+','+(-(bb.y+bb.height/2)).toFixed(2)+')');",
@@ -5308,6 +5424,7 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  prEl('prAct').querySelectorAll('.pr-cta').forEach(function(b){b.addEventListener('click',payReset);});",
     "}",
     "function showResult(key){",
+    "  PRKEY=key;",
     "  var card=document.querySelector('.checkout'), res=prEl('payResult'), mark=prEl('prMark'), timer=prEl('coTimer');",
     "  /* pin the height before the banner hides and the width narrows, so the",
     "     only height change the payer sees is collapseCard's single tween */",
@@ -5342,10 +5459,28 @@ body::after{background:radial-gradient(closest-side,rgba(var(--brand-rgb),.08),t
     "  window.__payDone=false; if(timer) timer.style.display='';",
     "  PR_TXN=null; if(PRFX) PRFX.hide();",
     "}",
+    /* the landed beat: the centre only forms the mark, its meaning plays
+       here, once the disc has flown to its slot above the amount */
+    "var PRBEAT=null, PRKEY='success';",
+    "function prBeat(fx){",
+    "  if(PRBEAT) cancelAnimationFrame(PRBEAT);",
+    "  var host=prEl('prGlyph'); if(!host) return;",
+    "  var wrap=host.querySelector('[data-beat]'); if(!wrap) return;",
+    "  var paths=[].slice.call(wrap.querySelectorAll('path'));",
+    "  paths.forEach(function(p2){p2.removeAttribute('transform');});",
+    "  var t0=performance.now(), DUR=PayFX.step*14;",
+    "  (function step(now){",
+    "    var p=now-t0, pose=PayFX.beatPose(fx,p);",
+    "    wrap.setAttribute('transform',pose.t);",
+    "    if(pose.parts) for(var i in pose.parts){ if(paths[i]) paths[i].setAttribute('transform',pose.parts[i]); }",
+    "    if(p<DUR) PRBEAT=requestAnimationFrame(step); else PRBEAT=null;",
+    "  })(t0);",
+    "}",
     "function prLand(){",
     "  PRFX.landOn(prEl('prDisc'),function(){",
     "    prEl('prMark').querySelector('svg').style.visibility='visible';",
     "    void prEl('prMark').offsetWidth; prEl('prMark').classList.add('land');",
+    "    prBeat((PR[PRKEY]||PR.success).fx);",
     "    PRFX.hide(true); collapseCard();",
     "  });",
     "}",
