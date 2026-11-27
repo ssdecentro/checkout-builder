@@ -1156,11 +1156,15 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;}
    CONTROL HEIGHT — the receipt's CTA sets the height every control follows,
    so the flow feels like one screen rather than three.
    ══════════════════════════════════════════════════════════════════════════ */
+/* Control height. The export's CSS collector only keeps selectors starting
+   with .checkout/.co-/.b-/... so a bare :root block is dropped — the
+   exported page declares this itself and every consumer carries a
+   fallback, or inputs and the CTA collapse to their content height. */
 :root{--co-ctl:46px;}
-.checkout .b-field input{height:var(--co-ctl);}
+.checkout .b-field input{height:var(--co-ctl,46px);}
 .checkout .co-nav .nav-next,
-.checkout .co-nav .nav-back{height:var(--co-ctl);}
-.checkout .b-pay button.paybtn{height:var(--co-ctl);font-size:var(--fs-sub);}
+.checkout .co-nav .nav-back{height:var(--co-ctl,46px);}
+.checkout .b-pay button.paybtn{height:var(--co-ctl,46px);font-size:var(--fs-sub);}
 .checkout .co-nav .nav-next{font-size:var(--fs-sub);}
 
 /* mobile: flush to the top edge, and the status tint runs behind the banner */
@@ -5172,6 +5176,7 @@ function buildExportHTML(){
    applyBrandTokens('#rrggbb') — the engine ships in the script below.
    ══════════════════════════════════════════════════════════════════════════ */
 :root{
+  --co-ctl:         46px;               /* control height: inputs, CTA, nav-back */
   --brand:          ${BP.brand};        /* merchant input — DECORATION ONLY      */
   --brand-rgb:      ${BP.brandRgb};     /* same colour as r,g,b for rgba()       */
   --brand-cta:      ${BP.ctaFill};      /* CTA fill  (Lc ${Math.round(BP.report.ctaLc)} with its label) */
